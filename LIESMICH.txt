@@ -1,0 +1,35 @@
+Schulkoje – Installation
+========================
+
+Alle Dateien liegen ohne Unterordner nebeneinander.
+
+GitHub Pages (wie bei Codekoje und Vokabelkoje):
+1. Neues Repository "Schulkoje" anlegen (Konto feuerfuchs89).
+2. Alle Dateien aus dieser ZIP direkt hochladen (nicht den Ordner, die Dateien).
+3. Settings > Pages > Branch "main", Ordner "/ (root)" > Save.
+4. Nach ein bis zwei Minuten: https://feuerfuchs89.github.io/Schulkoje/
+5. In Chrome auf Handy oder Tablet: Menü > "App installieren" bzw. "Zum Startbildschirm".
+
+Mentor (KI): In der installierten App im Zahnrad einen kostenlosen
+Gemini-Schlüssel eintragen (aistudio.google.com/apikey). Ohne Schlüssel
+funktionieren Lektionen, Animationen und Training trotzdem.
+
+Fortschritt, Profile und KI-Lektionen werden nur im Browser des Geräts gespeichert.
+
+Update: Neue Dateien hochladen und in sw.js die Zahl bei CACHE erhöhen.
+
+Neu in dieser Version: Biologie Klasse 3 bis 12 komplett mit Lektionen, Aufgaben,
+Animationen (Zelle, Blüte, Auge, Herz, Reflexbogen, Mitose, Enzyme, Blutzucker,
+See im Jahreslauf, Punnett-Quadrat, Aktionspotenzial, lac-Operon, DNA, Synapse,
+Mitochondrium, Chloroplast, Populationswachstum) und Küchentisch-Tipps.
+
+Neu in dieser Version: Chemie Klasse 7 bis 12 komplett (25 Themen) mit Lektionen,
+Aufgaben, Animationen (Teilchenmodell, Periodensystem mit Schalenmodell, Ionenbindung,
+Gleichungen selbst ausgleichen, pH-Skala, Titration, Elektronegativität, Molekülbaukasten,
+Gleichgewicht, Stoßtheorie, galvanische Zelle) und Küchentisch-Experimenten.
+
+Sicherung: Zahnrad > Sicherung > "Speichern unter …" sichert Fortschritt, Profile und
+KI-Lektionen als .json-Datei. Am PC öffnet sich der Speichern-Dialog, am Handy das
+Teilen-Menü ("In Dateien speichern" oder Drive wählen). "Sicherung laden" spielt die
+Datei auf einem Gerät wieder ein. Der Gemini-Schlüssel wird nur mitgespeichert,
+wenn man das Häkchen setzt.

@@ -1,0 +1,18 @@
+{
+  "name": "Schulkoje",
+  "short_name": "Schulkoje",
+  "description": "Schulstoff Klasse 4–12 aufarbeiten, um den eigenen Kindern helfen zu können.",
+  "lang": "de",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EDF2EE",
+  "theme_color": "#1F6B57",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml"}
+  ]
+}
