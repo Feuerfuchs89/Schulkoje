@@ -33,3 +33,23 @@ KI-Lektionen als .json-Datei. Am PC öffnet sich der Speichern-Dialog, am Handy 
 Teilen-Menü ("In Dateien speichern" oder Drive wählen). "Sicherung laden" spielt die
 Datei auf einem Gerät wieder ein. Der Gemini-Schlüssel wird nur mitgespeichert,
 wenn man das Häkchen setzt.
+
+Neu in dieser Version: Mathe-Ausbau
+- Kurze Runden: Beim ersten Mal Lektion, danach direkt 5 Aufgaben. Bis zu 3 Sterne pro Thema.
+- Serien: ab 3 richtigen Antworten in Folge +2 XP. Nach richtiger Antwort geht es automatisch
+  weiter (abschaltbar unter Zahnrad > Tempo).
+- Neue Aufgabenarten: auf den Zahlenstrahl tippen, Zahlen ordnen, Paare finden.
+- Spiele im Bereich Training: Blitzrechnen, Zahlen-Bubbles, Memory (mit Rekorden).
+- 8 neue Themen: Sachaufgaben (Kl. 4), Koordinatensystem, Volumen und Oberfläche, Daten und
+  Mittelwerte, Zinsrechnung, Rationale Zahlen (Kl. 5–7), Maßstab und Strahlensätze (Kl. 8–10).
+- Anzeigefehler behoben: Lange Aufgaben und breite Tabellen ragen auf dem Handy nicht mehr
+  über den Rand.
+
+Neu in dieser Version: Grundschule Klasse 1 bis 3
+- Mathe Klasse 1 (7 Themen), Klasse 2 (7 Themen), Klasse 3 (5 Themen) mit Bild-Aufgaben:
+  Punkte und Würfel, Zehnerfeld, Zehnerstangen, Münzen und Scheine, Uhr, Malfelder, Muster.
+- Klasse 1: große Antwortknöpfe zum Antippen statt Tippen.
+- Vorlesen: Lautsprecher-Knopf an jeder Aufgabe. Unter Zahnrad > Tempo lässt sich einstellen,
+  dass Grundschul-Aufgaben automatisch vorgelesen werden.
+- Sachunterricht Klasse 1–2 in Bio (Sinne, Jahreszeiten, Tierkinder, Obst und Gemüse,
+  Gesund bleiben) und Physik (Tag und Nacht, Warm und kalt, Straßenverkehr).

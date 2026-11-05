@@ -123,7 +123,10 @@ header.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-
 .tbl{border-collapse:collapse;font-size:.92rem;margin-top:8px}
 .tbl th,.tbl td{border:1px solid var(--line);padding:5px 10px;text-align:left}
 .tbl th{background:var(--sunk);font-weight:700}
-.term{font-family:var(--f-mono);font-weight:600;white-space:nowrap}
+.term{font-family:var(--f-mono);font-weight:600}
+.q,.feedback,.body,.wg-out,.opt{overflow-wrap:break-word}
+.lesson{overflow-x:hidden}
+.body .tbl,.feedback .tbl,.wg .tbl{display:block;overflow-x:auto;max-width:100%}
 .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-family:var(--f-mono);font-weight:600;font-size:.92em;line-height:1.15;margin:0 2px}
 .fr>span:first-child{border-bottom:1.6px solid currentColor;padding:0 3px}
 .fr>span:last-child{padding:0 3px}
@@ -254,6 +257,70 @@ nav.tabs svg{width:22px;height:22px}
 .stp button{width:28px;height:22px;border:1px solid var(--line);background:var(--surface);border-radius:5px;font:700 .85rem var(--f-mono);padding:0}
 .blank{color:var(--s-chemie)}
 .aus-t sub,.eq sub{font-size:.68em;vertical-align:-.25em;line-height:0}
+
+/* Mathe-Ausbau: Sterne, Serien, neue Aufgabenarten, Spiele */
+.stars{display:inline-flex;gap:1px;font-size:1rem;line-height:1;color:var(--line);white-space:nowrap}
+.stars .on{color:var(--signal)}
+.stars.big{font-size:2.3rem;gap:6px}
+.stars.big .on{animation:starpop .45s cubic-bezier(.3,1.6,.5,1) both}
+.stars.big .on:nth-child(2){animation-delay:.15s}.stars.big .on:nth-child(3){animation-delay:.3s}
+@keyframes starpop{from{transform:scale(0) rotate(-40deg)}to{transform:none}}
+.combo{display:inline-flex;align-items:center;gap:4px;font:700 .78rem var(--f-mono);color:#1A1405;background:var(--signal);border-radius:99px;padding:3px 9px;white-space:nowrap}
+.card.pulse{animation:pulse .35s ease}
+@keyframes pulse{50%{transform:scale(1.015)}}
+.btn{position:relative;overflow:hidden}
+.autobar{position:absolute;left:0;bottom:0;height:3px;background:var(--accent-ink);opacity:.6;animation:autobar 1.4s linear forwards}
+@keyframes autobar{from{width:0}to{width:100%}}
+.party{position:relative;overflow:hidden}
+.party::before,.party::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle,var(--signal) 2.5px,transparent 3px) 0 0/34px 34px,radial-gradient(circle,var(--s-chemie) 2px,transparent 2.5px) 17px 11px/34px 34px,radial-gradient(circle,var(--accent) 2px,transparent 2.5px) 9px 23px/34px 34px;opacity:0;animation:confetti 1.6s ease-out .2s}
+@keyframes confetti{0%{opacity:0;transform:translateY(-30px)}25%{opacity:.9}100%{opacity:0;transform:translateY(40px)}}
+.linein svg{touch-action:none;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.ord-slot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:52px;padding:8px;border-radius:10px;border:1.5px dashed var(--line);background:var(--sunk)}
+.ord-slot.right{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}
+.ord-slot.wrong{border-style:solid;border-color:var(--err);background:var(--err-bg)}
+.ord-pool{display:flex;flex-wrap:wrap;gap:8px}
+.chip-o{display:inline-flex;align-items:center;gap:6px;font:600 1.05rem var(--f-mono);padding:9px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.chip-o.in{border-color:var(--accent)}
+.chip-o .lt{color:var(--muted);font-weight:400}
+.pairsin{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pcol{display:flex;flex-direction:column;gap:8px;min-width:0}
+.opt.pc{text-align:center;font-family:var(--f-mono);font-weight:600;transition:background .2s,border-color .2s}
+.opt.pc:disabled{opacity:.55}
+.pvq{margin:10px 0 4px}
+.pvq th,.pvq td{text-align:center;min-width:2.3em;font-family:var(--f-mono)}
+.pvq td{font-size:1.2rem;font-weight:700}
+.games{display:flex;flex-direction:column;gap:8px}
+.card.game{display:flex;align-items:center;gap:14px;text-align:left;padding:14px;color:var(--ink);width:100%}
+.card.game svg{color:var(--accent);flex:none}
+.card.game .txt{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.gtime{height:8px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.gtime i{display:block;height:100%;width:100%;background:var(--signal)}
+.bq{font-size:2.2rem;font-weight:700;line-height:1.2}
+.blitz .ba{font:700 2.4rem var(--f-mono);min-height:1.3em;color:var(--accent)}
+.blitz.ok{border-color:var(--ok);background:var(--ok-bg)}
+.blitz.bad{animation:shake .3s;border-color:var(--err)}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.keypad button{font:700 1.5rem var(--f-mono);padding:14px 0;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.keypad button:active{background:var(--sunk)}
+.bubbles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.bubbles.bad{animation:shake .3s}
+.bub{aspect-ratio:1;border-radius:50%;border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--surface));font:700 1.15rem var(--f-mono);color:var(--ink);min-width:0;padding:0;transition:transform .12s}
+.bub[aria-pressed="true"]{background:var(--signal);border-color:var(--ink);transform:scale(1.08)}
+.bubbles.pop .bub{animation:pulse .25s}
+.memo{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mc{position:relative;aspect-ratio:4/3;border-radius:12px;border:1.5px solid var(--line);background:var(--accent);color:var(--accent-ink);font:700 1.2rem var(--f-mono);padding:0;min-width:0}
+.mc .front{display:none}.mc .back{font-size:1.6rem}
+.mc.up{background:var(--surface);color:var(--ink)}
+.mc.up .front{display:block}.mc.up .back{display:none}
+.mc.done{background:var(--ok-bg);border-color:var(--ok)}
+
+/* Grundschule */
+.eyerow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.say{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--accent);flex:none}
+.card.kids .q{font-size:1.3rem}
+.card.kids .opts.inline .opt{font-size:1.6rem;font-weight:700;padding:16px 8px;font-family:var(--f-mono)}
+.muster{font-size:2rem;letter-spacing:.2em}
 </style>
 
 <div class="wrap" id="app">
@@ -316,6 +383,9 @@ function toRat(s){
 /* Antwort prüfen → {ok, invalid?, note?} */
 function checkAnswer(ex,input){
   if(ex.kind==="choice")return{ok:input===ex.correct};
+  if(ex.kind==="line")return input==null?{ok:false,invalid:true,note:"Tippe zuerst auf den Zahlenstrahl."}:{ok:Math.abs(input-ex.ans)<ex.step/2};
+  if(ex.kind==="order")return{ok:Array.isArray(input)&&input.join()===ex.order.join()};
+  if(ex.kind==="pairs")return{ok:input===0,note:input>0?`Alle Paare gefunden, aber mit ${input} Fehlversuch${input>1?"en":""}.`:""};
   const r=toRat(input);
   if(!r)return{ok:false,invalid:true};
   if(ex.decimal&&r.frac)return{ok:false,invalid:true,note:"Gib das Ergebnis als Dezimalzahl mit Komma ein, z. B. 0,75."};
@@ -924,7 +994,8 @@ Object.assign(G,{
       return{q:`Welche Ziffer steht in <b>${fmt(n)}</b> an der <b>${PLACE1[k]}stelle</b>?`,kind:"num",ans:R(D[k]),
         sol:`Von rechts zählen: Einer, Zehner, Hunderter, Tausender, Zehntausender, Hunderttausender. An der ${PLACE1[k]}stelle steht die <b>${D[k]}</b>.`}}
     if(t===1){const parts=D.map((d,k)=>`${d} ${STELLEN[k]}`).reverse().join(" &nbsp; ");
-      return{q:`Schreibe als Zahl: <span class="term">${parts}</span><p class="muted small">HT = Hunderttausender, ZT = Zehntausender, T = Tausender, H = Hunderter, Z = Zehner, E = Einer</p>`,kind:"num",ans:R(n),
+      const tafel=`<div class="tbl-wrap"><table class="tbl pvq"><tr>${STELLEN.slice(0,D.length).reverse().map(x=>`<th>${x}</th>`).join("")}</tr><tr>${D.slice().reverse().map(x=>`<td>${x}</td>`).join("")}</tr></table></div>`;
+      return{q:`Schreibe als Zahl:${tafel}<p class="muted small">HT = Hunderttausender, ZT = Zehntausender, T = Tausender, H = Hunderter, Z = Zehner, E = Einer</p>`,kind:"num",ans:R(n),
         sol:`Die Ziffern einfach in die Stellenwerttafel von links (HT) nach rechts (E) eintragen: <b>${fmt(n)}</b>. Steht an einer Stelle nichts, schreibst du eine 0.`}}
     const k=ri(1,Math.min(5,D.length-1)),v=D[k]*10**k;if(!D[k])return G.stellenwert();
     return{q:`Wie viel ist die Ziffer <b>${D[k]}</b> in <b>${fmt(n)}</b> wert (an der ${PLACE1[k]}stelle)?`,kind:"num",ans:R(v),
@@ -2464,7 +2535,7 @@ Object.assign(G,{
     return{q:`Für A + B ⇌ C + D misst man im Gleichgewicht: c(A) = ${fmt(A)}, c(B) = ${fmt(B)}, c(C) = ${fmt(C)}, c(D) = ${fmt(D)} (alles mol/l). Wie groß ist K?`,kind:"num",ans:R(Math.round(K*1000),1000),tol:Math.max(.006,K*.002),
       sol:`Massenwirkungsgesetz: K = (c(C) · c(D)) : (c(A) · c(B)) = (${fmt(C)} · ${fmt(D)}) : (${fmt(A)} · ${fmt(B)}) = <b>${fmt(Math.round(K*1000)/1000)}</b>. ${K>1?"K > 1: Im Gleichgewicht überwiegen die Produkte.":K<1?"K < 1: Die Ausgangsstoffe überwiegen.":"K = 1: ausgeglichen."}`}},
   c_rgt(){const d=pick([10,20,30,40]);return{q:`Faustregel (RGT-Regel): 10 °C mehr verdoppeln die Reaktionsgeschwindigkeit. Wie viel schneller läuft eine Reaktion, wenn man um ${d} °C erwärmt?${unit("fach")}`,kind:"num",ans:R(2**(d/10)),sol:`${d/10}-mal verdoppeln: 2<sup>${d/10}</sup> = <b>${2**(d/10)}</b>-fach. Darum hält der Kühlschrank Lebensmittel länger frisch.`}},
-  c_puffer(){const pk=pick([[4.76,"Essigsäure/Acetat"],[6.35,"Kohlensäure/Hydrogencarbonat"],[7.2,"Dihydrogenphosphat/Hydrogenphosphat"],[9.25,"Ammonium/Ammoniak"]]),r=pick([[1,1],[10,1],[1,10]]),ph=pk[0]+Math.log10(r[0]/r[1]);
+  c_puffer(){const pk=pick([[4.76,"Essigsäure/Acetat"],[6.35,"Kohlensäure/<wbr>Hydrogen&shy;carbonat"],[7.2,"Dihydrogen&shy;phosphat/<wbr>Hydrogen&shy;phosphat"],[9.25,"Ammonium/Ammoniak"]]),r=pick([[1,1],[10,1],[1,10]]),ph=pk[0]+Math.log10(r[0]/r[1]);
     return{q:`Ein Puffer aus ${pk[1]} (pKs = ${fmt(pk[0])}) enthält Säure und Base im Verhältnis c(HA) : c(A⁻) = ${r[1]} : ${r[0]}. Welchen pH-Wert hat er?`,kind:"num",ans:R(Math.round(ph*100),100),tol:.006,
       sol:`Henderson-Hasselbalch: pH = pKs + lg(c(A⁻) : c(HA)) = ${fmt(pk[0])} + lg(${r[0]} : ${r[1]}) = ${fmt(pk[0])} ${r[0]>r[1]?"+ 1":r[0]<r[1]?MINUS+" 1":"+ 0"} = <b>${fmt(Math.round(ph*100)/100)}</b>. Bei gleichen Mengen ist pH = pKs.`}},
   c_spannung(){const M=Object.keys(POT),[a,b]=shuffle(M).slice(0,2),E=Math.abs(POT[a][0]-POT[b][0]),an=POT[a][0]<POT[b][0]?a:b,ka=an===a?b:a;
@@ -2957,6 +3028,434 @@ Object.assign(KT,{
 });
 
 
+/* ---------- Mathe-Ausbau: neue Aufgabenarten (Zahlenstrahl tippen, Ordnen, Paare) ---------- */
+/* line:  {kind:"line",min,max,step,major,ans,ansText}  → Antwort = Zahl
+   order: {kind:"order",items:[html],order:[Indizes klein→groß]} → Antwort = Indexfolge
+   pairs: {kind:"pairs",pairs:[[a,b],…]} → Antwort = Anzahl Fehlversuche (0 = richtig) */
+function lineLabel(v,ex){if(ex.fracLabels){const d=Math.round(1/ex.step);return Number.isInteger(v)?fmt(v):F(Math.round(v*d),d)}return fmt(Math.round(v*1000)/1000)}
+function lineInput(ex,onSet){
+  const W=320,pad=20,X=v=>pad+(v-ex.min)/(ex.max-ex.min)*(W-2*pad),V=x=>ex.min+(x-pad)/(W-2*pad)*(ex.max-ex.min);
+  const n=Math.round((ex.max-ex.min)/ex.step);let ticks="";
+  for(let i=0;i<=n;i++){const v=ex.min+i*ex.step,maj=Math.abs(v/ex.major-Math.round(v/ex.major))<1e-6;
+    ticks+=`<line x1="${X(v)}" y1="${maj?36:41}" x2="${X(v)}" y2="${maj?60:55}" stroke="var(--ink)" stroke-width="${maj?1.8:1}"/>`;
+    if(maj)ticks+=`<text x="${X(v)}" y="78" text-anchor="middle" font-size="12" font-family="var(--f-mono)" fill="var(--muted)">${ex.fracLabels?fmt(v):fmt(Math.round(v*1000)/1000)}</text>`}
+  const el=h(`<div class="linein"><svg viewBox="0 0 ${W} 92" width="100%" role="slider" aria-label="Zahlenstrahl, tippe die Stelle an" tabindex="0" aria-valuemin="${ex.min}" aria-valuemax="${ex.max}"><rect x="0" y="0" width="${W}" height="92" fill="transparent"/><line x1="${pad-10}" y1="48" x2="${W-pad+10}" y2="48" stroke="var(--ink)" stroke-width="2"/>${ticks}<g class="mk" style="display:none"><path d="M0,-2 l-8,-14 h16z" fill="var(--signal)" stroke="var(--ink)" stroke-width="1.2"/><circle r="6" cy="0" fill="var(--signal)" stroke="var(--ink)" stroke-width="1.2"/></g><g class="ok" style="display:none"><circle r="7" fill="none" stroke="var(--ok)" stroke-width="3"/></g></svg><p class="muted small">Tippe auf die Stelle oder ziehe die Markierung. Pfeiltasten gehen auch.</p></div>`);
+  const svg=$("svg",el),mk=$(".mk",svg);let val=null,locked=false,drag=false;
+  const set=v=>{v=Math.max(ex.min,Math.min(ex.max,ex.min+Math.round((v-ex.min)/ex.step)*ex.step));val=Math.round(v*1e6)/1e6;mk.style.display="";mk.setAttribute("transform",`translate(${X(val)},48)`);svg.setAttribute("aria-valuenow",val);onSet(val)};
+  const fromEv=e=>{const r=svg.getBoundingClientRect();return V((e.clientX-r.left)/r.width*W)};
+  svg.addEventListener("pointerdown",e=>{if(locked)return;drag=true;try{svg.setPointerCapture(e.pointerId)}catch(x){}set(fromEv(e))});
+  svg.addEventListener("pointermove",e=>{if(drag&&!locked)set(fromEv(e))});
+  svg.addEventListener("pointerup",()=>{drag=false});
+  svg.addEventListener("keydown",e=>{if(locked)return;if(e.key==="ArrowRight"||e.key==="ArrowUp"){e.preventDefault();set((val??ex.min)+ex.step)}if(e.key==="ArrowLeft"||e.key==="ArrowDown"){e.preventDefault();set((val??ex.max)-ex.step)}});
+  el.lock=()=>{locked=true;const o=$(".ok",svg);o.style.display="";o.setAttribute("transform",`translate(${X(ex.ans)},48)`)};
+  el.value=()=>val;return el}
+function orderInput(ex,onChange){
+  const el=h(`<div class="orderin stack" style="gap:10px"><div class="ord-slot" aria-label="Deine Reihenfolge"><span class="muted small ord-hint">Tippe die Zahlen von der kleinsten zur größten an.</span></div><div class="ord-pool"></div></div>`);
+  const slot=$(".ord-slot",el),pool=$(".ord-pool",el);let seq=[],locked=false;
+  const draw=()=>{slot.querySelectorAll(".chip-o").forEach(x=>x.remove());pool.innerHTML="";$(".ord-hint",el).hidden=seq.length>0;
+    seq.forEach((k,j)=>{const b=h(`<button type="button" class="chip-o in">${ex.items[k]}</button>`);if(j)b.prepend(h(`<span class="lt">&lt;</span>`));b.onclick=()=>{if(locked)return;seq.splice(j,1);draw();onChange(seq)};slot.append(b)});
+    ex.items.forEach((it,k)=>{if(seq.includes(k))return;const b=h(`<button type="button" class="chip-o">${it}</button>`);b.onclick=()=>{if(locked)return;seq.push(k);draw();onChange(seq)};pool.append(b)})};
+  el.lock=ok=>{locked=true;slot.classList.add(ok?"right":"wrong");if(!ok){const c=h(`<div class="ord-slot right"></div>`);ex.order.forEach((k,j)=>{const b=h(`<span class="chip-o in">${ex.items[k]}</span>`);if(j)b.prepend(h(`<span class="lt">&lt;</span>`));c.append(b)});el.append(h(`<span class="muted small">Richtig wäre:</span>`));el.append(c)}};
+  el.value=()=>seq.slice();draw();return el}
+function pairsInput(ex,onDone){
+  const L=shuffle(ex.pairs.map((p,i)=>[p[0],i])),Rr=shuffle(ex.pairs.map((p,i)=>[p[1],i]));let selL=null,selR=null,miss=0,found=0;
+  const el=h(`<div class="pairsin"><div class="pcol"></div><div class="pcol"></div><p class="muted small" style="grid-column:1/-1">Tippe links und rechts zwei Karten an, die zusammengehören.</p></div>`);
+  const [cl,cr]=el.querySelectorAll(".pcol");
+  const tryMatch=()=>{if(selL==null||selR==null)return;const bl=cl.children[selL[0]],br=cr.children[selR[0]];
+    if(selL[1]===selR[1]){[bl,br].forEach(b=>{b.classList.add("right");b.disabled=true;b.setAttribute("aria-pressed","false")});found++;if(found===ex.pairs.length)setTimeout(()=>onDone(miss),350)}
+    else{miss++;[bl,br].forEach(b=>{b.classList.add("wrong");setTimeout(()=>{b.classList.remove("wrong");b.setAttribute("aria-pressed","false")},450)})}
+    selL=selR=null};
+  L.forEach(([t,i],j)=>{const b=h(`<button type="button" class="opt pc" aria-pressed="false">${t}</button>`);b.onclick=()=>{if(b.disabled)return;[...cl.children].forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");selL=[j,i];tryMatch()};cl.append(b)});
+  Rr.forEach(([t,i],j)=>{const b=h(`<button type="button" class="opt pc" aria-pressed="false">${t}</button>`);b.onclick=()=>{if(b.disabled)return;[...cr.children].forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");selR=[j,i];tryMatch()};cr.append(b)});
+  el.misses=()=>miss;el.lock=()=>{};return el}
+
+/* ---------- Generatoren mit den neuen Aufgabenarten ---------- */
+const BDP=[[1,2,"0,5","50 %"],[1,4,"0,25","25 %"],[3,4,"0,75","75 %"],[1,5,"0,2","20 %"],[2,5,"0,4","40 %"],[1,10,"0,1","10 %"],[3,10,"0,3","30 %"],[1,8,"0,125","12,5 %"],[3,5,"0,6","60 %"],[1,20,"0,05","5 %"],[9,10,"0,9","90 %"],[1,1,"1","100 %"]];
+Object.assign(G,{
+  zs_tap(){const v=ri(-9,9);return{q:`Wo liegt <b>${fmt(v)}</b> auf dem Zahlenstrahl?`,kind:"line",min:-10,max:10,step:1,major:5,ans:v,
+    sol:`${v<0?`Negative Zahlen liegen links von der 0. ${fmt(v)} ist ${-v} Schritte links von der 0.`:v>0?`${v} Schritte rechts von der 0.`:"Genau in der Mitte."} Die langen Striche sind ${MINUS}10, ${MINUS}5, 0, 5 und 10.`}},
+  bruch_tap(){const d=pick([2,3,4,5,6,8,10]);let z;do z=ri(1,2*d-1);while(z===d);const v=z/d;
+    return{q:`Wo liegt ${F(z,d)} auf dem Zahlenstrahl?`,kind:"line",min:0,max:2,step:1/d,major:1,fracLabels:true,ans:v,ansText:F(z,d),
+      sol:`Zwischen 0 und 1 sind ${d} gleiche Abschnitte (die kleinen Striche): Jeder ist ${F(1,d)} lang. Zähle ${z} Abschnitte von der 0 aus.${z>d?` ${F(z,d)} ist größer als 1, denn ${F(d,d)} = 1.`:""}`}},
+  dez_tap(){let k;do k=ri(1,19);while(k===10);const v=k/20;
+    return{q:`Wo liegt <b>${fmt(v)}</b> auf dem Zahlenstrahl?`,kind:"line",min:0,max:1,step:.05,major:.1,ans:v,
+      sol:`Lange Striche sind Zehntel (0,1; 0,2; …), dazwischen liegen Zwanzigstel (0,05). ${fmt(v)} ${k%2?`liegt genau zwischen ${fmt((k-1)/20)} und ${fmt((k+1)/20)}`:`ist ein Zehntel-Strich`}.`}},
+  ordnen_neg(){const s=new Set();while(s.size<5)s.add(ri(-15,15));const v=[...s],ord=v.map((x,i)=>[x,i]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+    return{q:"Ordne von klein nach groß.",kind:"order",items:v.map(x=>fmt(x)),order:ord,sol:`Am Zahlenstrahl von links nach rechts: ${ord.map(i=>fmt(v[i])).join(" &lt; ")}. Bei negativen Zahlen gilt: Je größer die Zahl hinter dem Minus, desto kleiner ist sie.`}},
+  ordnen_dez(){const P=[.03,.3,.25,.305,.5,.45,.125,.2,.09,.9,.405,.035,.7,.07];let v;do v=shuffle(P).slice(0,5);while(new Set(v).size<5);const ord=v.map((x,i)=>[x,i]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+    return{q:"Ordne von klein nach groß.",kind:"order",items:v.map(x=>fmt(x)),order:ord,sol:`Trick: alle auf gleich viele Nachkommastellen auffüllen. ${ord.map(i=>String(v[i].toFixed(3)).replace(".",",")).join(" &lt; ")}. Die Anzahl der Ziffern sagt nichts über die Größe: 0,3 ist größer als 0,25.`}},
+  ordnen_bruch(){const P=[[1,2],[1,3],[2,3],[1,4],[3,4],[1,5],[2,5],[3,5],[1,6],[5,6],[3,8],[5,8],[7,10],[1,10]];let v;do v=shuffle(P).slice(0,4);while(new Set(v.map(x=>x[0]/x[1])).size<4);
+    const ord=v.map((x,i)=>[x[0]/x[1],i]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+    return{q:"Ordne die Brüche von klein nach groß.",kind:"order",items:v.map(x=>F(x[0],x[1])),order:ord,sol:`Als Dezimalzahl: ${ord.map(i=>`${F(v[i][0],v[i][1])} ≈ ${fmt(Math.round(v[i][0]/v[i][1]*100)/100)}`).join(", ")}. Oder alle auf einen gemeinsamen Nenner bringen.`}},
+  paare_bdp(){const sel=shuffle(BDP).slice(0,4),mode=ri(0,2);
+    const pairs=sel.map(r=>mode===0?[FR(R(r[0],r[1])),r[2]]:mode===1?[FR(R(r[0],r[1])),r[3]]:[r[2],r[3]]);
+    return{q:`Finde die Paare: ${["Bruch und Dezimalzahl","Bruch und Prozent","Dezimalzahl und Prozent"][mode]}.`,kind:"pairs",pairs,sol:`Gehört zusammen: ${sel.map(r=>`${FR(R(r[0],r[1]))} = ${r[2]} = ${r[3]}`).join("; ")}. Prozent heißt Hundertstel: 0,25 = 25 %.`}},
+  paare_1x1(){const s=new Map();while(s.size<4){const a=ri(3,9),b=ri(3,9);if(![...s.values()].includes(a*b))s.set(`${a} · ${b}`,a*b)}
+    return{q:"Finde die Paare: Aufgabe und Ergebnis.",kind:"pairs",pairs:[...s].map(([k,v])=>[k,fmt(v)]),sol:[...s].map(([k,v])=>`${k} = ${v}`).join(", ")+"."}},
+  paare_einheit(){const P=[["1 km","1000 m"],["1 m","100 cm"],["1 kg","1000 g"],["1 h","60 min"],["1 l","1000 ml"],["1 t","1000 kg"],["1 cm","10 mm"],["1 min","60 s"],["1 m²","100 dm²"],["1 dm³","1 l"],["1 €","100 ct"],["1 Tag","24 h"]];
+    const sel=[];const used=new Set();for(const p of shuffle(P)){if(used.has(p[1]))continue;used.add(p[1]);sel.push(p);if(sel.length===4)break}
+    return{q:"Finde die Paare: Was ist gleich viel?",kind:"pairs",pairs:sel,sol:sel.map(p=>`${p[0]} = ${p[1]}`).join(", ")+"."}},
+});
+
+/* ---------- Neue Themen: Generatoren ---------- */
+Object.assign(G,{
+  sach4(){const t=ri(0,3);
+    if(t===0){const n=ri(3,8),p=pick([35,40,45,55,60,65]),m=pick([99,119,129,149,189]),pay=Math.ceil((n*p+m)/500)*500;const rest=pay-n*p-m;
+      return{q:`Du kaufst ${n} Brötchen zu je ${p} ct und eine Packung Milch für ${decStr(R(m,100))} €. Du bezahlst mit ${pay/100} €. Wie viel Rückgeld bekommst du?${unit("€")}`,kind:"num",ans:R(rest,100),
+        sol:`1. Brötchen: ${n} · ${p} ct = ${n*p} ct.<br>2. Dazu die Milch: ${n*p} + ${m} = ${n*p+m} ct = ${decStr(R(n*p+m,100))} €.<br>3. Rückgeld: ${pay/100} € ${MINUS} ${decStr(R(n*p+m,100))} € = <b>${decStr(R(rest,100))} €</b>.<br><span class="muted small">Tipp: In Cent rechnen, dann gibt es keine Kommafehler.</span>`}}
+    if(t===1){const k=ri(14,45),s=pick([4,5,6]),b=Math.ceil(k/s);if(k%s===0)return G.sach4();
+      return{q:`${k} Kinder wollen paddeln. In jedes Kanu passen ${s} Kinder. Wie viele Kanus braucht man mindestens?`,kind:"num",ans:R(b),
+        sol:`${k} : ${s} = ${Math.floor(k/s)} Rest ${k%s}. Die ${k%s} übrigen Kinder brauchen auch ein Kanu: <b>${b} Kanus</b>. Bei Sachaufgaben immer fragen: Was bedeutet der Rest?`}}
+    if(t===2){const e=pick([8,9,12,14]),c=pick([4,5,6,7]),ne=2,nc=ri(1,3);
+      return{q:`Der Eintritt ins Freibad kostet ${e} € für Erwachsene und ${c} € für Kinder. Wie viel bezahlt eine Familie mit ${ne} Erwachsenen und ${nc} Kind${nc>1?"ern":""}?${unit("€")}`,kind:"num",ans:R(ne*e+nc*c),
+        sol:`Erwachsene: ${ne} · ${e} € = ${ne*e} €. Kinder: ${nc} · ${c} € = ${nc*c} €. Zusammen: <b>${ne*e+nc*c} €</b>.`}}
+    const km=ri(3,9),d=ri(3,6);
+    return{q:`Lea fährt jeden Schultag ${km} km zur Schule und wieder zurück nach Hause. Wie viele Kilometer sind das an ${d} Schultagen?${unit("km")}`,kind:"num",ans:R(2*km*d),
+      sol:`Hin und zurück sind ${km} + ${km} = ${2*km} km pro Tag. An ${d} Tagen: ${2*km} · ${d} = <b>${2*km*d} km</b>. Typischer Fehler: den Rückweg vergessen.`}},
+  koord(){const t=ri(0,3),pts=[];const nm="ABCD";while(pts.length<4){const x=ri(-5,5),y=ri(-5,5);if(!pts.some(p=>p[0]===x&&p[1]===y)&&x&&y)pts.push([x,y])}
+    const pl=plot({w:240,h:240}),lab=pts.map((p,i)=>pl.dot(p[0],p[1],i?"var(--accent)":"var(--signal)",5)+`<text x="${pl.X(p[0])+8}" y="${pl.Y(p[1])-7}" font-size="13" font-weight="700" font-family="var(--f-mono)" fill="var(--ink)">${nm[i]}</text>`).join("");
+    const [x,y]=pts[0];
+    if(t<2){const askX=t===0;return{q:`Lies ab: Welche <b>${askX?"x-Koordinate":"y-Koordinate"}</b> hat der Punkt A?<div class="vis">${pl.wrap(pts.slice(0,1).map(p=>pl.dot(p[0],p[1],"var(--signal)",6)).join("")+`<text x="${pl.X(x)+8}" y="${pl.Y(y)-8}" font-size="13" font-weight="700" font-family="var(--f-mono)" fill="var(--ink)">A</text>`)}</div>`,kind:"num",ans:R(askX?x:y),
+      sol:`A(${fmt(x)} | ${fmt(y)}). Zuerst immer x (nach rechts oder links), dann y (nach oben oder unten). Merkhilfe: <b>Erst gehen, dann springen.</b>`}}
+    if(t===2){const k=ri(0,3),[a,b]=pts[k],opts=["A","B","C","D"];
+      return{q:`Welcher Punkt hat die Koordinaten <span class="term">(${fmt(a)} | ${fmt(b)})</span>?<div class="vis">${pl.wrap(pts.map((p,i)=>pl.dot(p[0],p[1],"var(--accent)",5)+`<text x="${pl.X(p[0])+8}" y="${pl.Y(p[1])-7}" font-size="13" font-weight="700" font-family="var(--f-mono)" fill="var(--ink)">${nm[i]}</text>`).join(""))}</div>`,kind:"choice",opts,correct:k,
+        sol:`Von 0 aus ${Math.abs(a)} nach ${a>0?"rechts":"links"}, dann ${Math.abs(b)} nach ${b>0?"oben":"unten"}: Punkt <b>${nm[k]}</b>.`}}
+    const q=x>0&&y>0?0:x<0&&y>0?1:x<0?2:3;
+    return{q:`In welchem Quadranten liegt <span class="term">P(${fmt(x)} | ${fmt(y)})</span>?`,kind:"choice",opts:["I (rechts oben)","II (links oben)","III (links unten)","IV (rechts unten)"],correct:q,
+      sol:`x ist ${x>0?"positiv (rechts)":"negativ (links)"}, y ist ${y>0?"positiv (oben)":"negativ (unten)"}: Quadrant <b>${["I","II","III","IV"][q]}</b>. Die Quadranten werden gegen den Uhrzeigersinn gezählt, rechts oben beginnend.`}},
+  volumen(){const t=ri(0,3),a=ri(2,12),b=ri(2,10),c=ri(2,8);
+    if(t===0)return{q:`Ein Quader ist ${a} cm lang, ${b} cm breit und ${c} cm hoch. Wie groß ist sein <b>Volumen</b>?${unit("cm³")}`,kind:"num",ans:R(a*b*c),sol:`V = a · b · c = ${a} · ${b} · ${c} = <b>${a*b*c} cm³</b>. So viele Zentimeterwürfel passen hinein.`};
+    if(t===1)return{q:`Ein Quader ist ${a} cm lang, ${b} cm breit und ${c} cm hoch. Wie groß ist seine <b>Oberfläche</b>?${unit("cm²")}`,kind:"num",ans:R(2*(a*b+a*c+b*c)),sol:`Ein Quader hat 6 Flächen, je zwei gleiche:<br>O = 2 · (a·b + a·c + b·c) = 2 · (${a*b} + ${a*c} + ${b*c}) = <b>${2*(a*b+a*c+b*c)} cm²</b>.`};
+    if(t===2){const s=ri(2,10);return{q:`Ein Würfel hat die Kantenlänge ${s} cm. Wie groß ist sein Volumen?${unit("cm³")}`,kind:"num",ans:R(s**3),sol:`V = s · s · s = ${s}³ = <b>${s**3} cm³</b>.`}}
+    const L=ri(4,12)*10,B=ri(3,6)*10,H=ri(3,6)*10;
+    return{q:`Ein Aquarium ist ${L} cm lang, ${B} cm breit und ${H} cm hoch. Wie viele Liter Wasser passen hinein?${unit("l")}`,kind:"num",ans:R(L*B*H,1000),
+      sol:`In dm umrechnen: ${L/10} dm · ${B/10} dm · ${H/10} dm = ${fmt(L*B*H/1000)} dm³. Da 1 dm³ = 1 l ist, sind das <b>${fmt(L*B*H/1000)} l</b>.`}},
+  daten(){const t=ri(0,3);let v;
+    if(t===0){do v=Array.from({length:5},()=>ri(1,20));while(v.reduce((a,b)=>a+b)%5);const s=v.reduce((a,b)=>a+b);
+      return{q:`Bei einem Wettkampf schafft Ben im Ruderergometer diese Punkte: <span class="term">${v.join("; ")}</span>. Wie groß ist der <b>Mittelwert</b>?`,kind:"num",ans:R(s/5),sol:`Mittelwert = Summe : Anzahl = (${v.join(" + ")}) : 5 = ${s} : 5 = <b>${s/5}</b>.`}}
+    if(t===1){v=Array.from({length:pick([5,7])},()=>ri(1,30));const so=v.slice().sort((a,b)=>a-b),m=so[(so.length-1)/2];
+      return{q:`Bestimme den <b>Median</b> (Zentralwert): <span class="term">${v.join("; ")}</span>`,kind:"num",ans:R(m),sol:`Erst der Größe nach ordnen: ${so.join("; ")}. Der Wert in der Mitte ist der Median: <b>${m}</b>. Er wird von Ausreißern kaum beeinflusst.`}}
+    if(t===2){v=Array.from({length:6},()=>ri(-5,30));const mx=Math.max(...v),mn=Math.min(...v);
+      return{q:`Gemessene Temperaturen in °C: <span class="term">${v.map(fmt).join("; ")}</span>. Wie groß ist die <b>Spannweite</b>?${unit("°C")}`,kind:"num",ans:R(mx-mn),sol:`Spannweite = größter ${MINUS} kleinster Wert = ${fmt(mx)} ${MINUS} ${P(mn)} = <b>${mx-mn} °C</b>.`}}
+    const mode=ri(1,6);do{v=Array.from({length:7},()=>ri(1,6));v[ri(0,6)]=mode;v[ri(0,6)]=mode;v[ri(0,6)]=mode}while((()=>{const c={};v.forEach(x=>c[x]=(c[x]||0)+1);const mx=Math.max(...Object.values(c));return Object.values(c).filter(x=>x===mx).length>1})());
+    const c={};v.forEach(x=>c[x]=(c[x]||0)+1);const md=+Object.keys(c).reduce((a,b)=>c[a]>=c[b]?a:b);
+    return{q:`Gewürfelt wurde: <span class="term">${v.join("; ")}</span>. Welche Zahl ist der <b>Modalwert</b> (kommt am häufigsten vor)?`,kind:"num",ans:R(md),sol:`Zählen: ${Object.entries(c).map(([k,n])=>`${k}: ${n}×`).join(", ")}. Am häufigsten: <b>${md}</b>.`}},
+  zins(){const t=ri(0,3),K=pick([500,800,1000,1200,2000,2500,4000,5000]),p=pick([1,1.5,2,2.5,3,4,5]);
+    if(t===0){const Z=K*p/100;return{q:`${fmt(K)} € liegen ein Jahr lang auf dem Sparkonto, der Zinssatz ist ${fmt(p)} %. Wie viele Zinsen gibt es?${unit("€")}`,kind:"num",ans:R(Math.round(Z*100),100),sol:`Z = K · p : 100 = ${fmt(K)} · ${fmt(p)} : 100 = <b>${fmt(Z)} €</b>.`}}
+    if(t===1){const m=pick([3,4,6,8,9]),Z=K*p/100*m/12;if(Math.abs(Z*100-Math.round(Z*100))>1e-6)return G.zins();
+      return{q:`${fmt(K)} € werden für ${m} Monate zu ${fmt(p)} % angelegt. Wie viele Zinsen gibt es?${unit("€")}`,kind:"num",ans:R(Math.round(Z*100),100),sol:`Jahreszinsen: ${fmt(K*p/100)} €. Für ${m} Monate nur der Anteil ${F(m,12)}: ${fmt(K*p/100)} · ${m} : 12 = <b>${fmt(Z)} €</b>.`}}
+    if(t===2){const Z=K*p/100;return{q:`Für ${fmt(K)} € gibt es nach einem Jahr ${fmt(Z)} € Zinsen. Wie hoch ist der Zinssatz?${unit("%")}`,kind:"num",ans:R(Math.round(p*10),10),sol:`p = Z : K · 100 = ${fmt(Z)} : ${fmt(K)} · 100 = <b>${fmt(p)} %</b>.`}}
+    const Z=K*p/100;return{q:`Bei ${fmt(p)} % Zinsen bekommt man nach einem Jahr ${fmt(Z)} €. Wie viel Geld war angelegt?${unit("€")}`,kind:"num",ans:R(K),sol:`K = Z · 100 : p = ${fmt(Z)} · 100 : ${fmt(p)} = <b>${fmt(K)} €</b>. Kontrolle: 1 % wären ${fmt(K/100)} €.`}},
+  rational(){const t=ri(0,2);
+    if(t===0){const v=-ri(2,40)/pick([1,1,10]);return{q:`Wie groß ist der Betrag <span class="term">|${fmt(v)}|</span>?`,kind:"num",ans:R(Math.round(-v*10),10),sol:`Der Betrag ist der Abstand zur 0, ohne Vorzeichen: |${fmt(v)}| = <b>${fmt(-v)}</b>.`}}
+    if(t===1){let a,b;do{a=ri(-20,20)/pick([1,2,4]);b=ri(-20,20)/pick([1,2,4])}while(a===b);
+      return{q:`Welches Zeichen passt? <span class="term">${fmt(a)} ☐ ${fmt(b)}</span>`,kind:"choice",opts:["&lt;","&gt;"],correct:a<b?0:1,sol:`Am Zahlenstrahl liegt ${fmt(Math.min(a,b))} weiter links, ist also kleiner: ${fmt(a)} <b>${a<b?"&lt;":"&gt;"}</b> ${fmt(b)}.`}}
+    const s=new Set();while(s.size<5)s.add(ri(-30,30)/10);const v=[...s],ord=v.map((x,i)=>[x,i]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+    return{q:"Ordne von klein nach groß.",kind:"order",items:v.map(x=>fmt(x)),order:ord,sol:`${ord.map(i=>fmt(v[i])).join(" &lt; ")}. Erst die negativen Zahlen (die mit dem größten Betrag zuerst), dann die positiven.`}},
+  massstab(){const t=ri(0,3);
+    if(t===0){const M=pick([10000,25000,50000,100000]),cm=ri(2,12),km=cm*M/100000;
+      return{q:`Auf einer Wanderkarte im Maßstab 1 : ${fmt(M)} sind zwei Orte ${cm} cm voneinander entfernt. Wie weit ist das in Wirklichkeit?${unit("km")}`,kind:"num",ans:R(Math.round(km*1000),1000),sol:`1 cm auf der Karte sind ${fmt(M)} cm = ${fmt(M/100000)} km. ${cm} · ${fmt(M/100000)} km = <b>${fmt(km)} km</b>.`}}
+    if(t===1){const M=pick([25000,50000]),km=ri(1,8)/2,cm=km*100000/M;return{q:`Ein Rundweg am See ist ${fmt(km)} km lang. Wie lang ist er auf einer Karte im Maßstab 1 : ${fmt(M)}?${unit("cm")}`,kind:"num",ans:R(Math.round(cm*100),100),sol:`${fmt(km)} km = ${fmt(km*100000)} cm. Geteilt durch ${fmt(M)}: <b>${fmt(cm)} cm</b>.`}}
+    if(t===2){const a=ri(2,8),k=pick([1.5,2,2.5,3]),b=ri(2,8);
+      return{q:`Zwei Dreiecke sind ähnlich. Im kleinen ist eine Seite ${a} cm lang, im großen ist dieselbe Seite ${fmt(a*k)} cm. Eine andere Seite ist im kleinen ${b} cm. Wie lang ist sie im großen?${unit("cm")}`,kind:"num",ans:R(Math.round(b*k*10),10),sol:`Streckfaktor k = ${fmt(a*k)} : ${a} = ${fmt(k)}. Alle Seiten werden mit k malgenommen: ${b} · ${fmt(k)} = <b>${fmt(b*k)} cm</b>. Die Winkel bleiben gleich.`}}
+    const s=pick([1,1.2,1.5,1.8,2]),ls=pick([1,1.5,2,2.5]),L=pick([6,8,9,10,12,15]),H=s*L/ls;if(Math.abs(H*10-Math.round(H*10))>1e-6)return G.massstab();
+    return{q:`Ein ${fmt(s)} m langer Stab wirft einen ${fmt(ls)} m langen Schatten. Ein Baum wirft zur gleichen Zeit einen ${L} m langen Schatten. Wie hoch ist der Baum?${unit("m")}`,kind:"num",ans:R(Math.round(H*10),10),
+      sol:`Strahlensatz: Höhe und Schattenlänge stehen im gleichen Verhältnis. Baum : ${L} = ${fmt(s)} : ${fmt(ls)}, also Baum = ${L} · ${fmt(s)} : ${fmt(ls)} = <b>${fmt(H)} m</b>.`}},
+});
+const GEN_NAMES_M2={zs_tap:"Zahlenstrahl antippen",bruch_tap:"Brüche am Zahlenstrahl",dez_tap:"Dezimalzahlen am Zahlenstrahl",ordnen_neg:"Negative Zahlen ordnen",ordnen_dez:"Dezimalzahlen ordnen",ordnen_bruch:"Brüche ordnen",paare_bdp:"Bruch, Dezimal, Prozent",paare_1x1:"Einmaleins-Paare",paare_einheit:"Einheiten-Paare",sach4:"Sachaufgaben",koord:"Koordinatensystem",volumen:"Volumen und Oberfläche",daten:"Mittelwert und Median",zins:"Zinsrechnung",rational:"Rationale Zahlen",massstab:"Maßstab und Strahlensätze"};
+
+/* ---------- Neue Animationen ---------- */
+WIDGETS.koord=function(el){const w=wid("ko");
+  el.innerHTML=`<div class="wg"><div class="wg-vis" id="${w}-o"></div><div class="wg-ctl">${slider(w+"x","x (nach rechts / links)",-5,5,3)}${slider(w+"y","y (nach oben / unten)",-5,5,2)}</div><p class="wg-out" id="${w}-t"></p></div>`;
+  const X_=el.querySelector("#"+w+"x"),Y_=el.querySelector("#"+w+"y");
+  const draw=()=>{const x=+X_.value,y=+Y_.value;el.querySelector("#"+w+"x-v").textContent=fmt(x);el.querySelector("#"+w+"y-v").textContent=fmt(y);
+    const p=plot({w:260,h:260});
+    const path=`<path d="M${p.X(0)},${p.Y(0)} L${p.X(x)},${p.Y(0)} L${p.X(x)},${p.Y(y)}" fill="none" stroke="var(--signal)" stroke-width="3" stroke-dasharray="6 4"/>`;
+    const q=x===0||y===0?"auf einer Achse":x>0&&y>0?"im Quadranten I":x<0&&y>0?"im Quadranten II":x<0?"im Quadranten III":"im Quadranten IV";
+    el.querySelector("#"+w+"-o").innerHTML=p.wrap(path+p.dot(x,y,"var(--s-chemie)",7)+`<text x="${p.X(x)+9}" y="${p.Y(y)-9}" font-size="13" font-weight="700" font-family="var(--f-mono)" fill="var(--ink)">P</text>`);
+    el.querySelector("#"+w+"-t").innerHTML=`<b class="term">P(${fmt(x)} | ${fmt(y)})</b> liegt ${q}. Gelb gestrichelt der Weg: erst ${Math.abs(x)} nach ${x>=0?"rechts":"links"}, dann ${Math.abs(y)} nach ${y>=0?"oben":"unten"}.`};
+  X_.oninput=Y_.oninput=draw;draw()};
+WIDGETS.quader=function(el){const w=wid("qu");
+  el.innerHTML=`<div class="wg"><div class="wg-vis" id="${w}-o"></div><div class="wg-ctl">${slider(w+"a","Länge a",1,6,4)}${slider(w+"b","Breite b",1,5,3)}${slider(w+"c","Höhe c",1,5,2)}</div><p class="wg-out" id="${w}-t"></p></div>`;
+  const ids=["a","b","c"].map(k=>el.querySelector("#"+w+k));
+  const draw=()=>{const [a,b,c]=ids.map(i=>+i.value);ids.forEach(i=>el.querySelector("#"+i.id+"-v").textContent=i.value);
+    const u=22,dx=u*.87,dy=u*.5,ox=20+b*dx,oy=20+c*u+b*dy;let s="";
+    const P=(i,j,k)=>[ox+i*dx-j*dx,oy+i*dy+j*dy-k*u];
+    const face=(pts,col)=>`<polygon points="${pts.map(p=>p.map(v=>v.toFixed(1)).join(",")).join(" ")}" fill="${col}" stroke="var(--ink)" stroke-width=".8" stroke-opacity=".55"/>`;
+    for(let k=0;k<c;k++)for(let j=b-1;j>=0;j--)for(let i=0;i<a;i++){
+      if(k===c-1)s+=face([P(i,j,k+1),P(i+1,j,k+1),P(i+1,j+1,k+1),P(i,j+1,k+1)],"color-mix(in srgb,var(--accent) 45%,var(--surface))");
+      if(j===0)s+=face([P(i,j,k),P(i+1,j,k),P(i+1,j,k+1),P(i,j,k+1)],"color-mix(in srgb,var(--accent) 25%,var(--surface))");
+      if(i===a-1)s+=face([P(i+1,j,k),P(i+1,j+1,k),P(i+1,j+1,k+1),P(i+1,j,k+1)],"color-mix(in srgb,var(--accent) 65%,var(--surface))")}
+    const W=40+(a+b)*dx,H=40+c*u+(a+b)*dy;
+    el.querySelector("#"+w+"-o").innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="${Math.min(300,W*1.3)}" style="max-width:100%" role="img" aria-label="Quader aus Einheitswürfeln">${s}</svg>`;
+    el.querySelector("#"+w+"-t").innerHTML=`<b>Volumen</b> V = a · b · c = ${a} · ${b} · ${c} = <b>${a*b*c} Würfel</b> (cm³).<br><b>Oberfläche</b> O = 2 · (a·b + a·c + b·c) = 2 · (${a*b} + ${a*c} + ${b*c}) = <b>${2*(a*b+a*c+b*c)} Quadrate</b> (cm²).<br><span class="muted small">Das Volumen zählt die Würfel innen, die Oberfläche das Geschenkpapier außen.</span>`};
+  ids.forEach(i=>i.oninput=draw);draw()};
+WIDGETS.daten=function(el){const w=wid("da");let v=[4,7,7,9,23];
+  el.innerHTML=`<div class="wg"><div class="wg-vis wide" id="${w}-o"></div><div class="wg-ctl" id="${w}-s"></div><p class="wg-out" id="${w}-t"></p></div>`;
+  const sc=el.querySelector("#"+w+"-s");v.forEach((x,i)=>{sc.insertAdjacentHTML("beforeend",slider(w+i,`Wert ${i+1}`,0,25,x))});
+  const draw=()=>{v=v.map((_,i)=>+el.querySelector("#"+w+i).value);v.forEach((x,i)=>el.querySelector("#"+w+i+"-v").textContent=x);
+    const so=v.slice().sort((a,b)=>a-b),mean=v.reduce((a,b)=>a+b)/v.length,med=so[2],X=x=>16+x*12;let s=`<line x1="10" y1="60" x2="330" y2="60" stroke="var(--ink)" stroke-width="1.5"/>`;
+    for(let x=0;x<=25;x+=5)s+=`<line x1="${X(x)}" y1="56" x2="${X(x)}" y2="64" stroke="var(--ink)"/><text x="${X(x)}" y="78" text-anchor="middle" font-size="10" font-family="var(--f-mono)" fill="var(--muted)">${x}</text>`;
+    const cnt={};so.forEach(x=>{cnt[x]=(cnt[x]||0)+1;s+=`<circle cx="${X(x)}" cy="${60-cnt[x]*11}" r="5" fill="var(--accent)" stroke="var(--ink)" stroke-width=".8"/>`});
+    s+=`<line x1="${X(mean)}" y1="4" x2="${X(mean)}" y2="62" stroke="var(--s-chemie)" stroke-width="2.5"/><line x1="${X(med)}" y1="4" x2="${X(med)}" y2="62" stroke="var(--signal)" stroke-width="2.5" stroke-dasharray="5 3"/>`;
+    el.querySelector("#"+w+"-o").innerHTML=`<svg viewBox="0 0 340 84" width="100%" style="max-width:340px" role="img" aria-label="Punktdiagramm mit Mittelwert und Median">${s}</svg>`;
+    el.querySelector("#"+w+"-t").innerHTML=`<span style="color:var(--s-chemie);font-weight:700">Mittelwert ${fmt(Math.round(mean*10)/10)}</span> · <span style="font-weight:700">Median ${med}</span> (gelb gestrichelt) · Spannweite ${so[4]-so[0]}<br><span class="muted small">Zieh einen Wert ganz nach rechts (Ausreißer): Der Mittelwert wandert mit, der Median kaum.</span>`};
+  sc.querySelectorAll("input").forEach(i=>i.oninput=draw);draw()};
+WIDGETS.strahlen=function(el){const w=wid("sr");
+  el.innerHTML=`<div class="wg"><div class="wg-vis" id="${w}-o"></div><div class="wg-ctl">${slider(w,"Streckfaktor k",1,3,2,.25)}</div><p class="wg-out" id="${w}-t"></p></div>`;
+  const Sl=el.querySelector("#"+w);
+  const draw=()=>{const k=+Sl.value,Z=[20,170],a=[70,0],b=[50,-55];el.querySelector("#"+w+"-v").textContent=fmt(k);
+    const A=[Z[0]+a[0],Z[1]+a[1]],B=[Z[0]+b[0],Z[1]+b[1]],A2=[Z[0]+a[0]*k,Z[1]+a[1]*k],B2=[Z[0]+b[0]*k,Z[1]+b[1]*k];
+    const ln=(p,q,c,wd=2,d="")=>`<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke="${c}" stroke-width="${wd}" ${d?`stroke-dasharray="${d}"`:""}/>`;
+    const t=(p,s)=>`<text x="${p[0]}" y="${p[1]}" font-size="12" font-weight="700" font-family="var(--f-mono)" fill="var(--ink)">${s}</text>`;
+    const s=ln(Z,[Z[0]+a[0]*3.2,Z[1]],"var(--muted)",1.5)+ln(Z,[Z[0]+b[0]*3.2,Z[1]+b[1]*3.2],"var(--muted)",1.5)+`<polygon points="${Z} ${A} ${B}" fill="var(--accent)" fill-opacity=".3"/>`+`<polygon points="${Z} ${A2} ${B2}" fill="var(--signal)" fill-opacity=".12"/>`+ln(A,B,"var(--accent)",3)+ln(A2,B2,"var(--signal)",3)+t([Z[0]-12,Z[1]+4],"Z")+t([A[0]-4,A[1]+16],"A")+t([A2[0]-4,A2[1]+16],"A'")+t([B[0]-14,B[1]-4],"B")+t([B2[0]-16,B2[1]-4],"B'");
+    el.querySelector("#"+w+"-o").innerHTML=`<svg viewBox="0 0 260 190" width="100%" style="max-width:300px" role="img" aria-label="Strahlensatzfigur">${s}</svg>`;
+    el.querySelector("#"+w+"-t").innerHTML=`Die Strecken AB und A'B' sind <b>parallel</b>. Dann gilt: <span class="term">ZA' : ZA = ZB' : ZB = A'B' : AB = ${fmt(k)}</span>. Alles wird mit demselben Faktor gestreckt, die Winkel bleiben gleich: Die Dreiecke sind <b>ähnlich</b>.`};
+  Sl.oninput=draw;draw()};
+
+/* ---------- Neue Themen einhängen ---------- */
+{const MB=k=>SUBJECTS[0].bands.find(b=>b.key===k);
+ const add=(k,topic,after)=>{const t=MB(k).topics,i=after?t.findIndex(x=>x.id===after):-1;if(i>=0)t.splice(i+1,0,topic);else t.push(topic)};
+ const more=(id,gens)=>{for(const b of SUBJECTS[0].bands)for(const t of b.topics||[])if(t.id===id)gens.forEach(g=>{if(!t.gens.includes(g))t.gens.push(g)})};
+ more("m4-einmaleins",["paare_1x1"]);more("m4-groessen",["paare_einheit"]);more("m-negativ",["zs_tap","ordnen_neg"]);more("m-bruch1",["bruch_tap","ordnen_bruch"]);
+ more("m-dezimal",["dez_tap","ordnen_dez","paare_bdp"]);more("m-prozent",["paare_bdp"]);
+ add("4",{id:"m4-sach",title:"Sachaufgaben",sub:"Rechengeschichten Schritt für Schritt",gens:["sach4"],steps:[
+   {title:"Erst verstehen, dann rechnen",body:`<p>Bei Sachaufgaben scheitern Kinder selten am Rechnen, sondern am Verstehen. Ein fester Ablauf hilft:</p><ol class="rules"><li><b>Lesen:</b> zweimal, langsam.</li><li><b>Frage finden:</b> Was ist gesucht? Unterstreichen.</li><li><b>Wichtiges markieren:</b> Welche Zahlen brauche ich? Manche stehen nur zur Ablenkung da.</li><li><b>Rechnen:</b> in kleinen Schritten, jede Zeile beschriften.</li><li><b>Antwortsatz:</b> „Ich bekomme 2,35 € zurück.“ Passt das zur Frage?</li></ol><p class="tip">Eine kleine Skizze hilft fast immer: Kanus als Kästchen, Wege als Pfeile.</p>`}]});
+ add("5-7",{id:"m-koord",title:"Koordinatensystem",sub:"Punkte ablesen und eintragen",gens:["koord"],steps:[
+   {title:"Erst gehen, dann springen",body:`<p>Ein <b>Koordinatensystem</b> hat zwei Achsen: die waagerechte <b>x-Achse</b> und die senkrechte <b>y-Achse</b>. Sie kreuzen sich im <b>Ursprung</b> (0 | 0).</p><p>Ein Punkt wird mit zwei Zahlen beschrieben: <b>P(x | y)</b>. Zuerst x: so weit nach rechts (oder links bei Minus). Dann y: so weit nach oben (oder unten).</p><p>Die vier Bereiche heißen <b>Quadranten</b> und werden gegen den Uhrzeigersinn gezählt, rechts oben beginnt Quadrant I.</p>`,w:"koord"}]},"m-negativ");
+ add("5-7",{id:"m-volumen",title:"Volumen und Oberfläche",sub:"Quader, Würfel, Liter",gens:["volumen"],steps:[
+   {title:"Würfel zählen",body:`<p>Das <b>Volumen</b> sagt, wie viel in einen Körper hineinpasst. Beim Quader zählt man Einheitswürfel: Länge mal Breite mal Höhe.</p><p class="eq">V = a · b · c</p><p>Die <b>Oberfläche</b> ist die Fläche aller sechs Seiten, wie das Geschenkpapier zum Einpacken:</p><p class="eq">O = 2 · (a·b + a·c + b·c)</p>`,w:"quader"},
+   {title:"Volumeneinheiten",body:`<p>Bei Volumen springen die Einheiten um <b>1000</b>: 1 dm³ = 1000 cm³, 1 m³ = 1000 dm³.</p><p>Und das Wichtigste für den Alltag: <b>1 dm³ = 1 Liter</b>. Ein Würfel mit 10 cm Kante fasst genau einen Liter.</p><p class="tip">1 m³ sind 1000 Liter, also etwa fünf volle Badewannen.</p>`}]},"m-flaeche");
+ add("5-7",{id:"m-daten",title:"Daten und Mittelwerte",sub:"Mittelwert, Median, Spannweite",gens:["daten"],steps:[
+   {title:"Daten zusammenfassen",body:`<ul class="rules"><li><b>Mittelwert</b> (Durchschnitt): alle Werte addieren, durch die Anzahl teilen.</li><li><b>Median</b> (Zentralwert): Werte der Größe nach ordnen, der mittlere ist der Median. Bei gerader Anzahl der Mittelwert der beiden mittleren.</li><li><b>Spannweite:</b> größter minus kleinster Wert.</li><li><b>Modalwert:</b> der Wert, der am häufigsten vorkommt.</li></ul>`,w:"daten"}]},"m-prozent");
+ add("5-7",{id:"m-zins",title:"Zinsrechnung",sub:"Zinsen, Zinssatz, Kapital",gens:["zins"],steps:[
+   {title:"Prozentrechnung mit Geld",body:`<p>Zinsrechnung ist Prozentrechnung mit neuen Namen:</p><table class="tbl"><tr><th>Prozent</th><th>Zinsen</th></tr><tr><td>Grundwert G</td><td>Kapital K</td></tr><tr><td>Prozentsatz p</td><td>Zinssatz p</td></tr><tr><td>Prozentwert W</td><td>Zinsen Z</td></tr></table><p class="eq">Z = K · p : 100</p><p>Für einen Teil des Jahres nimmt man nur den Anteil: für 3 Monate ein Viertel der Jahreszinsen.</p><p class="tip">Banken rechnen bei Monaten oft mit 12 Monaten, bei Tagen mit 360 Tagen pro Jahr.</p>`}]},"m-prozent");
+ add("5-7",{id:"m-rational",title:"Rationale Zahlen",sub:"Betrag, vergleichen, ordnen",gens:["rational","ordnen_neg"],steps:[
+   {title:"Alle Zahlen auf einem Strahl",body:`<p><b>Rationale Zahlen</b> sind alle Zahlen, die man als Bruch schreiben kann: positive, negative, ganze, Brüche und Dezimalzahlen. Sie haben alle ihren Platz auf dem Zahlenstrahl.</p><p>Der <b>Betrag</b> |${MINUS}5| = 5 ist der Abstand zur 0, ohne Vorzeichen.</p><p>Vergleichen: Was weiter links liegt, ist kleiner. ${MINUS}2,5 &lt; ${MINUS}1 &lt; 0,5. Bei negativen Zahlen ist also die mit dem größeren Betrag die kleinere.</p>`,w:"zahlenstrahl"}]},"m-negativ");
+ add("8-10",{id:"m-strahlen",title:"Maßstab und Strahlensätze",sub:"Ähnlichkeit, Karten, Schatten",gens:["massstab"],steps:[
+   {title:"Maßstab",body:`<p>Ein <b>Maßstab</b> 1 : 25 000 heißt: 1 cm auf der Karte sind 25 000 cm = 250 m in Wirklichkeit. Bei Modellen ist es umgekehrt: 1 : 87 (Modelleisenbahn) verkleinert, 10 : 1 vergrößert.</p>`},
+   {title:"Ähnliche Figuren und Strahlensätze",body:`<p>Zwei Figuren sind <b>ähnlich</b>, wenn eine eine vergrößerte oder verkleinerte Kopie der anderen ist. Alle Längen werden mit demselben <b>Streckfaktor k</b> malgenommen, die Winkel bleiben gleich.</p>`,w:"strahlen"}]},"m-pyth");
+}
+Object.assign(KT,{
+ "m4-sach":`<p>Lass dein Kind die Aufgabe <b>mit eigenen Worten nacherzählen</b>, bevor es rechnet. Wer die Geschichte erzählen kann, hat sie verstanden. Viele Schulen verlangen einen <b>Antwortsatz</b>. <b>Typischer Fehler:</b> Alle Zahlen irgendwie verrechnen, ohne zu fragen, was gesucht ist. <b>Prüffrage:</b> „Kann das Ergebnis stimmen?“ (Rückgeld größer als der bezahlte Schein? Unmöglich.)</p>`,
+ "m-koord":`<p>Schiffe versenken auf Karopapier ist das perfekte Übungsspiel, gern auch mit negativen Koordinaten. <b>Typischer Fehler:</b> x und y vertauschen. Merkhilfe: <b>x</b> kommt im Alphabet vor <b>y</b>, also erst x. Oder: „Erst durch die Tür gehen, dann die Treppe hoch.“</p>`,
+ "m-volumen":`<p>Mit Würfelzucker oder Lego einen Quader bauen und zählen lassen. Danach eine Milchtüte nachmessen: Passt 1 Liter hinein? <b>Typischer Fehler:</b> Oberfläche und Volumen verwechseln, und bei Volumen mit 100 statt 1000 umrechnen.</p>`,
+ "m-daten":`<p>Eigene Daten machen es spannend: Schuhgrößen der Familie, Temperaturen einer Woche, Würfelergebnisse. <b>Typischer Fehler:</b> Beim Median vergessen, vorher zu ordnen. Und: Der Mittelwert muss kein Wert aus der Liste sein (2,3 Kinder pro Familie).</p>`,
+ "m-zins":`<p>Am eigenen Sparbuch oder Taschengeld rechnen. <b>Typischer Fehler:</b> Zinsen für Monate wie für ein ganzes Jahr rechnen. Und Zinssatz mit Zinsen verwechseln: 3 % ist der Satz, 30 € sind die Zinsen.</p>`,
+ "m-rational":`<p>Thermometer, Kontostand oder Stockwerke (Keller = ${MINUS}1) helfen. <b>Typischer Fehler:</b> ${MINUS}8 sei größer als ${MINUS}3. Frage: „Wo ist es kälter: bei ${MINUS}8 oder ${MINUS}3 Grad?“</p>`,
+ "m-strahlen":`<p>Draußen ausprobieren: Einen Stock senkrecht halten, seinen Schatten und den eines Baumes messen und die Baumhöhe ausrechnen. Oder auf einer Wanderkarte den Weg zum See ausmessen. <b>Typischer Fehler:</b> Beim Strahlensatz Strecken vom falschen Punkt aus messen. Immer vom Scheitelpunkt Z aus.</p>`,
+});
+
+/* ---------- Grundschule Klasse 1–3: Bilder für Aufgaben ---------- */
+const DICE={1:[[1,1]],2:[[0,0],[2,2]],3:[[0,0],[1,1],[2,2]],4:[[0,0],[2,0],[0,2],[2,2]],5:[[0,0],[2,0],[1,1],[0,2],[2,2]],6:[[0,0],[2,0],[0,1],[2,1],[0,2],[2,2]]};
+function diceSVG(n,col="var(--accent)"){const s=56,p=DICE[n].map(([x,y])=>`<circle cx="${12+x*16}" cy="${12+y*16}" r="5.5" fill="${col}"/>`).join("");return `<svg viewBox="0 0 ${s} ${s}" width="${s}" height="${s}" role="img" aria-label="Würfel mit ${n}"><rect x="2" y="2" width="${s-4}" height="${s-4}" rx="9" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>${p}</svg>`}
+function dotsSVG(n,col="var(--accent)"){ // bis 10 als zwei Fünferreihen, darüber Zehnerfelder
+  if(n<=6&&Math.random()<.5)return diceSVG(n,col);
+  const f=Math.ceil(n/10)||1;let s="";for(let k=0;k<f;k++)for(let i=0;i<10;i++){const x=14+(i%5)*26,y=14+Math.floor(i/5)*26+k*62,on=k*10+i<n;
+    s+=`<circle cx="${x}" cy="${y}" r="10" fill="${on?col:"none"}" stroke="${on?"var(--ink)":"var(--line)"}" stroke-width="1.5"/>`}
+  return `<svg viewBox="0 0 132 ${f*62-8}" width="170" role="img" aria-label="${n} Punkte">${s}</svg>`}
+function zehnerfeldSVG(n,m=0){ // n rot, dann m blau dazu
+  let s="";const fields=Math.max(1,Math.ceil((n+m)/10));for(let k=0;k<fields;k++){s+=`<rect x="${4+k*150}" y="4" width="138" height="58" rx="6" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/><line x1="${4+k*150+69}" y1="4" x2="${4+k*150+69}" y2="62" stroke="var(--ink)" stroke-width="1"/>`;
+    for(let i=0;i<10;i++){const j=k*10+i,x=4+k*150+14+(i%5)*27.5,y=19+Math.floor(i/5)*28;s+=`<circle cx="${x}" cy="${y}" r="10" fill="${j<n?"var(--err)":j<n+m?"var(--s-mathe)":"none"}" stroke="${j<n+m?"var(--ink)":"var(--line)"}" stroke-width="1.3"/>`}}
+  return `<svg viewBox="0 0 ${fields*150} 66" width="${fields*150>160?300:150}" style="max-width:100%" role="img" aria-label="Zehnerfeld">${s}</svg>`}
+function stangenSVG(z,e){let s="";for(let i=0;i<z;i++){s+=`<g transform="translate(${4+i*16},4)">`;for(let k=0;k<10;k++)s+=`<rect x="0" y="${k*11}" width="11" height="11" fill="var(--s-physik)" stroke="var(--ink)" stroke-width=".8"/>`;s+="</g>"}
+  for(let i=0;i<e;i++)s+=`<rect x="${12+z*16+(i%3)*14}" y="${70+Math.floor(i/3)*14-28}" width="11" height="11" fill="var(--accent)" stroke="var(--ink)" stroke-width=".8"/>`;
+  return `<svg viewBox="0 0 ${Math.max(80,z*16+62)} 116" width="${Math.min(300,Math.max(80,z*16+62)*1.4)}" style="max-width:100%" role="img" aria-label="${z} Zehnerstangen und ${e} Einerwürfel">${s}</svg>`}
+const COINS={"1ct":[1,13,"#B8743B"],"2ct":[2,15,"#B8743B"],"5ct":[5,17,"#B8743B"],"10ct":[10,16,"#D9B13B"],"20ct":[20,18,"#D9B13B"],"50ct":[50,20,"#D9B13B"],"1€":[100,19,"bi"],"2€":[200,21,"bi2"]};
+function geldSVG(list){let x=4,s="";list.forEach(c=>{if(c==="5€"||c==="10€"||c==="20€"){const v=+c.replace("€","");s+=`<g transform="translate(${x},8)"><rect width="66" height="38" rx="4" fill="${v===5?"#9FB2A7":v===10?"#E0A8A0":"#93A9D6"}" stroke="var(--ink)" stroke-width="1.2"/><text x="33" y="25" text-anchor="middle" font-size="14" font-weight="700" font-family="var(--f-mono)" fill="#1a1a1a">${v} €</text></g>`;x+=72;return}
+    const [v,r,col]=COINS[c],cx=x+r;
+    s+=col==="bi"?`<circle cx="${cx}" cy="27" r="${r}" fill="#D9B13B" stroke="var(--ink)" stroke-width="1.2"/><circle cx="${cx}" cy="27" r="${r*.68}" fill="#C9CCCF"/>`:col==="bi2"?`<circle cx="${cx}" cy="27" r="${r}" fill="#C9CCCF" stroke="var(--ink)" stroke-width="1.2"/><circle cx="${cx}" cy="27" r="${r*.68}" fill="#D9B13B"/>`:`<circle cx="${cx}" cy="27" r="${r}" fill="${col}" stroke="var(--ink)" stroke-width="1.2"/>`;
+    s+=`<text x="${cx}" y="31" text-anchor="middle" font-size="${r>16?10:8.5}" font-weight="700" font-family="var(--f-mono)" fill="#1a1a1a">${c.replace("ct","")}</text>`;x+=2*r+6});
+  return `<svg viewBox="0 0 ${x} 54" width="${Math.min(320,x*1.25)}" style="max-width:100%" role="img" aria-label="Geld: ${list.join(", ")}">${s}</svg>`}
+function clockSVG(h_,m,size=170){const c=size/2,r=c-6;let s=`<circle cx="${c}" cy="${c}" r="${r}" fill="var(--surface)" stroke="var(--ink)" stroke-width="3"/>`;
+  for(let i=0;i<60;i++){const a=i/60*2*Math.PI,r1=i%5?r-5:r-11;s+=`<line x1="${c+r1*Math.sin(a)}" y1="${c-r1*Math.cos(a)}" x2="${c+(r-2)*Math.sin(a)}" y2="${c-(r-2)*Math.cos(a)}" stroke="var(--ink)" stroke-width="${i%5?.8:2.2}"/>`}
+  for(let i=1;i<=12;i++){const a=i/12*2*Math.PI;s+=`<text x="${c+(r-24)*Math.sin(a)}" y="${c-(r-24)*Math.cos(a)+5}" text-anchor="middle" font-size="${size/12}" font-weight="600" font-family="var(--f-body)" fill="var(--ink)">${i}</text>`}
+  const ha=((h_%12)+m/60)/12*2*Math.PI,ma=m/60*2*Math.PI;
+  s+=`<line x1="${c}" y1="${c}" x2="${c+r*.5*Math.sin(ha)}" y2="${c-r*.5*Math.cos(ha)}" stroke="var(--ink)" stroke-width="7" stroke-linecap="round"/><line x1="${c}" y1="${c}" x2="${c+r*.8*Math.sin(ma)}" y2="${c-r*.8*Math.cos(ma)}" stroke="var(--s-chemie)" stroke-width="4" stroke-linecap="round"/><circle cx="${c}" cy="${c}" r="5" fill="var(--ink)"/>`;
+  return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="Uhr">${s}</svg>`}
+const pad2=m=>String(m).padStart(2,"0");
+function uhrWort(h_,m){const h12=x=>((x-1+12)%12)+1,n=h12(h_),nx=h12(h_+1);
+  return m===0?`${n} Uhr`:m===30?`halb ${nx}`:m===15?`Viertel nach ${n}`:m===45?`Viertel vor ${nx}`:m<30?`${m} nach ${n}`:`${60-m} vor ${nx}`}
+const numOpts=(ans,spread=3,min=0)=>{const s=new Set([ans]);let g=0;while(s.size<4&&g++<50){const v=ans+ri(-spread,spread);if(v>=min&&v!==ans)s.add(v)}const o=shuffle([...s]);return{opts:o.map(v=>fmt(v)),correct:o.indexOf(ans)}};
+const kid=(q,ans,sol,spread,min)=>Object.assign({q,kind:"choice",sol,kidAns:ans},numOpts(ans,spread,min));
+
+/* ---------- Generatoren Klasse 1 ---------- */
+Object.assign(G,{
+  k1_zaehlen(){const n=ri(1,10);return kid(`Wie viele Punkte sind es?<div class="vis">${dotsSVG(n)}</div>`,n,`Es sind <b>${n}</b>. Tipp: Bei fünf Punkten in einer Reihe muss man nicht einzeln zählen, man sieht die 5 sofort.`,2,1)},
+  k1_zehner(){const t=ri(0,2);
+    if(t===0){const n=ri(5,20);return kid(`Welche Zahl zeigt das Zehnerfeld?<div class="vis">${zehnerfeldSVG(n)}</div>`,n,`${n>10?`Ein volles Feld sind 10, dazu ${n-10}: <b>${n}</b>.`:`Eine volle Reihe sind 5${n>5?`, dazu ${n-5}`:""}: <b>${n}</b>.`}`,2,1)}
+    if(t===1){const n=ri(1,9);return kid(`Wie viele fehlen bis 10?<div class="vis">${zehnerfeldSVG(n)}</div>`,10-n,`${n} + <b>${10-n}</b> = 10. Die leeren Kreise zeigen, wie viele fehlen.`,2,1)}
+    const n=ri(1,19);return kid(`Welche Zahl kommt <b>nach</b> ${n}?`,n+1,`Nach ${n} kommt <b>${n+1}</b>. Der Nachbar rechts ist immer 1 mehr.`,2,0)},
+  k1_plus10(){const t=ri(0,2);
+    if(t===0){const a=ri(1,8),b=ri(1,10-a);return kid(`<span class="term">${a} + ${b} = ?</span><div class="vis">${zehnerfeldSVG(a,b)}</div>`,a+b,`${a} rote und ${b} blaue sind zusammen <b>${a+b}</b>.`,2,0)}
+    if(t===1){const a=ri(3,10),b=ri(1,a);return kid(`<span class="term">${a} ${MINUS} ${b} = ?</span><div class="vis">${dotsSVG(a)}</div>`,a-b,`Von ${a} nimmst du ${b} weg, dann bleiben <b>${a-b}</b>.`,2,0)}
+    const s=ri(5,10),a=ri(1,s-1);return kid(`Zerlege: <span class="term">${s} = ${a} + ?</span>`,s-a,`${a} + <b>${s-a}</b> = ${s}. Zerlegen ist wie ein Zahlenhaus: Unten stehen zwei Zahlen, die zusammen die Zahl im Dach ergeben.`,2,0)},
+  k1_plus20(){const t=ri(0,1);
+    if(t===0){const a=ri(6,9),b=ri(11-a,9);return kid(`<span class="term">${a} + ${b} = ?</span><div class="vis">${zehnerfeldSVG(a,b)}</div>`,a+b,`Erst bis zur 10 auffüllen: ${a} + ${10-a} = 10. Dann den Rest: 10 + ${b-(10-a)} = <b>${a+b}</b>.`,2,5)}
+    const a=ri(11,18),b=ri(a-9,9);return kid(`<span class="term">${a} ${MINUS} ${b} = ?</span>`,a-b,`Erst bis zur 10 zurück: ${a} ${MINUS} ${a-10} = 10. Dann noch ${b-(a-10)} weg: 10 ${MINUS} ${b-(a-10)} = <b>${a-b}</b>.`,2,0)},
+  k1_formen(){const F_=[["Kreis",`<circle cx="50" cy="50" r="40"/>`,0],["Dreieck",`<polygon points="50,10 92,88 8,88"/>`,3],["Quadrat",`<rect x="14" y="14" width="72" height="72"/>`,4],["Rechteck",`<rect x="4" y="26" width="92" height="50"/>`,4]];
+    const [n,svg,e]=pick(F_),vis=`<div class="vis"><svg viewBox="0 0 100 100" width="110" fill="${pick(["var(--s-chemie)","var(--s-mathe)","var(--signal)","var(--s-bio)"])}" stroke="var(--ink)" stroke-width="3">${svg}</svg></div>`;
+    if(Math.random()<.6){const o=shuffle(F_.map(x=>x[0]));return{q:`Wie heißt diese Form?${vis}`,kind:"choice",opts:o,correct:o.indexOf(n),sol:`Das ist ein <b>${n}</b>. ${n==="Quadrat"?"Alle vier Seiten sind gleich lang.":n==="Rechteck"?"Gegenüberliegende Seiten sind gleich lang.":n==="Kreis"?"Er ist ganz rund und hat keine Ecken.":"Es hat drei Ecken und drei Seiten."}`}}
+    return kid(`Wie viele Ecken hat diese Form?${vis}`,e,`Ein ${n} hat <b>${e}</b> Ecken.`,2,0)},
+  k1_muster(){const t=ri(0,1);
+    if(t===0){const st=ri(0,5),d=pick([1,2,5,10]),seq=[0,1,2,3].map(i=>st+i*d);return kid(`Wie geht es weiter? <span class="term">${seq.join(", ")}, ?</span>`,st+4*d,`Immer ${d} mehr: ${seq[3]} + ${d} = <b>${st+4*d}</b>.`,3,0)}
+    const sh=[["●","var(--err)"],["■","var(--s-mathe)"],["▲","var(--s-bio)"]],len=ri(2,3),pat=shuffle(sh).slice(0,len),show=Array.from({length:len*2+ri(0,len-1)},(_,i)=>pat[i%len]),nx=pat[show.length%len];
+    const o=shuffle(sh.map(x=>x[0]));return{q:`Was kommt als Nächstes?<div class="vis"><span class="muster">${show.map(x=>`<b style="color:${x[1]}">${x[0]}</b>`).join(" ")} <b>?</b></span></div>`,kind:"choice",opts:o.map(x=>`<b style="color:${sh.find(y=>y[0]===x)[1]};font-size:2.6rem;line-height:1">${x}</b>`),correct:o.indexOf(nx[0]),sol:`Das Muster wiederholt sich alle ${len}: ${pat.map(x=>x[0]).join(" ")}. Als Nächstes kommt ${nx[0]}.`}},
+  k1_geld(){const pool=["1€","2€","5€","10€"],n=ri(2,4),l=Array.from({length:n},()=>pick(pool)).sort((a,b)=>parseInt(b)-parseInt(a)),sum=l.reduce((s,c)=>s+parseInt(c),0);
+    return kid(`Wie viel Euro sind das?<div class="vis">${geldSVG(l)}</div>`,sum,`${l.map(c=>parseInt(c)).join(" + ")} = <b>${sum} €</b>. Tipp: mit dem größten Schein anfangen.`,3,1)},
+});
+
+/* ---------- Generatoren Klasse 2 ---------- */
+Object.assign(G,{
+  k2_zahl100(){const t=ri(0,2),z=ri(1,9),e=ri(0,9),n=z*10+e;
+    if(t===0)return{q:`Welche Zahl ist das?<div class="vis">${stangenSVG(z,e)}</div><p class="muted small">Eine Stange sind 10, ein Würfel ist 1.</p>`,kind:"num",ans:R(n),sol:`${z} Zehner und ${e} Einer: ${z*10} + ${e} = <b>${n}</b>.`};
+    if(t===1)return{q:`Wie viele <b>Zehner</b> hat die Zahl ${n}?`,kind:"num",ans:R(z),sol:`${n} = ${z} Zehner und ${e} Einer. Die erste Ziffer zählt die Zehner: <b>${z}</b>.`};
+    const m=ri(11,98);return{q:`Welche Zahl liegt genau in der Mitte zwischen ${m-1} und ${m+1}?`,kind:"num",ans:R(m),sol:`Die Nachbarn von ${m} sind ${m-1} und ${m+1}. Die Mitte ist <b>${m}</b>.`}},
+  k2_plus100(){const t=ri(0,3);let a,b,r,sol,op="+";
+    if(t===0){a=ri(1,8)*10;b=ri(1,9-a/10)*10;r=a+b;sol=`Zehner plus Zehner: ${a/10} + ${b/10} = ${r/10}, also <b>${r}</b>.`}
+    else if(t===1){do{a=ri(11,79);b=ri(2,9)}while(a%10===0||a%10+b<=10);const up=10-a%10;r=a+b;sol=`Über den Zehner: ${a} + ${up} = ${a+up}, dann noch + ${b-up} = <b>${r}</b>.`}
+    else if(t===2){a=ri(12,60);b=ri(11,99-a);r=a+b;sol=`Erst die Zehner: ${a} + ${b-b%10} = ${a+b-b%10}. Dann die Einer: ${a+b-b%10} + ${b%10} = <b>${r}</b>.`}
+    else{a=ri(30,99);b=ri(11,a-5);r=a-b;op=MINUS;sol=`Erst die Zehner weg: ${a} ${MINUS} ${b-b%10} = ${a-(b-b%10)}. Dann die Einer: ${a-(b-b%10)} ${MINUS} ${b%10} = <b>${r}</b>.`}
+    return{q:`Rechne: <span class="term">${a} ${op} ${b}</span>`,kind:"num",ans:R(r),sol}},
+  k2_mal(){const a=ri(2,5),b=ri(2,10),t=ri(0,1);
+    if(t===0){let s="";for(let i=0;i<a;i++)for(let j=0;j<b;j++)s+=`<circle cx="${12+j*22}" cy="${12+i*22}" r="8" fill="var(--s-chemie)" stroke="var(--ink)" stroke-width="1"/>`;
+      return{q:`Wie viele Punkte sind es? Rechne als Malaufgabe.<div class="vis"><svg viewBox="0 0 ${b*22+2} ${a*22+2}" width="${Math.min(300,b*24)}" style="max-width:100%">${s}</svg></div>`,kind:"num",ans:R(a*b),sol:`${a} Reihen mit je ${b} Punkten: <b>${a} · ${b} = ${a*b}</b>. Statt ${Array(a).fill(b).join(" + ")} rechnet man kürzer mal.`}}
+    return{q:`Rechne: <span class="term">${a} · ${b}</span>`,kind:"num",ans:R(a*b),sol:`${a} · ${b} heißt ${a}-mal die ${b}: ${Array(a).fill(b).join(" + ")} = <b>${a*b}</b>.`}},
+  k2_geteilt(){const k=ri(2,5),je=ri(2,6),n=k*je,thing=pick(["Bonbons","Murmeln","Sticker","Äpfel"]);
+    return{q:`${n} ${thing} werden gerecht an ${k} Kinder verteilt. Wie viele bekommt jedes Kind?`,kind:"num",ans:R(je),sol:`${n} : ${k} = <b>${je}</b>, denn ${k} · ${je} = ${n}. Man kann auch reihum verteilen: jedem eins, bis nichts mehr übrig ist.`}},
+  k2_tap(){const v=ri(1,99);return{q:`Wo liegt <b>${v}</b> auf dem Zahlenstrahl?`,kind:"line",min:0,max:100,step:1,major:10,ans:v,sol:`Die langen Striche sind die Zehner. ${v} liegt ${v%10?`zwischen ${v-v%10} und ${v-v%10+10}, ${v%10<5?"näher an der "+(v-v%10):v%10>5?"näher an der "+(v-v%10+10):"genau in der Mitte"}`:"genau auf einem Zehnerstrich"}.`}},
+  k2_uhr(){const h_=ri(1,12),m=pick([0,0,30,30,15,45]),ok=uhrWort(h_,m),w=new Set([ok]);
+    const alt=[uhrWort(h_+1,m),uhrWort(h_,(m+30)%60),uhrWort(h_-1,m),m===30?`halb ${((h_-1+12)%12)+1}`:uhrWort(h_,m===0?15:0)];alt.forEach(x=>{if(w.size<4)w.add(x)});
+    const o=shuffle([...w]);return{q:`Wie spät ist es?<div class="vis">${clockSVG(h_,m)}</div>`,kind:"choice",opts:o,correct:o.indexOf(ok),
+      sol:`Der kurze Zeiger zeigt die Stunde, der lange (rot) die Minuten. Hier: <b>${ok}</b> (${h_}:${pad2(m)} Uhr).${m===30?` Bei „halb“ ist die Hälfte der Stunde <b>bis</b> zur nächsten vorbei: halb ${((h_)%12)+1} ist ${h_}:30.`:""}`}},
+  k2_laenge(){const it=pick([["ein Bleistift",15,"cm"],["ein Klassenzimmer",8,"m"],["ein Daumennagel",1,"cm"],["ein Schulbus",12,"m"],["ein Lineal",30,"cm"],["eine Tür",2,"m"],["eine Ameise",5,"mm"]]),[n,v,u]=it;
+    if(Math.random()<.5){const opts=shuffle([`${v} ${u}`,`${v} ${u==="cm"?"m":u==="m"?"km":"cm"}`,`${v} ${u==="cm"?"mm":u==="m"?"cm":"m"}`]);
+      return{q:`Wie lang ist ungefähr ${n}?`,kind:"choice",opts,correct:opts.indexOf(`${v} ${u}`),sol:`${n[0].toUpperCase()+n.slice(1)} ist etwa <b>${v} ${u}</b> lang. Gut zum Schätzen: 1 cm ist etwa so breit wie dein Finger, 1 m ist ein großer Schritt.`}}
+    const m=ri(1,5);return{q:`Wie viele Zentimeter sind <b>${m} m</b>?${unit("cm")}`,kind:"num",ans:R(m*100),sol:`1 m = 100 cm, also ${m} m = <b>${m*100} cm</b>.`}},
+  k2_geld(){if(Math.random()<.5){const pool=["2€","1€","50ct","20ct","10ct","5ct"],l=Array.from({length:ri(3,5)},()=>pick(pool)).sort((a,b)=>(COINS[b][0])-(COINS[a][0])),ct=l.reduce((s,c)=>s+COINS[c][0],0);
+      return{q:`Wie viel Geld ist das? Gib die Antwort in Cent an.<div class="vis">${geldSVG(l)}</div>${unit("ct")}`,kind:"num",ans:R(ct),sol:`${l.map(c=>COINS[c][0]+" ct").join(" + ")} = <b>${ct} ct</b>${ct>=100?` = ${decStr(R(ct,100))} €`:""}. 100 ct sind 1 €.`}}
+    const p=ri(2,9),pay=10;return{q:`Ein Eis kostet ${p} €. Du bezahlst mit einem 10-€-Schein. Wie viel bekommst du zurück?${unit("€")}`,kind:"num",ans:R(pay-p),sol:`Ergänzen: ${p} + <b>${pay-p}</b> = 10. Du bekommst ${pay-p} € zurück.`}},
+});
+
+/* ---------- Generatoren Klasse 3 ---------- */
+Object.assign(G,{
+  k3_zahl1000(){const t=ri(0,2),n=ri(101,999),d=digitsR(n);
+    if(t===0)return{q:`Wie viele <b>Hunderter</b> hat die Zahl ${n}?`,kind:"num",ans:R(d[2]),sol:`${n} = ${d[2]} H, ${d[1]} Z, ${d[0]} E. Also <b>${d[2]}</b> Hunderter.`};
+    if(t===1){const H=ri(1,9),Z=ri(0,9),E=ri(0,9);return{q:`Schreibe als Zahl: <span class="term">${H} H &nbsp; ${Z} Z &nbsp; ${E} E</span>`,kind:"num",ans:R(H*100+Z*10+E),sol:`${H} Hunderter, ${Z} Zehner, ${E} Einer: <b>${H*100+Z*10+E}</b>.${Z===0||E===0?" Die 0 hält den Platz frei.":""}`}}
+    const k=pick([10,100]),dir=Math.random()<.5;return{q:`Welche Zahl ist <b>${k} ${dir?"mehr":"weniger"}</b> als ${n}?`,kind:"num",ans:R(dir?n+k:n-k),sol:`${n} ${dir?"+":MINUS} ${k} = <b>${dir?n+k:n-k}</b>. Bei ± ${k} ändert sich vor allem die ${k===10?"Zehner":"Hunderter"}ziffer.`}},
+  k3_rechnen(){const t=ri(0,1);
+    if(t===0){const a=ri(120,600),b=ri(110,999-a);return{q:`Rechne: <span class="term">${a} + ${b}</span>`,kind:"num",ans:R(a+b),sol:`Schrittweise: ${a} + ${b-b%100} = ${a+b-b%100}, + ${b%100-b%10} = ${a+b-b%10}, + ${b%10} = <b>${a+b}</b>. Oder stellenweise: Hunderter, Zehner, Einer getrennt addieren.`}}
+    const a=ri(300,999),b=ri(110,a-20);return{q:`Rechne: <span class="term">${a} ${MINUS} ${b}</span>`,kind:"num",ans:R(a-b),sol:`Schrittweise: ${a} ${MINUS} ${b-b%100} = ${a-(b-b%100)}, ${MINUS} ${b%100-b%10} = ${a-(b-b%10)}, ${MINUS} ${b%10} = <b>${a-b}</b>.`}},
+  k3_mal(){if(Math.random()<.6){const a=ri(3,9),b=ri(12,49);return{q:`Rechne: <span class="term">${a} · ${b}</span>`,kind:"num",ans:R(a*b),sol:`Zerlegen: ${a} · ${b-b%10} = ${a*(b-b%10)} und ${a} · ${b%10} = ${a*(b%10)}. Zusammen: <b>${a*b}</b>.`}}
+    const d=ri(2,9),q=ri(11,40),n=d*q;return{q:`Rechne: <span class="term">${n} : ${d}</span>`,kind:"num",ans:R(q),sol:`Zerlegen in leichte Teile: ${n} = ${d*(q-q%10)} + ${d*(q%10)}. ${d*(q-q%10)} : ${d} = ${q-q%10} und ${d*(q%10)} : ${d} = ${q%10}. Zusammen: <b>${q}</b>.`}},
+  k3_groessen(){const t=ri(0,3);
+    if(t===0){const kg=ri(1,5),g=pick([0,250,500,750]);return{q:`Wie viel Gramm sind <b>${kg} kg${g?` ${g} g`:""}</b>?${unit("g")}`,kind:"num",ans:R(kg*1000+g),sol:`1 kg = 1000 g. ${kg} kg = ${kg*1000} g${g?`, dazu ${g} g`:""}: <b>${fmt(kg*1000+g)} g</b>.`}}
+    if(t===1){const km=ri(1,9);return{q:`Wie viele Meter sind <b>${km} km</b>?${unit("m")}`,kind:"num",ans:R(km*1000),sol:`1 km = 1000 m, also <b>${fmt(km*1000)} m</b>.`}}
+    if(t===2){const it=pick([["ein Apfel","150 g",["150 kg","15 g"]],["eine Tafel Schokolade","100 g",["100 kg","1 g"]],["ein Fahrrad","15 kg",["15 g","150 kg"]],["ein Erwachsener","75 kg",["75 g","7 kg"]]]);const o=shuffle([it[1],...it[2]]);
+      return{q:`Wie schwer ist ungefähr ${it[0]}?`,kind:"choice",opts:o,correct:o.indexOf(it[1]),sol:`${it[0][0].toUpperCase()+it[0].slice(1)} wiegt etwa <b>${it[1]}</b>. Zum Vergleich: Eine Packung Zucker wiegt 1 kg.`}}
+    const m=ri(1,9),cm=ri(1,99);return{q:`Wie viele Zentimeter sind <b>${m} m ${cm} cm</b>?${unit("cm")}`,kind:"num",ans:R(m*100+cm),sol:`${m} m = ${m*100} cm, dazu ${cm} cm: <b>${m*100+cm} cm</b>.`}},
+  k3_spiegel(){const sym=["A","H","M","O","T","U","V","W","X","Y"],non=["F","G","J","L","N","P","R","S","Z"],ok=pick(sym),o=shuffle([ok,...shuffle(non).slice(0,3)]);
+    return{q:"Welcher Buchstabe ist <b>achsensymmetrisch</b>? Man kann ihn so falten, dass beide Hälften aufeinanderliegen.",kind:"choice",opts:o.map(x=>`<b style="font:700 2rem var(--f-body)">${x}</b>`),correct:o.indexOf(ok),
+      sol:`<b>${ok}</b> hat eine Spiegelachse (${["H","O","X"].includes(ok)?"sogar zwei":ok==="A"||ok==="M"||ok==="T"||ok==="U"||ok==="V"||ok==="W"||ok==="Y"?"senkrecht in der Mitte":"waagerecht"}). Probier es mit einem Taschenspiegel auf der Mittellinie aus.`}},
+});
+const GEN_NAMES_G={k1_zaehlen:"Punkte zählen",k1_zehner:"Zehnerfeld",k1_plus10:"Plus und Minus bis 10",k1_plus20:"Zehnerübergang",k1_formen:"Formen",k1_muster:"Muster",k1_geld:"Euro zählen",k2_zahl100:"Zahlen bis 100",k2_tap:"Zahlenstrahl bis 100",k2_plus100:"Rechnen bis 100",k2_mal:"Malaufgaben",k2_geteilt:"Verteilen",k2_uhr:"Uhr lesen",k2_laenge:"Längen",k2_geld:"Geld bis 100",k3_zahl1000:"Zahlen bis 1000",k3_rechnen:"Rechnen bis 1000",k3_mal:"Mal und geteilt (halbschriftlich)",k3_groessen:"Gewichte und Längen",k3_spiegel:"Symmetrie"};
+
+/* ---------- Animationen Grundschule ---------- */
+WIDGETS.zehnerfeld=function(el){const w=wid("zf");let a=6,b=0;
+  el.innerHTML=`<div class="wg"><div class="wg-vis" id="${w}-o"></div><div class="row"><button class="btn small" type="button" data-a="r+">+ rot</button><button class="btn small ghost" type="button" data-a="r-">${MINUS} rot</button><button class="btn small" type="button" data-a="b+" style="background:var(--s-mathe)">+ blau</button><button class="btn small ghost" type="button" data-a="b-">${MINUS} blau</button></div><p class="wg-eqline" id="${w}-t"></p></div>`;
+  const draw=()=>{el.querySelector("#"+w+"-o").innerHTML=zehnerfeldSVG(a,b);const s=a+b;
+    el.querySelector("#"+w+"-t").innerHTML=`<span class="term">${a} + ${b} = ${s}</span><br><span class="muted small">${s<10?`Bis 10 fehlen noch ${10-s}.`:s===10?"Genau ein volles Feld: 10!":`Ein volles Feld (10) und noch ${s-10}.`}</span>`};
+  el.querySelectorAll("[data-a]").forEach(btn=>btn.onclick=()=>{const k=btn.dataset.a;if(k==="r+"&&a+b<20)a++;if(k==="r-"&&a>0)a--;if(k==="b+"&&a+b<20)b++;if(k==="b-"&&b>0)b--;draw()});draw()};
+WIDGETS.hunderter=function(el){const w=wid("hu");
+  el.innerHTML=`<div class="wg"><div class="wg-vis" id="${w}-o"></div><div class="wg-ctl">${slider(w+"z","Zehner (Stangen)",0,9,3)}${slider(w+"e","Einer (Würfel)",0,9,7)}</div><p class="wg-eqline" id="${w}-t"></p></div>`;
+  const Z=el.querySelector("#"+w+"z"),E=el.querySelector("#"+w+"e");
+  const draw=()=>{const z=+Z.value,e=+E.value;el.querySelector("#"+w+"z-v").textContent=z;el.querySelector("#"+w+"e-v").textContent=e;el.querySelector("#"+w+"-o").innerHTML=stangenSVG(z,e);
+    el.querySelector("#"+w+"-t").innerHTML=`<span class="term">${z} Z + ${e} E = ${z*10+e}</span>`};Z.oninput=E.oninput=draw;draw()};
+WIDGETS.malfeld=function(el){const w=wid("mf");
+  el.innerHTML=`<div class="wg"><div class="wg-vis" id="${w}-o"></div><div class="wg-ctl">${slider(w+"a","Reihen",1,10,3)}${slider(w+"b","In jeder Reihe",1,10,4)}</div><p class="wg-out" id="${w}-t"></p></div>`;
+  const A=el.querySelector("#"+w+"a"),B=el.querySelector("#"+w+"b");
+  const draw=()=>{const a=+A.value,b=+B.value;el.querySelector("#"+w+"a-v").textContent=a;el.querySelector("#"+w+"b-v").textContent=b;let s="";
+    for(let i=0;i<a;i++)for(let j=0;j<b;j++)s+=`<circle cx="${12+j*24}" cy="${12+i*24}" r="9" fill="${i%2?"var(--s-chemie)":"var(--accent)"}" stroke="var(--ink)" stroke-width="1"/>`;
+    el.querySelector("#"+w+"-o").innerHTML=`<svg viewBox="0 0 ${b*24} ${a*24}" width="${Math.min(280,b*26)}" style="max-width:100%" role="img" aria-label="${a} mal ${b} Punkte">${s}</svg>`;
+    el.querySelector("#"+w+"-t").innerHTML=`<span class="term">${a} · ${b} = ${a*b}</span> &nbsp; (${Array(Math.min(a,6)).fill(b).join(" + ")}${a>6?" + …":""})<br><span class="muted small">Dreh das Feld im Kopf um 90°: Dann sind es ${b} Reihen mit je ${a}. Darum ist ${a} · ${b} = ${b} · ${a} (Tauschaufgabe).</span>`};
+  A.oninput=B.oninput=draw;draw()};
+WIDGETS.uhrlesen=function(el){const w=wid("ul");
+  el.innerHTML=`<div class="wg"><div class="wg-vis" id="${w}-o"></div><div class="wg-ctl">${slider(w,"Uhrzeit drehen",0,715,450,5)}</div><p class="wg-eqline" id="${w}-t"></p></div>`;
+  const Sl=el.querySelector("#"+w);
+  const draw=()=>{const t=+Sl.value,h_=Math.floor(t/60)||12,m=t%60;el.querySelector("#"+w+"-v").textContent=`${h_}:${pad2(m)}`;el.querySelector("#"+w+"-o").innerHTML=clockSVG(h_,m,190);
+    const sachsen=m===15?` · in Sachsen auch „viertel ${((h_)%12)+1}“`:m===45?` · in Sachsen auch „dreiviertel ${((h_)%12)+1}“`:"";
+    el.querySelector("#"+w+"-t").innerHTML=`<b>${uhrWort(h_,m)}</b><br><span class="muted small">${h_}:${pad2(m)} Uhr oder ${h_===12?0:h_+12}:${pad2(m)} Uhr${sachsen}</span>`};
+  Sl.oninput=draw;draw()};
+WIDGETS.geldbeutel=function(el){const w=wid("gb");let l=[];
+  const C=["2€","1€","50ct","20ct","10ct","5ct","2ct","1ct"];
+  el.innerHTML=`<div class="wg"><div class="row" style="gap:6px">${C.map(c=>`<button type="button" class="btn ghost small" data-c="${c}">${c.replace("ct"," ct").replace("€"," €")}</button>`).join("")}</div><div class="wg-vis" id="${w}-o" style="min-height:60px"></div><p class="wg-eqline" id="${w}-t"></p><div class="row"><button type="button" class="btn ghost small" id="${w}-r">Ausleeren</button></div></div>`;
+  const draw=()=>{const ct=l.reduce((s,c)=>s+COINS[c][0],0);el.querySelector("#"+w+"-o").innerHTML=l.length?geldSVG(l):`<p class="muted small">Tippe Münzen an, um sie in den Geldbeutel zu legen.</p>`;
+    el.querySelector("#"+w+"-t").innerHTML=`<b>${ct} ct</b>${ct>=100?` = ${decStr(R(ct,100))} €`:""}`};
+  el.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{if(l.length<10){l.push(b.dataset.c);l.sort((a,b)=>COINS[b][0]-COINS[a][0])}draw()});el.querySelector("#"+w+"-r").onclick=()=>{l=[];draw()};draw()};
+
+/* ---------- Themen Klasse 1–3 ---------- */
+const GT=(id,title,sub,gens,steps)=>({id,title,sub,gens,kids:true,steps:steps.map(([t,b,w,wo])=>{const o={title:t,body:b};if(w){o.w=w;o.wo=wo||{}}return o})});
+const BAND1={key:"1",title:"Klasse 1",topics:[
+  GT("k1-zaehlen","Zahlen bis 10","Zählen, Würfelbilder, Mengen",["k1_zaehlen"],[["Zählen und sehen",`<p>Zuerst lernen Kinder, Dinge zu <b>zählen</b>: jedes genau einmal antippen und dabei laut zählen. Danach sollen sie kleine Mengen <b>auf einen Blick</b> erkennen, ohne zu zählen: Würfelbilder, Finger, Fünferreihen.</p><p>Wichtig ist die <b>Kraft der Fünf</b>: Fünf Punkte in einer Reihe (wie eine Hand) erkennt man sofort. 7 ist dann „eine volle Fünf und noch zwei“.</p>`]]),
+  GT("k1-zehner","Zahlen bis 20","Zehnerfeld, Nachbarzahlen",["k1_zehner"],[["Das Zehnerfeld",`<p>Ein <b>Zehnerfeld</b> hat zwei Reihen mit je fünf Plätzen. Ist es voll, sind es genau 10. Damit sieht man jede Zahl bis 20 als „10 und noch ein paar“: 14 ist ein volles Feld und 4.</p><p>Tippe die Knöpfe und füll das Feld:</p>`,"zehnerfeld"]]),
+  GT("k1-plus10","Plus und Minus bis 10","Dazutun, wegnehmen, zerlegen",["k1_plus10"],[["Rechnen mit Bildern",`<p><b>Plus</b> heißt dazutun, <b>Minus</b> heißt wegnehmen. Kinder rechnen zuerst mit Dingen zum Anfassen, dann mit Bildern, erst danach nur mit Zahlen.</p><p>Ganz wichtig: die <b>Zerlegungen der 10</b> (1 + 9, 2 + 8, 3 + 7, 4 + 6, 5 + 5). Wer sie auswendig kann, rechnet später viel schneller. In der Schule heißen sie oft „verliebte Zahlen“ oder „Zehnerfreunde“.</p>`,"zehnerfeld"]]),
+  GT("k1-plus20","Rechnen bis 20","Über die 10 rechnen",["k1_plus20"],[["Der Zehnerübergang",`<p>8 + 5 ist schwerer als 3 + 4, weil man über die 10 muss. Der Trick heißt <b>Teilschritte</b>:</p><p class="eq">8 + 5 = 8 + 2 + 3 = 10 + 3 = 13</p><p>Erst bis zur 10 auffüllen (dafür braucht man die Zehnerfreunde), dann den Rest dazu. Beim Minus genauso rückwärts: 13 ${MINUS} 5 = 13 ${MINUS} 3 ${MINUS} 2 = 8.</p><p class="tip">Auch hilfreich: Verdoppeln (6 + 6 = 12, also ist 6 + 7 = 13).</p>`]]),
+  GT("k1-formen","Formen","Kreis, Dreieck, Viereck",["k1_formen"],[["Formen erkennen",`<p>Kreis, Dreieck, Quadrat und Rechteck: Kinder suchen sie in der Umgebung (Teller, Dach, Fenster, Tür) und zählen Ecken und Seiten. Ein <b>Quadrat</b> ist ein besonderes Rechteck: Alle Seiten sind gleich lang.</p>`]]),
+  GT("k1-muster","Muster und Folgen","Was kommt als Nächstes?",["k1_muster"],[["Regeln entdecken",`<p>Muster schulen das mathematische Denken: Rot, Blau, Rot, Blau … oder 2, 4, 6, 8. Das Kind soll die <b>Regel finden</b> und weiterführen. Später heißt das Folgen und Funktionen.</p>`]]),
+  GT("k1-geld","Euro und Münzen","Geld erkennen und zählen",["k1_geld"],[["Unser Geld",`<p>In Klasse 1 geht es um Euro-Münzen (1 €, 2 €) und Scheine (5 €, 10 €, 20 €). Kinder sollen sie erkennen und kleine Beträge zusammenzählen. Cent kommen meist in Klasse 2.</p><p class="tip">Echtes Geld ist der beste Lehrer: beim Bäcker selbst bezahlen lassen.</p>`]]),
+]};
+const BAND2={key:"2",title:"Klasse 2",topics:[
+  GT("k2-zahl100","Zahlen bis 100","Zehner und Einer",["k2_zahl100","k2_tap"],[["Bündeln in Zehnern",`<p>Bis 100 zählt man nicht mehr einzeln, sondern in <b>Zehnern</b>. Eine Zehnerstange sind 10 Würfel. 37 sind 3 Stangen und 7 einzelne Würfel.</p><p>Achtung beim Sprechen: Wir sagen <b>sieben</b>und<b>dreißig</b>, also die Einer zuerst, schreiben aber die 3 zuerst. Darum vertauschen viele Kinder die Ziffern (73 statt 37).</p>`,"hunderter"]]),
+  GT("k2-plus100","Rechnen bis 100","Zehner und Einer getrennt",["k2_plus100"],[["Schrittweise rechnen",`<p>Bei 46 + 27 rechnen Kinder in Schritten, meist erst die Zehner, dann die Einer:</p><p class="eq">46 + 20 = 66<br>66 + 7 = 73</p><p>Es gibt viele erlaubte Wege (Zehner und Einer getrennt, Hilfsaufgabe 46 + 30 ${MINUS} 3 …). Die Schule lässt oft eigene Wege zu. Wichtig ist, dass das Kind seinen Weg erklären kann.</p>`]]),
+  GT("k2-mal","Malnehmen","Malaufgaben als Punktefeld",["k2_mal","paare_1x1"],[["Mal ist schnelles Plus",`<p>3 · 4 heißt: 3-mal die 4, also 4 + 4 + 4 = 12. Im <b>Punktefeld</b> sind es 3 Reihen mit je 4 Punkten.</p><p>Zuerst lernen Kinder die <b>Kernaufgaben</b>: · 1, · 2, · 5 und · 10. Daraus leiten sie die anderen ab.</p>`,"malfeld"]]),
+  GT("k2-geteilt","Teilen","Gerecht verteilen",["k2_geteilt"],[["Verteilen und Aufteilen",`<p><b>Verteilen:</b> 12 Bonbons an 3 Kinder, wie viele bekommt jedes? <b>Aufteilen:</b> 12 Bonbons in Tüten zu je 3, wie viele Tüten? Beides ist 12 : 3 = 4.</p><p>Teilen ist die Umkehrung vom Malnehmen: 12 : 3 = 4, weil 3 · 4 = 12.</p>`]]),
+  GT("k2-uhr","Die Uhr","Volle, halbe und Viertelstunden",["k2_uhr"],[["Kurzer und langer Zeiger",`<p>Der <b>kurze Zeiger</b> zeigt die Stunde, der <b>lange</b> die Minuten. Steht der lange oben auf der 12, ist es eine volle Stunde.</p><p>Dreh die Uhr selbst:</p>`,"uhrlesen"]]),
+  GT("k2-laenge","Längen messen","Zentimeter und Meter",["k2_laenge"],[["Messen mit dem Lineal",`<p>Länge misst man in <b>Zentimetern</b> (cm) und <b>Metern</b> (m): 1 m = 100 cm. Beim Lineal wird bei der <b>0</b> angelegt, nicht beim Rand.</p><p>Stützpunkte zum Schätzen: Ein Finger ist etwa 1 cm breit, ein großer Schritt etwa 1 m.</p>`]]),
+  GT("k2-geld","Geld bis 100 €","Euro und Cent",["k2_geld"],[["Cent und Euro",`<p><b>100 Cent sind 1 Euro.</b> Kinder legen Beträge mit Münzen und rechnen Rückgeld durch <b>Ergänzen</b> aus: Ein Eis kostet 3 €, ich bezahle mit 10 €: 3 + 7 = 10, also 7 € zurück.</p><p>Leg selbst Geld in den Beutel:</p>`,"geldbeutel"]]),
+]};
+const BAND3={key:"3",title:"Klasse 3",topics:[
+  GT("k3-zahl1000","Zahlen bis 1000","Hunderter, Zehner, Einer",["k3_zahl1000"],[["Der Tausenderraum",`<p>Jetzt kommen die <b>Hunderter</b> dazu: 10 Zehner sind 1 Hunderter, 10 Hunderter sind 1 Tausender. In der Stellenwerttafel steht 352 als 3 H, 5 Z, 2 E.</p><p class="tip">Anschaulich: 1000 Würfel sind ein großer Würfel, 100 eine Platte, 10 eine Stange.</p>`]]),
+  GT("k3-rechnen","Rechnen bis 1000","Schrittweise plus und minus",["k3_rechnen"],[["Halbschriftlich rechnen",`<p>Vor dem schriftlichen Rechnen (Klasse 4) wird <b>halbschriftlich</b> gerechnet: in Schritten, die man aufschreibt.</p><p class="eq">456 + 237<br>456 + 200 = 656<br>656 + 30 = 686<br>686 + 7 = 693</p><p>Manche Schulen führen das schriftliche Addieren schon in Klasse 3 ein.</p>`]]),
+  GT("k3-mal","Mal und geteilt","Großes Einmaleins halbschriftlich",["k3_mal"],[["Zerlegen macht es leicht",`<p>7 · 23 rechnet man mit dem <b>Zerlegungstrick</b>: 7 · 20 = 140 und 7 · 3 = 21, zusammen 161.</p><p>Beim Teilen genauso: 84 : 4 = 80 : 4 + 4 : 4 = 20 + 1 = 21.</p><p>Am Ende der 3. Klasse sollte das <b>kleine Einmaleins</b> automatisch sitzen. Dafür eignet sich das Blitzrechnen-Spiel im Training.</p>`]]),
+  GT("k3-groessen","Gewichte und Längen","g, kg, m, km",["k3_groessen"],[["Größen im Alltag",`<table class="tbl"><tr><td>1 km</td><td>= 1000 m</td></tr><tr><td>1 m</td><td>= 100 cm</td></tr><tr><td>1 kg</td><td>= 1000 g</td></tr></table><p>Stützpunkte: Eine Tafel Schokolade wiegt 100 g, eine Packung Zucker 1 kg. Ein Kilometer ist etwa 15 Minuten zu Fuß.</p>`]]),
+  GT("k3-spiegel","Spiegeln und Symmetrie","Achsensymmetrische Figuren",["k3_spiegel","formen"],[["Falten und spiegeln",`<p>Eine Figur ist <b>achsensymmetrisch</b>, wenn man sie so falten kann, dass beide Hälften genau aufeinanderliegen. Die Faltlinie heißt <b>Spiegelachse</b>.</p><p>Viele Buchstaben sind symmetrisch (A, H, M, T), andere nicht (F, R, S). Klecksbilder (Farbe auf Papier, zusammenklappen) sind immer symmetrisch.</p>`]]),
+]};
+{const M=SUBJECTS[0];M.bands.unshift(BAND1,BAND2,BAND3)}
+const B12=(su,topics)=>{const s=SUBJECTS.find(x=>x.id===su);s.bands.unshift({key:"1-2",title:"Klasse 1–2 · Sachunterricht",topics})};
+B12("bio",[
+ SA("b12-sinne","Unsere Sinne","Sehen, hören, riechen, schmecken, fühlen","Wir haben fünf Sinne: Mit den <b>Augen</b> sehen wir, mit den <b>Ohren</b> hören wir, mit der <b>Nase</b> riechen wir, mit der <b>Zunge</b> schmecken wir und mit der <b>Haut</b> fühlen wir. Spiel dazu: Fühlsäckchen mit Gegenständen und mit geschlossenen Augen raten.",[["Womit riechen wir?","Gerüche nehmen wir mit der Nase wahr.","Mit der Nase","Mit den Ohren","Mit den Augen"],["Wie viele Sinne haben wir?","Sehen, Hören, Riechen, Schmecken und Fühlen: fünf.","5","3","10"],["Womit fühlen wir, ob etwas warm ist?","Die Haut spürt Wärme, Kälte, Druck und Schmerz.","Mit der Haut","Mit der Zunge","Mit der Nase"],["Womit schmecken wir, ob etwas süß ist?","Die Zunge schmeckt süß, sauer, salzig und bitter.","Mit der Zunge","Mit den Augen","Mit den Ohren"]]),
+ SA("b12-jahreszeiten","Die Jahreszeiten","Frühling, Sommer, Herbst, Winter","Ein Jahr hat vier Jahreszeiten: Im <b>Frühling</b> blühen die ersten Blumen, im <b>Sommer</b> ist es warm, im <b>Herbst</b> fallen die Blätter, im <b>Winter</b> ist es kalt und manchmal schneit es. Mit dem Kind: einen Baum vor dem Haus jede Jahreszeit fotografieren.",[["Wann fallen die Blätter von den Bäumen?","Im Herbst werden die Blätter bunt und fallen ab.","Im Herbst","Im Frühling","Im Sommer"],["Wie viele Jahreszeiten gibt es?","Frühling, Sommer, Herbst, Winter.","4","2","12"],["Welche Jahreszeit kommt nach dem Winter?","Nach dem Winter kommt der Frühling, dann wird es wärmer.","Frühling","Herbst","Sommer"],["Wann ist es am wärmsten?","Im Sommer scheint die Sonne am längsten und am höchsten.","Im Sommer","Im Winter","Im Herbst"]]),
+ SA("b12-tiere","Tiere und ihre Kinder","Wer gehört zu wem?","Tierkinder haben oft eigene Namen: Die Kuh hat ein <b>Kalb</b>, das Pferd ein <b>Fohlen</b>, das Schaf ein <b>Lamm</b>, der Hund einen <b>Welpen</b>, die Katze ein <b>Kätzchen</b>, das Huhn ein <b>Küken</b>. Manche Tiere legen Eier (Huhn, Ente), andere bringen lebende Junge zur Welt.",[["Wie heißt das Kind der Kuh?","Ein junges Rind heißt Kalb.","Kalb","Fohlen","Ferkel"],["Wie heißt das Kind des Pferdes?","Ein junges Pferd heißt Fohlen.","Fohlen","Lamm","Kalb"],["Welches Tier legt Eier?","Das Huhn legt Eier, aus denen Küken schlüpfen.","Huhn","Hund","Katze"],["Wie heißt das Kind des Schafes?","Ein junges Schaf heißt Lamm.","Lamm","Küken","Welpe"],["Wie heißt das Kind des Schweins?","Ein junges Schwein heißt Ferkel.","Ferkel","Kalb","Fohlen"]]),
+ SA("b12-obst","Obst und Gemüse","Was wächst wo?","<b>Obst</b> wächst meist an Bäumen und Sträuchern und schmeckt süß (Apfel, Kirsche, Erdbeere). <b>Gemüse</b> sind andere essbare Pflanzenteile: Wurzeln (Möhre), Blätter (Salat), Knollen (Kartoffel). Gemeinsam auf dem Markt oder im Garten anschauen.",[["Was ist Gemüse?","Die Möhre ist eine Wurzel und zählt zum Gemüse.","Möhre","Apfel","Kirsche"],["Wo wachsen Äpfel?","Äpfel wachsen an Bäumen.","An Bäumen","In der Erde","Im Wasser"],["Welcher Teil der Möhre wird gegessen?","Bei der Möhre essen wir die Wurzel.","Die Wurzel","Die Blüte","Die Frucht"],["Was ist Obst?","Die Erdbeere ist Obst.","Erdbeere","Kartoffel","Salat"]]),
+ SA("b12-gesund","Gesund bleiben","Hände waschen, schlafen, bewegen","Gesund bleiben wir, wenn wir die <b>Hände waschen</b> (nach dem Klo und vor dem Essen, so lange wie zweimal „Happy Birthday“ singen), genug <b>schlafen</b>, uns <b>bewegen</b>, Wasser trinken und zweimal am Tag die <b>Zähne putzen</b>.",[["Wann wäscht man die Hände?","Vor dem Essen und nach dem Klo, damit keine Keime in den Mund kommen.","Vor dem Essen und nach dem Klo","Nur am Abend","Nur wenn sie schmutzig aussehen"],["Wie oft putzt man am Tag die Zähne?","Morgens und abends: zweimal.","Zweimal","Einmal in der Woche","Nie"],["Was ist das beste Getränk gegen Durst?","Wasser löscht den Durst ohne Zucker.","Wasser","Cola","Limonade"]]),
+]);
+B12("physik",[
+ SA("p12-tagnacht","Tag und Nacht","Warum es dunkel wird","Die Erde dreht sich einmal am Tag um sich selbst. Die Seite, die zur <b>Sonne</b> zeigt, hat <b>Tag</b>, die andere Seite hat <b>Nacht</b>. Die Sonne geht im Osten auf und im Westen unter. Mit dem Kind: Taschenlampe als Sonne, einen Ball langsam drehen.",[["Warum wird es nachts dunkel?","Unsere Seite der Erde dreht sich von der Sonne weg.","Die Erde dreht sich von der Sonne weg","Die Sonne geht aus","Der Mond deckt die Sonne zu"],["Wo geht die Sonne auf?","Die Sonne geht im Osten auf.","Im Osten","Im Westen","Im Norden"],["Wie lange dauert eine Drehung der Erde?","Eine Drehung dauert einen Tag, also 24 Stunden.","Einen Tag","Eine Woche","Ein Jahr"]]),
+ SA("p12-warmkalt","Warm und kalt","Das Thermometer","Mit einem <b>Thermometer</b> misst man, wie warm oder kalt es ist, in <b>Grad Celsius</b> (°C). Bei 0 °C gefriert Wasser zu Eis. Wir Menschen haben etwa 37 °C. Mit dem Kind: Thermometer in kaltes und warmes Wasser halten.",[["Bei wie viel Grad gefriert Wasser?","Bei 0 °C wird Wasser zu Eis.","0 °C","100 °C","37 °C"],["Womit misst man die Temperatur?","Mit dem Thermometer.","Mit dem Thermometer","Mit dem Lineal","Mit der Waage"],["Wie warm ist ein gesunder Mensch ungefähr?","Etwa 37 °C. Ab 38 °C hat man Fieber.","37 °C","20 °C","50 °C"]]),
+ SA("p12-verkehr","Sicher im Straßenverkehr","Ampel und Schulweg","Bei <b>Rot</b> bleibt man stehen, bei <b>Grün</b> darf man gehen. Vor dem Überqueren: <b>links, rechts, links</b> schauen. Im Dunkeln helle Kleidung und Reflektoren tragen, damit Autofahrer einen sehen. Den Schulweg vor dem ersten Schultag gemeinsam üben.",[["Was macht man an einer roten Fußgängerampel?","Bei Rot bleibt man stehen, auch wenn kein Auto kommt.","Stehen bleiben","Schnell rennen","Langsam gehen"],["Wohin schaut man vor dem Überqueren der Straße?","Erst links, dann rechts, dann noch einmal links.","Links, rechts, links","Nur nach vorne","Nur nach rechts"],["Warum trägt man im Dunkeln Reflektoren?","Damit Autofahrer einen früh sehen.","Damit Autofahrer einen sehen","Weil es schön aussieht","Damit es wärmer ist"]]),
+]);
+Object.assign(KT,{
+ "k1-zaehlen":`<p>Kinder zählen anfangs oft zu schnell oder doppelt. Hilft: Gegenstände beim Zählen zur Seite schieben. Würfelspiele (Mensch ärgere dich nicht, Kniffel für Kinder) trainieren das Erkennen von Mengen nebenbei. <b>Prüffrage:</b> Drei Finger kurz zeigen und wieder verstecken: „Wie viele waren es?“</p>`,
+ "k1-zehner":`<p>Ein Eierkarton mit 10 Plätzen ist ein perfektes Zehnerfeld. <b>Typischer Fehler:</b> Bei Zahlen über 10 wird wieder von 1 gezählt, statt die volle 10 zu sehen. <b>Prüffrage:</b> „Wie viele fehlen bis 10?“</p>`,
+ "k1-plus10":`<p>Die Zehnerfreunde als Spiel üben: Du sagst 3, das Kind ruft 7. Fingerrechnen ist am Anfang erlaubt und normal, das Ziel ist aber, dass es später ohne Finger geht. <b>Typischer Fehler:</b> Beim Minus wird die Startzahl mitgezählt (7 ${MINUS} 3: „7, 6, 5“ und dann 5 als Ergebnis).</p>`,
+ "k1-plus20":`<p>Der Zehnerübergang ist die größte Hürde der 1. Klasse. Viele Schulen nutzen das Rechenschiffchen oder den Rechenrahmen mit roten und blauen Perlen. <b>Typischer Fehler:</b> zählendes Rechnen bleibt bestehen (8 + 5: „9, 10, 11, 12, 13“). Das funktioniert, wird aber bei größeren Zahlen zur Falle. Lieber den Weg über die 10 üben.</p>`,
+ "k1-formen":`<p>Formen-Jagd in der Wohnung: Wer findet die meisten Kreise? <b>Typischer Fehler:</b> Ein schräg gedrehtes Quadrat wird nicht mehr als Quadrat erkannt (es sei eine „Raute“). Das Blatt drehen hilft.</p>`,
+ "k1-muster":`<p>Ketten mit Perlen fädeln, Muster mit Legosteinen legen und das Kind fortsetzen lassen. Dann tauschen: Das Kind legt ein Muster, du setzt fort (gern auch absichtlich falsch).</p>`,
+ "k1-geld":`<p>Kaufladen spielen mit echtem Kleingeld ist unschlagbar. <b>Typischer Fehler:</b> Kinder denken, mehr Münzen sind mehr Geld (drei 1-€-Münzen gegen einen 5-€-Schein).</p>`,
+ "k2-zahl100":`<p>Die Zahlendreher (73 statt 37) sind im Deutschen völlig normal, weil wir die Einer zuerst sprechen. Hilft: Zahlen mit Geld legen (Zehner-Scheine, Einer-Münzen) und erst die Zehner schreiben lassen. <b>Prüffrage:</b> „Was ist mehr: 37 oder 73?“</p>`,
+ "k2-plus100":`<p>Lass dein Kind <b>laut erklären</b>, wie es rechnet. Es gibt mehrere richtige Wege, und Schulen wollen oft, dass Kinder verschiedene ausprobieren. <b>Typischer Fehler:</b> Zehner und Einer vermischen (46 + 27 = 613, weil 4 + 2 = 6 und 6 + 7 = 13 nebeneinander geschrieben werden).</p>`,
+ "k2-mal":`<p>Malaufgaben überall entdecken: Eierkarton (2 · 5), Schokoladentafel (4 · 6), Fenster. In Sachsen wird das Einmaleins in Klasse 2 eingeführt und bis Ende Klasse 3 sicher gelernt. <b>Typischer Fehler:</b> Mal und Plus verwechseln (3 · 4 = 7).</p>`,
+ "k2-geteilt":`<p>Beim Teilen von Süßigkeiten unter Geschwistern lernen Kinder das von selbst, ihr habt mit Zwillingen da sogar einen Vorteil. <b>Typischer Fehler:</b> Teilen wird nicht als Umkehrung vom Malnehmen gesehen. Frage: „Welche Malaufgabe hilft dir?“</p>`,
+ "k2-uhr":`<p>In Sachsen sagt man oft <b>„viertel vier“</b> für 3:15 und <b>„dreiviertel vier“</b> für 3:45. In der Schule und in vielen Büchern heißt es „Viertel nach drei“ und „Viertel vor vier“. Sprecht beide Varianten an, damit das Kind beim Opa nicht verwirrt ist. Eine Lernuhr zum Drehen ist ihr Geld wert. <b>Typischer Fehler:</b> Den Stundenzeiger bei halb falsch lesen (bei halb vier steht er zwischen 3 und 4).</p>`,
+ "k2-laenge":`<p>Mit Zollstock und Maßband durch die Wohnung: Wie lang ist das Bett, wie breit der Tisch? Erst schätzen, dann messen. <b>Typischer Fehler:</b> Beim Lineal ab dem Rand statt ab der 0 messen.</p>`,
+ "k2-geld":`<p>Beim Einkaufen den Kassenbon gemeinsam lesen und Rückgeld vorher schätzen. <b>Typischer Fehler:</b> 1,50 € als 1 € 5 ct lesen. Hinter dem Komma stehen immer zwei Stellen Cent.</p>`,
+ "k3-zahl1000":`<p>Zahlen bis 1000 lassen sich mit Geld (Hunderter-Scheine aus dem Spiel) oder mit Seitenzahlen in Büchern erleben. <b>Typischer Fehler:</b> Bei Zahlen mit Null (305) wird die Null weggelassen (35).</p>`,
+ "k3-rechnen":`<p>Halbschriftlich heißt: Jeder Schritt wird aufgeschrieben. Lass dein Kind lieber eine Zeile mehr schreiben als im Kopf durcheinanderzukommen. <b>Typischer Fehler:</b> Beim Minus über den Hunderter (603 ${MINUS} 8) den Übergang vergessen.</p>`,
+ "k3-mal":`<p>Das Blitzrechnen-Spiel unter Training ist genau dafür gemacht: Ziel ist das kleine Einmaleins ohne Nachdenken. 5 Minuten täglich bringen mehr als eine Stunde am Wochenende. <b>Typischer Fehler:</b> Beim Zerlegen einen Teil vergessen (7 · 23 = 140 + 3).</p>`,
+ "k3-groessen":`<p>Mit der Küchenwaage wiegen: Wie schwer ist ein Apfel, ein Buch, ein Kuscheltier? <b>Typischer Fehler:</b> Gramm und Kilogramm verwechseln, und beim Umrechnen 100 statt 1000.</p>`,
+ "k3-spiegel":`<p>Klecksbilder und Spiegel-Spiele (das Kind spiegelt deine Bewegungen) machen Symmetrie greifbar. <b>Typischer Fehler:</b> Beim Spiegeln auf Karopapier die Abstände zur Achse nicht gleich lassen.</p>`,
+});
+
 /* ---------- Helfer ---------- */
 const $=(s,r=document)=>r.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -2976,7 +3475,7 @@ const read=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k)||"null");retur
 const write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 let PROF=read(PKEY,null);if(!PROF||!Array.isArray(PROF.list)||!PROF.list.length)PROF={list:[{id:"main",name:"Ich"}],cur:"main"};
 const profKey=id=>id==="main"?"schulkoje.v1":"schulkoje.v1:"+id;
-function loadState(){return Object.assign({done:{},seen:{},xp:0,streak:0,last:"",skill:{},day:{d:"",n:0},goal:20,subj:"mathe",chat:[]},read(profKey(PROF.cur),{}))}
+function loadState(){return Object.assign({stars:{},games:{},done:{},seen:{},xp:0,streak:0,last:"",skill:{},day:{d:"",n:0},goal:20,subj:"mathe",chat:[]},read(profKey(PROF.cur),{}))}
 let S=loadState();
 let AIS=Object.assign({provider:"auto",key:"",model:GEMINI_DEFAULT.model,quick:GEMINI_DEFAULT.quick},read(AIKEY,{}));
 let KI=read(KIKEY,{});
@@ -2993,7 +3492,7 @@ function rankOf(xp){let i=0;RANKS.forEach((r,k)=>{if(xp>=r[0])i=k});return{i,nam
 
 /* ---------- Themen-Verzeichnis ---------- */
 const GEN_NAMES={rechenregeln:"Rechenregeln",teilbarkeit:"Teilbarkeitsregeln",ggt:"ggT bestimmen",kgv:"kgV bestimmen",primzahl:"Primzahlen erkennen",bruchbild:"Brüche ablesen",kuerzen:"Brüche kürzen",erweitern:"Brüche erweitern",bruchvergleich:"Brüche vergleichen",bruchadd:"Brüche plus/minus",bruchmul:"Brüche mal/geteilt",dezumw:"Bruch ↔ Dezimalzahl",dezrech:"Kommazahlen rechnen",flaeche:"Fläche und Umfang",winkelart:"Winkelarten",winkelrechnen:"Winkel berechnen",zahlenstrahl:"Zahlenstrahl lesen",negativ:"Negative Zahlen",prozent:"Prozentrechnung",dreisatz:"Dreisatz",term:"Terme vereinfachen",gleichung:"Gleichungen lösen"};
-Object.assign(GEN_NAMES,GEN_NAMES_EXTRA,GEN_NAMES_810,GEN_NAMES_1112,GEN_NAMES_PH,GEN_NAMES_PH2,GEN_NAMES_S,GEN_NAMES_BIO);
+Object.assign(GEN_NAMES,GEN_NAMES_EXTRA,GEN_NAMES_810,GEN_NAMES_1112,GEN_NAMES_PH,GEN_NAMES_PH2,GEN_NAMES_S,GEN_NAMES_BIO,GEN_NAMES_M2,GEN_NAMES_G);
 const STOPS={};          // key → Stop
 SUBJECTS.forEach(su=>su.bands.forEach(b=>{
   (b.topics||[]).forEach(t=>{STOPS[t.id]={key:t.id,subj:su,band:b,title:t.title,sub:t.sub,topic:t}});
@@ -3069,16 +3568,22 @@ function kiEx(key,q,i){const order=shuffle(q.opts.map((_,k)=>k));
 function openOverlay(){const root=$("#lesson");root.hidden=false;document.body.style.overflow="hidden";root.scrollTop=0;return root}
 function closeOverlay(){const root=$("#lesson");root.hidden=true;root.innerHTML="";document.body.style.overflow="";
   if(currentTab==="path")renderPath();else if(currentTab==="train")renderTrain();else renderMentor()}
-function answerText(ex){if(ex.kind==="choice")return ex.opts[ex.correct];return ex.decimal?decStr(ex.ans):FR(ex.ans)}
+function answerText(ex){if(ex.kind==="choice")return ex.opts[ex.correct];if(ex.kind==="line")return ex.ansText||fmt(ex.ans)+" (grüner Kreis)";if(ex.kind==="order")return ex.order.map(i=>ex.items[i]).join(" &lt; ");if(ex.kind==="pairs")return "alle Paare ohne Fehlversuch";return ex.decimal?decStr(ex.ans):FR(ex.ans)}
 
 function runSession({title,steps,stop=null,mode="lesson"}){
-  const root=openOverlay();let i=0,right=0,total=0,xpGain=0;
+  const root=openOverlay();let i=0,right=0,total=0,xpGain=0,combo=0,best=0,ft=0,fr=0,autoT=null;
   const draw=()=>{root.innerHTML="";root.scrollTop=0;
     const w=h(`<div class="wrap"><div class="lbar"><button class="x" type="button" aria-label="Sitzung beenden">×</button><div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${steps.length}" aria-valuenow="${i}"><i style="width:${i/steps.length*100}%"></i></div><span class="eyebrow">${i+1}/${steps.length}</span></div><div class="stack" id="sb"></div></div>`);
     root.append(w);$(".x",w).onclick=closeOverlay;const sb=$("#sb",w);
     if(i>=steps.length){finish(sb);return}
-    const s=steps[i];if(s.t==="info")drawInfo(sb,s);else drawEx(sb,s)};
-  const next=()=>{i++;draw()};
+    const s=steps[i];if(s.t==="info")drawInfo(sb,s);else if(s.t==="intro")drawIntro(sb,s);else drawEx(sb,s);
+    if(combo>=3)$(".lbar",w).insertBefore(h(`<span class="combo" title="Richtige Antworten in Folge">▲ ${combo}</span>`),$(".lbar .eyebrow",w))};
+  const next=()=>{clearTimeout(autoT);i++;draw()};
+  function drawIntro(sb,s){const st=S.stars[stop.key]||0;
+    sb.append(h(`<div class="card karo stack" style="align-items:center;text-align:center;padding-block:24px"><span class="eyebrow">${esc(stop.band.title)} · Runde</span><h2 style="font-size:1.5rem">${esc(title)}</h2>${starRow(st,true)}<p class="muted">${st===3?"Alles drin. Hältst du die drei Sterne?":st?"Schaffst du mehr Sterne?":"5 Aufgaben, los geht's."}</p></div>`));
+    const row=h(`<div class="row end"><button class="btn ghost" type="button">Erklärung ansehen</button><button class="btn" type="button">Los geht's</button></div>`);sb.append(row);
+    const [ex,go]=row.querySelectorAll("button");go.onclick=next;setTimeout(()=>{try{go.focus({preventScroll:true})}catch(e){}},30);
+    ex.onclick=()=>{steps.splice(i+1,0,...s.info);next()}}
 
   function drawInfo(sb,s){
     const c=h(`<div class="card stack ${s.kt?"kt":""}"><span class="eyebrow">${s.kt?"Für den Küchentisch · "+esc(title):esc(title)}</span><h2>${s.title}</h2><div class="body">${s.html||s.body}</div><div class="wslot"></div><div class="mentorbox" hidden><div class="ans"></div></div></div>`);
@@ -3092,9 +3597,11 @@ function runSession({title,steps,stop=null,mode="lesson"}){
     ask.onclick=()=>{ask.disabled=true;const mb=$(".mentorbox",c);mb.hidden=false;
       streamInto($(".ans",mb),`${SYS()}\n\nErkläre den folgenden Lerninhalt noch einmal mit anderen Worten und einem neuen, konkreten Beispiel. Thema: ${title}.\n\nLerninhalt: ${plain(s.html||s.body)}`)}}
 
-  function drawEx(sb,s){const ex=s.ex;let sel=null,checked=false;
-    const c=h(`<div class="card stack"><span class="eyebrow">${mode==="train"?"Training · "+esc(skillName(s.skill)):"Aufgabe"}</span><div class="q">${ex.q}</div><div class="inp"></div><div class="fb" aria-live="polite"></div></div>`);
-    sb.append(c);const inp=$(".inp",c),fb=$(".fb",c);
+  function drawEx(sb,s){const ex=s.ex;let sel=null,checked=false,special=null,pairsMiss=0;
+    const kids=!!(stop&&stop.topic&&stop.topic.kids)||/^g:k\d_/.test(s.skill||"");
+    const c=h(`<div class="card stack ${kids?"kids":""}"><div class="eyerow"><span class="eyebrow">${mode==="train"?"Training · "+esc(skillName(s.skill)):"Aufgabe"}</span>${canSpeak()?`<button type="button" class="say" aria-label="Aufgabe vorlesen" title="Vorlesen"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a3.5 3.5 0 0 1 0 6M18.5 6.5a7 7 0 0 1 0 11"/></svg></button>`:""}</div><div class="q">${ex.q}</div><div class="inp"></div><div class="fb" aria-live="polite"></div></div>`);
+    sb.append(c);const sayB=$(".say",c);if(sayB)sayB.onclick=()=>speak(ex.q+(ex.kind==="choice"?" . "+ex.opts.map(plain).join(" , oder , "):""));
+    if(kids&&S.vorlesen&&canSpeak())setTimeout(()=>speak(ex.q),250);const inp=$(".inp",c),fb=$(".fb",c);
     const row=h(`<div class="row end"><button class="btn" type="button" disabled>Prüfen</button></div>`);sb.append(row);const btn=$("button",row);
     let field=null;
     if(ex.kind==="choice"){const short=ex.opts.every(o=>plain(o).length<14);
@@ -3102,6 +3609,9 @@ function runSession({title,steps,stop=null,mode="lesson"}){
       ex.opts.forEach((o,k)=>{const b=h(`<button class="opt" type="button" aria-pressed="false">${o}</button>`);
         b.onclick=()=>{if(checked)return;sel=k;box.querySelectorAll(".opt").forEach((x,j)=>x.setAttribute("aria-pressed",j===k));btn.disabled=false};box.append(b)});
       inp.append(box)}
+    else if(ex.kind==="line"){special=lineInput(ex,()=>{if(!checked)btn.disabled=false});inp.append(special)}
+    else if(ex.kind==="order"){special=orderInput(ex,seq=>{if(!checked)btn.disabled=seq.length!==ex.items.length});inp.append(special)}
+    else if(ex.kind==="pairs"){special=pairsInput(ex,m=>{pairsMiss=m;btn.disabled=false;btn.click()});special.value=()=>pairsMiss;inp.append(special);row.hidden=true}
     else{const id="ans"+i;inp.append(h(`<div class="stack" style="gap:8px"><label class="muted small" for="${id}">Deine Antwort${ex.kind==="frac"?" (Bruch als 3/4)":""}</label><div class="answer"><input id="${id}" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${ex.kind==="frac"?"text":"decimal"}"></div><div class="keys">${["/",MINUS,","].map(k=>`<button type="button" data-k="${k}">${k}</button>`).join("")}</div></div>`));
       field=$("input",inp);field.oninput=()=>{btn.disabled=!field.value.trim()};
       field.onkeydown=e=>{if(e.key==="Enter"&&!btn.disabled){e.preventDefault();btn.click()}};
@@ -3109,40 +3619,49 @@ function runSession({title,steps,stop=null,mode="lesson"}){
       setTimeout(()=>{try{field.focus({preventScroll:true})}catch(e){}},50)}
     btn.onclick=()=>{
       if(checked){next();return}
-      const res=checkAnswer(ex,ex.kind==="choice"?sel:field.value);
+      const res=checkAnswer(ex,ex.kind==="choice"?sel:special?special.value():field.value);
       if(res.invalid){fb.innerHTML=`<p class="feedback info">${esc(res.note||"Das kann ich nicht lesen. Erlaubt sind ganze Zahlen (12, −3), Kommazahlen (2,5) und Brüche (3/4).")}</p>`;return}
-      checked=true;total++;countTask();updateSkill(s.skill,res.ok);
-      if(res.ok){right++;const g=s.retry?5:10;xpGain+=g;addXP(g)}else save();
+      checked=true;total++;countTask();updateSkill(s.skill,res.ok);row.hidden=false;
+      if(!s.retry){ft++;if(res.ok)fr++}
+      combo=res.ok?combo+1:0;best=Math.max(best,combo);
+      if(res.ok){right++;const g=(s.retry?5:10)+(combo>=3?2:0);xpGain+=g;addXP(g)}else save();
       if(ex.kind==="choice")inp.querySelectorAll(".opt").forEach((x,j)=>{if(j===ex.correct)x.classList.add("right");else if(j===sel)x.classList.add("wrong")});
+      else if(special)special.lock(res.ok);
       else{field.readOnly=true;field.classList.add(res.ok?"right":"wrong")}
-      fb.innerHTML=res.ok?`<div class="feedback ok stack" style="gap:6px"><b>Richtig!</b>${ex.sol?`<details class="sol"><summary>Lösungsweg ansehen</summary><div>${ex.sol}</div></details>`:""}</div>`
+      if(kids&&S.vorlesen&&canSpeak())speak(res.ok?pick(["Richtig!","Super!","Toll gemacht!"]):"Nicht ganz. Schau mal, wie es geht.");
+      fb.innerHTML=res.ok?`<div class="feedback ok stack" style="gap:6px"><b>${pick(["Richtig!","Genau!","Stark!","Sitzt!","Super!"])}${combo>=3?` <span class="combo">▲ ${combo} in Folge · +2 XP</span>`:""}</b>${ex.sol?`<details class="sol"><summary>Lösungsweg ansehen</summary><div>${ex.sol}</div></details>`:""}</div>`
         :`<div class="feedback bad stack" style="gap:6px"><b>${res.note?esc(res.note):"Nicht ganz."} Richtig ist: ${answerText(ex)}</b><div>${ex.sol}</div>${s.retry?"":`<span class="muted small">Eine ähnliche Aufgabe kommt gleich noch einmal.</span>`}</div>`;
       if(!res.ok&&!s.retry)steps.push(s.gen?Object.assign(genEx(s.gen),{retry:true}):Object.assign({},s,{retry:true,ex:Object.assign({},ex)}));
       btn.textContent="Weiter";
       if(!res.ok){const ask=h(`<button class="btn ghost small" type="button">Mentor fragen</button>`);row.prepend(ask);
         ask.onclick=()=>{ask.disabled=true;const mb=h(`<div class="card mentorbox"><span class="eyebrow">Mentor</span><div class="ans"></div></div>`);sb.insertBefore(mb,row);
-          const mine=ex.kind==="choice"?plain(ex.opts[sel]):field.value;
+          const mine=ex.kind==="choice"?plain(ex.opts[sel]):ex.kind==="order"?special.value().map(k=>plain(ex.items[k])).join(" < "):ex.kind==="line"?String(special.value()):ex.kind==="pairs"?`${pairsMiss} Fehlversuche beim Zuordnen`:field.value;
           streamInto($(".ans",mb),`${SYS()}\n\nIch habe diese Aufgabe falsch gelöst.\nAufgabe: ${plain(ex.q)}\nMeine Antwort: ${mine}\nRichtige Antwort: ${plain(answerText(ex))}\nLösungsweg der App: ${plain(ex.sol)}\n\nErkläre mir einfach und anders als der Lösungsweg, wo mein Denkfehler vermutlich liegt und wie ich es beim nächsten Mal richtig mache.`)}}
-      if(steps.length)$(".prog",root).setAttribute("aria-valuemax",steps.length);$(".lbar .eyebrow",root).textContent=`${i+1}/${steps.length}`};
+      if(steps.length)$(".prog",root).setAttribute("aria-valuemax",steps.length);$(".lbar .eyebrow",root).textContent=`${i+1}/${steps.length}`;
+      if(res.ok&&S.auto!==false){c.classList.add("pulse");const bar=h(`<i class="autobar"></i>`);btn.append(bar);autoT=setTimeout(next,1400);
+        const stopAuto=()=>{clearTimeout(autoT);bar.remove()};c.addEventListener("click",stopAuto,{once:true});const d=$("details",fb);if(d)d.addEventListener("toggle",stopAuto,{once:true})}};
   }
 
-  function finish(sb){
-    const rate=total?right/total:1,pass=rate>=.6;
+  function finish(sb){clearTimeout(autoT);
+    const rate=ft?fr/ft:1,pass=rate>=.6,stars=!ft?0:rate>=1?3:rate>=.8?2:rate>=.6?1:0;
+    let newBest=false;if(stop&&!stop.planned&&ft&&mode!=="train"){if(stars>(S.stars[stop.key]||0)){S.stars[stop.key]=stars;newBest=true}}
     if(stop&&pass&&!S.done[stop.key]){S.done[stop.key]=true;xpGain+=25;addXP(25)}
     save();
     const msg=mode==="train"?"Training geschafft.":pass?"Lektion abgeschlossen.":"Fast. Für den Haken brauchst du 60 % beim ersten Versuch.";
-    const c=h(`<div class="card karo stack" style="align-items:center;text-align:center;padding-block:28px"><span class="eyebrow">${esc(title)}</span><h2 style="font-size:1.6rem">${msg}</h2><p class="muted">${total?`${right} von ${total} Aufgaben auf Anhieb richtig`:"Alles gelesen"} · <b style="color:var(--ink)">+${xpGain} XP</b></p><p class="muted small">Heute: ${S.day.d===today()?S.day.n:0} von ${S.goal} Aufgaben</p></div>`);
+    const c=h(`<div class="card karo stack ${stars===3?"party":""}" style="align-items:center;text-align:center;padding-block:28px"><span class="eyebrow">${esc(title)}</span>${ft&&mode!=="train"?starRow(stars,true):""}<h2 style="font-size:1.6rem">${stars===3&&mode!=="train"?"Perfekt!":msg}</h2>${newBest&&S.stars[stop.key]>0?`<p><b>Neuer Bestwert für dieses Thema.</b></p>`:""}${best>=3?`<p class="muted small">Längste Serie: ▲ ${best}</p>`:""}<p class="muted">${ft?`${fr} von ${ft} Aufgaben auf Anhieb richtig`:"Alles gelesen"} · <b style="color:var(--ink)">+${xpGain} XP</b></p><p class="muted small">Heute: ${S.day.d===today()?S.day.n:0} von ${S.goal} Aufgaben</p></div>`);
     sb.append(c);
     const row=h(`<div class="row end"></div>`);
     if(stop&&stop.planned){const re=h(`<button class="btn ghost small" type="button">Lektion neu erstellen</button>`);re.onclick=()=>{delete KI[stop.key];saveKI();openPlanned(stop)};row.append(re)}
     if(mode==="train"){const again=h(`<button class="btn ghost" type="button">Noch eine Runde</button>`);again.onclick=startTraining;row.append(again)}
-    else if(stop&&!stop.planned){const again=h(`<button class="btn ghost" type="button">Nochmal üben</button>`);again.onclick=()=>runSession({title:stop.title,steps:exList(stop.topic.gens,8),stop,mode:"lesson"});row.append(again)}
+    else if(stop&&!stop.planned){const again=h(`<button class="btn ghost" type="button">Noch eine Runde</button>`);again.onclick=()=>runSession({title:stop.title,steps:exList(stop.topic.gens,5),stop,mode:"lesson"});row.append(again)}
     const done=h(`<button class="btn" type="button">Fertig</button>`);done.onclick=closeOverlay;row.append(done);sb.append(row)}
   draw()}
 
-function openStop(st){S.seen[st.key]=true;save();
+function openStop(st){const was=!!S.seen[st.key];S.seen[st.key]=true;save();
   if(st.planned){openPlanned(st);return}
-  const t=st.topic,steps=[...t.steps.map(s=>Object.assign({t:"info"},s)),...(KT[t.id]?[{t:"info",kt:true,title:"So lernen Kinder das heute",body:KT[t.id]}]:[]),...exList(t.gens,6)];
+  const t=st.topic,info=[...t.steps.map(s=>Object.assign({t:"info"},s)),...(KT[t.id]?[{t:"info",kt:true,title:"So lernen Kinder das heute",body:KT[t.id]}]:[])];
+  if(was){runSession({title:t.title,steps:[{t:"intro",info},...exList(t.gens,5)],stop:st});return}
+  const steps=[...t.steps.map(s=>Object.assign({t:"info"},s)),...(KT[t.id]?[{t:"info",kt:true,title:"So lernen Kinder das heute",body:KT[t.id]}]:[]),...exList(t.gens,6)];
   runSession({title:t.title,steps,stop:st})}
 function kiSteps(st,L){return[...L.steps.map(s=>({t:"info",kt:/Kinder das heute/i.test(s.title),title:esc(s.title),html:md(s.body)})),...L.quiz.map((q,k)=>kiEx(st.key,q,k))]}
 
@@ -3193,7 +3712,7 @@ function renderPath(){const box=$("#tab-path");box.innerHTML="";
       if(done){cls+=" done";buoy="✓"}else if(!nextSet&&!st.planned){cls+=" next";nextSet=true}
       if(st.planned){cls+=" ki"+(ready?" ready":"");if(!done)buoy="KI"}
       const sub=st.planned?(done?"KI-Lektion · abgeschlossen":ready?"KI-Lektion · bereit":"Lektion vom Mentor erstellen lassen"):st.sub;
-      const b2=h(`<button class="${cls}" type="button"><span class="buoy">${buoy}</span><span class="txt"><span class="t">${esc(st.title)}</span><br><span class="s">${esc(sub)}</span></span>${!st.planned&&st.topic.steps.some(x=>x.w)?`<span class="tag">Animation</span>`:""}</button>`);
+      const b2=h(`<button class="${cls}" type="button"><span class="buoy">${buoy}</span><span class="txt"><span class="t">${esc(st.title)}</span><br><span class="s">${esc(sub)}</span></span>${!st.planned&&S.seen[st.key]?starRow(S.stars[st.key]||0):!st.planned&&st.topic.steps.some(x=>x.w)?`<span class="tag">Animation</span>`:""}</button>`);
       b2.onclick=()=>openStop(st);route.append(b2)});
     box.append(sec)})}
 
@@ -3213,7 +3732,7 @@ function startTraining(){const pool=trainingPool();if(!pool.size)return;
   runSession({title:"Training",steps,mode:"train"})}
 function renderTrain(){const box=$("#tab-train");box.innerHTML="";const pool=trainingPool(),dayN=S.day.d===today()?S.day.n:0;
   const head=h(`<div class="card daily"><div class="ring">${ringSVG(dayN/S.goal,"var(--signal)")}<b>${dayN}/${S.goal}</b></div><div class="daily-txt"><span class="eyebrow">Heute</span><h2>${dayN>=S.goal?"Tagesziel geschafft":"Tagesziel: "+S.goal+" Aufgaben"}</h2><span class="muted small">Gemischte Aufgaben aus allem, was du schon angefangen hast. Was dir schwerfällt, kommt öfter dran.</span></div></div>`);
-  box.append(head);
+  box.append(head);box.append(gamesCard());
   if(!pool.size){box.append(h(`<p class="notice">Noch nichts zum Trainieren. Öffne unter „Lernen“ eine Lektion, dann landen ihre Aufgaben automatisch hier.</p>`));return}
   const row=h(`<div class="row"><button class="btn" type="button">Training starten (10 Aufgaben)</button></div>`);$("button",row).onclick=startTraining;box.append(row);
   const ids=[...pool.keys()].sort((a,b)=>skillOf(a).s-skillOf(b).s);
@@ -3251,7 +3770,7 @@ function settingsShell(title){const root=openOverlay();root.innerHTML="";
 function openSettings(){const body=settingsShell("Einstellungen");
   const goal=h(`<div class="card stack"><span class="eyebrow">Tagesziel</span><div class="row" role="group" aria-label="Aufgaben pro Tag"></div></div>`);
   [10,20,30,50].forEach(n=>{const b=h(`<button class="btn small ${S.goal===n?"":"ghost"}" type="button" aria-pressed="${S.goal===n}">${n} Aufgaben</button>`);b.onclick=()=>{S.goal=n;save();openSettings()};$(".row",goal).append(b)});
-  body.append(goal);body.append(themeCard());
+  body.append(goal);body.append(tempoCard());body.append(themeCard());
   const ai=h(`<div class="card stack"><span class="eyebrow">Mentor (KI)</span>
     <fieldset class="radios"><legend class="muted small">Welche KI soll helfen?</legend>
       <label><input type="radio" name="prov" value="auto"> Automatisch <span class="muted">(Claude, wenn verfügbar, sonst Gemini)</span></label>
@@ -3341,6 +3860,97 @@ function backupCard(){
         msg.innerHTML=`<p class="feedback ok"><b>Eingespielt.</b> Die App startet neu …</p>`;setTimeout(()=>location.reload(),900)}
       catch(x){msg.innerHTML=`<p class="feedback bad">Das Einspielen hat nicht geklappt. Der Speicher des Browsers ist gesperrt oder voll.</p>`}}};
   return c}
+
+
+function starRow(n,big=false){return `<span class="stars${big?" big":""}" aria-label="${n} von 3 Sternen">${[1,2,3].map(k=>`<span class="${k<=n?"on":""}">★</span>`).join("")}</span>`}
+function canSpeak(){return typeof speechSynthesis!=="undefined"&&typeof SpeechSynthesisUtterance!=="undefined"}
+function speak(html){if(!canSpeak())return;try{speechSynthesis.cancel();
+  let t=plain(String(html)).replace(/(\d{1,2}):(\d{2}) Uhr/g,(_,h,m)=>`${h} Uhr ${+m}`).replace(/\((\d+)\/(\d+)\)/g,"$1 $2tel").replace(/·/g," mal ").replace(/(\d)\s*:\s*(\d)/g,"$1 geteilt durch $2").replace(/[−–]/g," minus ").replace(/\+/g," plus ").replace(/=/g," ist ").replace(/\?/g,"?").replace(/\[Abbildung\]/g,"").replace(/\s+/g," ");
+  const u=new SpeechSynthesisUtterance(t);u.lang="de-DE";u.rate=.92;const v=speechSynthesis.getVoices().find(x=>/^de/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
+function tempoCard(){const on=S.auto!==false,c=h(`<div class="card stack"><span class="eyebrow">Tempo</span><label class="chk"><input type="checkbox" id="autonext" ${on?"checked":""}> Nach richtiger Antwort automatisch weiter</label><p class="muted small">Spart Klicks. Tippst du auf die Karte oder den Lösungsweg, hält es an.</p>${canSpeak()?`<label class="chk"><input type="checkbox" id="vorlesen" ${S.vorlesen?"checked":""}> Grundschul-Aufgaben automatisch vorlesen <span class="muted small">(für Kinder, die noch nicht lesen)</span></label>`:""}</div>`);
+  const vl=$("#vorlesen",c);if(vl)vl.onchange=e=>{S.vorlesen=e.target.checked;save()};
+  $("#autonext",c).onchange=e=>{S.auto=e.target.checked;save()};return c}
+/* ---------- Spiele: Blitzrechnen, Zahlen-Bubbles, Memory ---------- */
+function gameBest(k){return(S.games||{})[k]}
+function setBest(k,v,lowerBetter=false){S.games=S.games||{};const o=S.games[k];if(o==null||(lowerBetter?v<o:v>o)){S.games[k]=v;save();return true}return false}
+function gamesCard(){const c=h(`<div class="stack" style="gap:10px"><span class="eyebrow">Spiele</span><div class="games"></div></div>`),g=$(".games",c);
+  const bb=Math.max(0,...BLITZ.map(m=>gameBest("blitz:"+m[0])||0)),bu=Math.max(0,...BUB.map(m=>gameBest("bubble:"+m[0])||0)),me=gameBest("memory");
+  [["Blitzrechnen","60 Sekunden Kopfrechnen. Wie viele schaffst du?",bb?`Rekord ${bb}`:"Noch kein Rekord",openBlitz,`<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>`],
+   ["Zahlen-Bubbles","Tippe Blasen an, die zusammen die Zielzahl ergeben.",bu?`Rekord ${bu}`:"Noch kein Rekord",openBubbles,`<circle cx="8" cy="9" r="5"/><circle cx="16.5" cy="15" r="4.5"/><circle cx="17" cy="5.5" r="2.5"/>`],
+   ["Memory","Finde Bruch, Dezimalzahl und Prozent, die gleich viel sind.",me?`Rekord ${me} Züge`:"Noch kein Rekord",openMemory,`<rect x="3" y="4" width="8" height="8" rx="1.5"/><rect x="13" y="4" width="8" height="8" rx="1.5"/><rect x="3" y="14" width="8" height="6" rx="1.5"/><rect x="13" y="14" width="8" height="6" rx="1.5"/>`]
+  ].forEach(([t,d,r,fn,ic])=>{const b=h(`<button type="button" class="card game"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">${ic}</svg><span class="txt"><b>${t}</b><span class="muted small">${d}</span></span><span class="tag">${r}</span></button>`);b.onclick=fn;g.append(b)});
+  return c}
+function gameShell(title){const root=openOverlay();root.innerHTML="";
+  const w=h(`<div class="wrap"><div class="lbar"><button class="x" type="button" aria-label="Spiel beenden">×</button><h2 style="flex:1;font-size:1.15rem">${title}</h2><span class="chip" id="gsc">0</span></div><div class="stack" id="gb"></div></div>`);
+  root.append(w);let stop=()=>{};$(".x",w).onclick=()=>{stop();closeOverlay()};return{body:$("#gb",w),score:$("#gsc",w),onStop:f=>{stop=f}}}
+function modePicker(body,modes,key,start){body.innerHTML="";
+  const c=h(`<div class="card stack"><span class="eyebrow">Wähle</span><div class="stack" style="gap:8px"></div></div>`);
+  modes.forEach(m=>{const best=gameBest(key+":"+m[0]);const b=h(`<button type="button" class="opt" style="display:flex;justify-content:space-between;gap:10px"><span>${m[1]}</span><span class="muted small">${best?`Rekord ${best}`:""}</span></button>`);b.onclick=()=>start(m);$(".stack",c).append(b)});
+  body.append(c)}
+function timerBar(sec,onEnd){const el=h(`<div class="gtime"><i></i></div>`),bar=$("i",el);const t0=performance.now();let raf,dead=false;
+  const f=t=>{if(dead)return;const p=Math.min(1,(t-t0)/(sec*1000));bar.style.width=(100-p*100)+"%";bar.style.background=p>.8?"var(--err)":"var(--signal)";if(p>=1){dead=true;onEnd();return}raf=requestAnimationFrame(f)};raf=requestAnimationFrame(f);
+  el.kill=()=>{dead=true;cancelAnimationFrame(raf)};return el}
+function gameOver(body,score,key,txt,again,lowerBetter=false){const rec=setBest(key,score,lowerBetter);
+  body.innerHTML="";const c=h(`<div class="card karo stack" style="align-items:center;text-align:center;padding-block:26px"><span class="eyebrow">Ergebnis</span><h2 style="font-size:2.2rem">${score}</h2><p>${txt}</p><p class="muted">${rec?`<b style="color:var(--ink)">Neuer Rekord!</b>`:`Rekord: ${gameBest(key)}`}</p></div>`);
+  if(rec)c.classList.add("party");body.append(c);
+  const r=h(`<div class="row end"><button class="btn ghost" type="button">Andere Auswahl</button><button class="btn" type="button">Nochmal</button></div>`);const [o,n]=r.querySelectorAll("button");o.onclick=again.pick;n.onclick=again.same;body.append(r)}
+
+/* Blitzrechnen */
+const BLITZ=[["plus","Plus und Minus bis 100",()=>{if(Math.random()<.5){const a=ri(5,70),b=ri(3,100-a);return[`${a} + ${b}`,a+b]}const a=ri(20,100),b=ri(3,a);return[`${a} ${MINUS} ${b}`,a-b]}],
+  ["mal","Einmaleins",()=>{const a=ri(2,10),b=ri(2,10);return[`${a} · ${b}`,a*b]}],
+  ["geteilt","Geteilt (Einmaleins rückwärts)",()=>{const a=ri(2,10),b=ri(2,10);return[`${a*b} : ${a}`,b]}],
+  ["minus","Mit negativen Zahlen",()=>{const a=ri(-20,20),b=ri(-20,20),t=ri(0,2);return t===0?[`${P(a)} + ${P(b)}`,a+b]:t===1?[`${P(a)} ${MINUS} ${P(b)}`,a-b]:(()=>{const x=ri(-9,9),y=ri(-9,9);return[`${P(x)} · ${P(y)}`,x*y]})()}],
+  ["prozent","Prozent im Kopf",()=>{const p=pick([10,20,25,50,75]),G0=pick([20,40,60,80,100,120,200,240,400,500,800]);return[`${p} % von ${G0}`,G0*p/100]}],
+  ["gross","Kopfrechnen mit Nullen",()=>{const a=ri(2,9),b=ri(2,9),za=pick([10,100]),zb=pick([1,10]);return Math.random()<.6?[`${fmt(a*za)} · ${fmt(b*zb)}`,a*za*b*zb]:[`${fmt(a*b*100)} : ${a}`,b*100]}]];
+function openBlitz(){const sh=gameShell("Blitzrechnen");let mode=null;
+  const pickM=()=>{sh.onStop(()=>{});sh.score.textContent="0";modePicker(sh.body,BLITZ,"blitz",m=>{mode=m;play()})};
+  const play=()=>{let score=0,miss=0,cur,typed="",over=false;const body=sh.body;body.innerHTML="";sh.score.textContent="0";
+    const card=h(`<div class="card stack blitz" style="align-items:center;text-align:center"><div class="bq term"></div><div class="ba" aria-live="polite"></div></div>`);
+    const pad=h(`<div class="keypad">${["7","8","9","4","5","6","1","2","3",MINUS,"0","⌫"].map(k=>`<button type="button" data-k="${k}">${k}</button>`).join("")}</div>`);
+    const tb=timerBar(60,()=>end());body.append(tb,card,pad);
+    const nextQ=()=>{cur=mode[2]();typed="";$(".bq",card).innerHTML=cur[0]+" =";$(".ba",card).textContent="?";card.classList.remove("ok","bad")};
+    const press=k=>{if(over)return;if(k==="⌫")typed=typed.slice(0,-1);else if(k===MINUS||k==="-"){typed=typed.startsWith("-")?typed.slice(1):"-"+typed}else if(/^\d$/.test(k))typed+=k;
+      $(".ba",card).textContent=typed?typed.replace("-",MINUS):"?";const want=String(cur[1]);
+      if(typed===want){score++;countTask();sh.score.textContent=score;card.classList.add("ok");setTimeout(nextQ,160)}
+      else if(typed.replace("-","").length>=want.replace("-","").length&&typed!=="-"){miss++;card.classList.add("bad");setTimeout(()=>{typed="";$(".ba",card).textContent="?";card.classList.remove("bad")},300)}};
+    pad.querySelectorAll("button").forEach(b=>b.onclick=()=>press(b.dataset.k));
+    const kh=e=>{if(e.key==="Backspace")press("⌫");else if(e.key==="-")press("-");else if(/^\d$/.test(e.key))press(e.key)};document.addEventListener("keydown",kh);
+    const end=()=>{if(over)return;over=true;tb.kill();document.removeEventListener("keydown",kh);if(score)addXP(score);
+      gameOver(body,score,"blitz:"+mode[0],`richtige Aufgaben in 60 Sekunden${miss?`, ${miss} daneben`:""}. +${score} XP`,{pick:pickM,same:play})};
+    sh.onStop(()=>{over=true;tb.kill();document.removeEventListener("keydown",kh)});nextQ()};
+  pickM()}
+
+/* Zahlen-Bubbles */
+const BUB=[["10","Mach 10 (Zahlen 1 bis 9)",10,()=>ri(1,9),1],["100","Mach 100 (Zehner und Fünfer)",100,()=>ri(1,19)*5,1],["1","Mach 1 (Zehntel)",1,()=>ri(1,9)/10,.1],["20","Mach 20 (auch negative)",20,()=>ri(-5,18),1]];
+function openBubbles(){const sh=gameShell("Zahlen-Bubbles");let mode=null;
+  const pickM=()=>{sh.onStop(()=>{});sh.score.textContent="0";modePicker(sh.body,BUB,"bubble",m=>{mode=m;play()})};
+  const play=()=>{let score=0,over=false,sel=[],vals=[];const body=sh.body,T=mode[2],eq=(a,b)=>Math.abs(a-b)<1e-9;body.innerHTML="";sh.score.textContent="0";
+    const info=h(`<div class="card stack" style="align-items:center;text-align:center;gap:4px"><span class="eyebrow">Ziel</span><div class="bq term">${fmt(T)}</div><div class="muted small" id="bsum">Ausgewählt: 0</div></div>`);
+    const grid=h(`<div class="bubbles"></div>`),tb=timerBar(60,()=>end());body.append(tb,info,grid);
+    const solvable=()=>{for(let i=0;i<vals.length;i++)for(let j=i+1;j<vals.length;j++){if(eq(vals[i]+vals[j],T))return true;for(let k=j+1;k<vals.length;k++)if(eq(vals[i]+vals[j]+vals[k],T))return true}return false};
+    const fix=()=>{let tries=0;while(!solvable()&&tries++<50){const i=ri(0,vals.length-1),j=(i+1+ri(0,vals.length-2))%vals.length,a=vals[i],need=Math.round((T-a)*10)/10;if(need!==0&&(mode[0]==="20"||need>0)&&Math.abs(need)<T)vals[j]=need;else vals[i]=mode[3]()}};
+    const draw=()=>{grid.innerHTML="";vals.forEach((v,i)=>{const b=h(`<button type="button" class="bub" aria-pressed="${sel.includes(i)}">${fmt(v)}</button>`);b.onclick=()=>tap(i,b);grid.append(b)});
+      const s=sel.reduce((a,i)=>a+vals[i],0);$("#bsum",info).textContent=`Ausgewählt: ${fmt(Math.round(s*10)/10)}`};
+    const tap=(i,b)=>{if(over)return;if(sel.includes(i))sel=sel.filter(x=>x!==i);else sel.push(i);const s=Math.round(sel.reduce((a,k)=>a+vals[k],0)*10)/10;
+      if(eq(s,T)){score++;countTask();sh.score.textContent=score;sel.forEach(k=>vals[k]=mode[3]());sel=[];fix();draw();grid.classList.add("pop");setTimeout(()=>grid.classList.remove("pop"),250);return}
+      if((mode[0]!=="20"&&s>T)||sel.length>3){grid.classList.add("bad");setTimeout(()=>grid.classList.remove("bad"),300);sel=[]}draw()};
+    for(let i=0;i<12;i++)vals.push(mode[3]());fix();draw();
+    const end=()=>{if(over)return;over=true;tb.kill();if(score)addXP(score*2);gameOver(body,score,"bubble:"+mode[0],`mal die ${fmt(T)} gebaut. +${score*2} XP`,{pick:pickM,same:play})};
+    sh.onStop(()=>{over=true;tb.kill()})};
+  pickM()}
+
+/* Memory: Bruch, Dezimalzahl, Prozent */
+function openMemory(){const sh=gameShell("Memory");
+  const play=()=>{const body=sh.body;body.innerHTML="";let moves=0,open=[],found=0,busy=false;sh.score.textContent="0 Züge";
+    const sel=shuffle(BDP).slice(0,6),cards=shuffle(sel.flatMap((r,i)=>{const m=ri(0,2),a=[FR(R(r[0],r[1])),r[2],r[3]];const x=m===2?[a[1],a[2]]:[a[0],a[m+1]];return[{t:x[0],p:i},{t:x[1],p:i}]}));
+    body.append(h(`<p class="muted small">Decke immer zwei Karten auf. Gleich viel? Dann bleiben sie liegen.</p>`));
+    const grid=h(`<div class="memo"></div>`);body.append(grid);
+    cards.forEach((c,i)=>{const b=h(`<button type="button" class="mc" aria-label="Karte ${i+1}"><span class="back">?</span><span class="front">${c.t}</span></button>`);
+      b.onclick=()=>{if(busy||b.classList.contains("up"))return;b.classList.add("up");open.push([b,c]);
+        if(open.length===2){moves++;sh.score.textContent=moves+" Züge";const [[b1,c1],[b2,c2]]=open;open=[];
+          if(c1.p===c2.p){b1.classList.add("done");b2.classList.add("done");found++;countTask();if(found===6)setTimeout(()=>{addXP(5);gameOver(body,moves,"memory",`Züge für alle 6 Paare. +5 XP`,{pick:play,same:play},true)},500)}
+          else{busy=true;setTimeout(()=>{b1.classList.remove("up");b2.classList.remove("up");busy=false},900)}}};grid.append(b)})};
+  play()}
 
 /* ---------- Start ---------- */
 document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>{currentTab=b.dataset.tab;
