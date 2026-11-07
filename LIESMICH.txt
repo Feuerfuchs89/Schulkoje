@@ -53,3 +53,6 @@ Neu in dieser Version: Grundschule Klasse 1 bis 3
   dass Grundschul-Aufgaben automatisch vorgelesen werden.
 - Sachunterricht Klasse 1–2 in Bio (Sinne, Jahreszeiten, Tierkinder, Obst und Gemüse,
   Gesund bleiben) und Physik (Tag und Nacht, Warm und kalt, Straßenverkehr).
+
+Neu in dieser Version: Physik, Band "Elektrotechnik & Löten · Praxis" (im Aufbau):
+Kapitel 1 bis 6, je mit Lektion, Aufgaben (leicht, mittel, schwer), Quiz und Küchentisch-Experiment.

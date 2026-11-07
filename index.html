@@ -3493,6 +3493,254 @@ function rankOf(xp){let i=0;RANKS.forEach((r,k)=>{if(xp>=r[0])i=k});return{i,nam
 /* ---------- Themen-Verzeichnis ---------- */
 const GEN_NAMES={rechenregeln:"Rechenregeln",teilbarkeit:"Teilbarkeitsregeln",ggt:"ggT bestimmen",kgv:"kgV bestimmen",primzahl:"Primzahlen erkennen",bruchbild:"Brüche ablesen",kuerzen:"Brüche kürzen",erweitern:"Brüche erweitern",bruchvergleich:"Brüche vergleichen",bruchadd:"Brüche plus/minus",bruchmul:"Brüche mal/geteilt",dezumw:"Bruch ↔ Dezimalzahl",dezrech:"Kommazahlen rechnen",flaeche:"Fläche und Umfang",winkelart:"Winkelarten",winkelrechnen:"Winkel berechnen",zahlenstrahl:"Zahlenstrahl lesen",negativ:"Negative Zahlen",prozent:"Prozentrechnung",dreisatz:"Dreisatz",term:"Terme vereinfachen",gleichung:"Gleichungen lösen"};
 Object.assign(GEN_NAMES,GEN_NAMES_EXTRA,GEN_NAMES_810,GEN_NAMES_1112,GEN_NAMES_PH,GEN_NAMES_PH2,GEN_NAMES_S,GEN_NAMES_BIO,GEN_NAMES_M2,GEN_NAMES_G);
+/* =====================================================================
+   Schulkoje: Modul "Elektrotechnik & Löten" (Physik)
+   EINFÜGEN in index.html: direkt NACH der Zeile
+     Object.assign(GEN_NAMES,GEN_NAMES_EXTRA,GEN_NAMES_810, ... );
+   und VOR der Zeile, die mit  SUBJECTS.forEach(su=>su.bands.forEach(b=>{  beginnt.
+   Danach in sw.js die Zahl bei CACHE erhöhen.
+   Stand: Kapitel 1 bis 6
+   ===================================================================== */
+{
+const ELC=(q,right,wrong,sol)=>{const o=shuffle([right,...wrong]);return CH(q,o,o.indexOf(right),sol)};
+const EL_TOPICS=[];
+
+/* ---------- Kapitel 1: Spannung, Strom, Widerstand ---------- */
+Object.assign(G,{
+  el1_einh(){ /* leicht */
+    if(Math.random()<.5){const x=pick([20,50,100,250,500,750,1500,2000]);
+      return{q:`Ein Gerät braucht einen Strom von ${fmt(x)} mA. Wie viel sind das in Ampere?${unit("A")}`,kind:"num",ans:R(x,1000),
+        sol:`1 A = 1000 mA. Also durch 1000 teilen: ${fmt(x)} : 1000 = <b>${fmt(x/1000)} A</b>.`}}
+    const a=pick([.02,.05,.1,.25,.5,1.5,2]),m=Math.round(a*1000);
+    return{q:`Ein Ladegerät liefert ${fmt(a)} A. Wie viel sind das in Milliampere?${unit("mA")}`,kind:"num",ans:R(m),
+      sol:`1 A = 1000 mA. Also mit 1000 malnehmen: ${fmt(a)} · 1000 = <b>${fmt(m)} mA</b>.`}},
+  el1_vergl(){ /* mittel */
+    const vals=shuffle([20,50,150,300,450,800,1200]).slice(0,3);
+    const lab=v=>v>=100?`${fmt(v/1000)} A`:`${fmt(v)} mA`;
+    const mx=Math.max(...vals),k=vals.indexOf(mx);
+    return CH("Drei Geräte ziehen unterschiedlich viel Strom. Welcher Strom ist am <b>größten</b>?",vals.map(lab),k,
+      `Alles in mA umrechnen: ${vals.map(v=>fmt(v)+" mA").join(", ")}. Der größte Wert ist <b>${lab(mx)}</b>. Tipp: Erst alles in dieselbe Einheit umrechnen, dann vergleichen.`)},
+  el1_prop(){ /* schwer */
+    const I0=pick([120,240,360,600]);
+    const sc=pick([
+      {t:"Der Widerstand wird <b>doppelt</b> so groß. Die Spannung bleibt gleich.",n:1,d:2,s:"Bei gleicher Spannung gilt: doppelter Widerstand, halber Strom."},
+      {t:"Der Widerstand wird <b>dreimal</b> so groß. Die Spannung bleibt gleich.",n:1,d:3,s:"Bei gleicher Spannung gilt: dreifacher Widerstand, ein Drittel des Stroms."},
+      {t:"Der Widerstand wird <b>halbiert</b>. Die Spannung bleibt gleich.",n:2,d:1,s:"Bei gleicher Spannung gilt: halber Widerstand, doppelter Strom."},
+      {t:"Die Spannung wird <b>verdoppelt</b>. Der Widerstand bleibt gleich.",n:2,d:1,s:"Bei gleichem Widerstand gilt: doppelte Spannung, doppelter Strom."},
+      {t:"Die Spannung wird <b>verdreifacht</b>. Der Widerstand bleibt gleich.",n:3,d:1,s:"Bei gleichem Widerstand gilt: dreifache Spannung, dreifacher Strom."},
+      {t:"Die Spannung wird <b>halbiert</b>. Der Widerstand bleibt gleich.",n:1,d:2,s:"Bei gleichem Widerstand gilt: halbe Spannung, halber Strom."}]);
+    const res=I0*sc.n/sc.d;
+    return{q:`Ein Stromkreis besteht aus einer Spannungsquelle und einem Widerstand. Es fließen ${fmt(I0)} mA. ${sc.t} Wie groß ist die Stromstärke danach?${unit("mA")}`,kind:"num",ans:R(I0*sc.n,sc.d),
+      sol:`${sc.s} ${fmt(I0)} mA ${sc.n===1?":":"·"} ${sc.n===1?sc.d:sc.n}${sc.n!==1&&sc.d!==1?" : "+sc.d:""} = <b>${fmt(res)} mA</b>.`}},
+  el1_quiz(){ /* Quiz */
+    return pick([
+      ()=>ELC("In welcher Einheit misst man die Stromstärke?","Ampere (A)",["Volt (V)","Ohm (Ω)"],"Die Stromstärke I misst man in <b>Ampere (A)</b>. Volt ist die Einheit der Spannung, Ohm die des Widerstands."),
+      ()=>ELC("Was treibt den Strom in einem Stromkreis an?","Die Spannung der Quelle",["Der Widerstand","Die Leitung selbst"],"Die <b>Spannung</b> (zum Beispiel einer Batterie) treibt die Ladungen an. Der Widerstand bremst sie."),
+      ()=>ELC("Im Wasserbild entspricht der elektrische Widerstand …","einer engen Stelle im Rohr",["dem Wasserdruck der Pumpe","der Wassermenge pro Sekunde"],"Druck der Pumpe = Spannung, Wassermenge pro Sekunde = Stromstärke, <b>enge Stelle = Widerstand</b>.")
+    ])()}
+});
+Object.assign(GEN_NAMES,{el1_einh:"Strom: mA und A umrechnen",el1_vergl:"Ströme vergleichen",el1_prop:"Strom bei anderer Spannung oder Widerstand",el1_quiz:"Quiz: Spannung, Strom, Widerstand"});
+
+EL_TOPICS.push(T("p-el1","Spannung, Strom, Widerstand","V, A, Ω: die drei Grundgrößen",["el1_einh","el1_vergl","el1_prop","el1_quiz"],[
+ ["Lernziel und Wasserbild",`<p class="tip">Lernziel: Du kannst erklären, was Spannung, Stromstärke und Widerstand sind, und du kennst ihre Einheiten V, A und Ω.</p><p>Ein <b>Stromkreis</b> ist ein geschlossener Weg, auf dem elektrische Ladung fließt. Am besten stellst du dir einen Wasserkreislauf vor: Eine Pumpe drückt Wasser durch ein Rohr.</p><ul class="rules"><li><b>Pumpe</b> = Batterie (die <b>Quelle</b>)</li><li><b>Wasserdruck</b> = Spannung</li><li><b>Wassermenge pro Sekunde</b> = Stromstärke</li><li><b>Enge Stelle im Rohr</b> = Widerstand</li></ul><p>Was in den Drähten fließt, sind winzige, negativ geladene Teilchen, die <b>Elektronen</b>. Warum sie das tun, klären wir in Teil 3.</p>`],
+ ["Spannung U in Volt (V)",`<p>Die <b>Spannung</b> sagt, wie stark die Quelle die Ladungen antreibt. Man misst sie in <b>Volt (V)</b>, Formelzeichen U.</p><div class="tbl-wrap"><table class="tbl"><tr><th>Quelle</th><th>Spannung</th></tr><tr><td>Mignon-Batterie (AA)</td><td>1,5 V</td></tr><tr><td>Flachbatterie</td><td>4,5 V</td></tr><tr><td>Auto-Batterie</td><td>etwa 12 V</td></tr><tr><td>Steckdose</td><td>230 V (lebensgefährlich)</td></tr></table></div><p>Spannung ist auch da, wenn gar nichts fließt, wie Druck im Schlauch bei zugedrehtem Hahn.</p>`],
+ ["Stromstärke I in Ampere (A)",`<p>Die <b>Stromstärke</b> sagt, wie viel Ladung pro Sekunde durch den Draht fließt. Einheit: <b>Ampere (A)</b>, Formelzeichen I.</p><p>Kleine Ströme gibt man in <b>Milliampere (mA)</b> an. Milli heißt Tausendstel: <b>1 A = 1000 mA</b>. Eine kleine LED braucht meist etwa 10 bis 20 mA, ein Handy-Ladegerät oft 1 bis 2 A.</p><p class="tip">Alltagsbild: Im Gartenschlauch ist die Stromstärke die Menge Wasser, die pro Sekunde herauskommt.</p>`],
+ ["Widerstand R in Ohm (Ω)",`<p>Der <b>Widerstand</b> bremst den Strom. Man misst ihn in <b>Ohm (Ω)</b>, das ist der griechische Buchstabe Omega. Formelzeichen R. Große Werte schreibt man mit <b>Kilo</b>: <b>1 kΩ = 1000 Ω</b>.</p><p>Ein langer, dünner Draht hat mehr Widerstand als ein kurzer, dicker. Kupferkabel haben sehr wenig Widerstand, Gummi so viel, dass praktisch kein Strom fließt.</p><p>Bei gleicher Spannung gilt: <b>doppelter Widerstand, halber Strom.</b> Bei gleichem Widerstand gilt: <b>doppelte Spannung, doppelter Strom.</b></p>`],
+ ["Merkkasten",`<p class="eq">U in Volt (V)<br>I in Ampere (A)<br>R in Ohm (Ω)</p><ul class="rules"><li>Die <b>Spannung treibt</b> den Strom an.</li><li>Der <b>Widerstand bremst</b> ihn.</li><li>1 A = 1000 mA und 1 kΩ = 1000 Ω.</li><li>Gleiche Spannung: Widerstand verdoppelt, Strom halbiert.</li></ul>`],
+ ["Sicherheit",`<p class="warn">Probiere nur mit Kleinspannung bis 12 V Gleichspannung (zum Beispiel Batterien). Die Steckdose (230 V) ist lebensgefährlich: nie damit experimentieren. Eine Batterie darf man nie nur mit einem Draht verbinden (Kurzschluss), denn der Draht wird heiß. Unter 14 Jahren nur mit einem Erwachsenen.</p>`]
+]));
+Object.assign(KT,{"p-el1":`<p><b>Experiment: Widerstand erleben.</b> Material: Flachbatterie 4,5 V (oder drei 1,5-V-Batterien im Halter), Glühlämpchen für 3,5 bis 4,5 V mit Fassung, 3 Kabel mit Krokodilklemmen, Büroklammer, Alufolienstreifen, Bleistiftmine (etwa 5 cm), Radiergummi.</p><ol class="rules"><li>Baue den Stromkreis: Batterie, Kabel, Lämpchen, Kabel zurück zur Batterie. Das Lämpchen leuchtet.</li><li>Löse ein Kabel in der Mitte und klemme nacheinander Büroklammer, Alufolie, Bleistiftmine und Radiergummi in die Lücke.</li><li>Beobachte die Helligkeit. Büroklammer und Alufolie: hell. Bleistiftmine: dunkler oder gar nicht (das hängt von der Mine ab, bitte ausprobieren). Radiergummi: aus.</li></ol><p>Erklärung: Je größer der Widerstand, desto weniger Strom fließt und desto dunkler leuchtet das Lämpchen.</p><p class="warn">Nur Batterie bis 4,5 V verwenden. Nie die Batterie kurzschließen. Die Mine kann warm werden, den Kreis nach kurzer Zeit wieder öffnen. Unter 14 Jahren mit Aufsicht eines Erwachsenen.</p><p><b>Typischer Fehler:</b> „Strom wird im Lämpchen verbraucht.“ Die Stromstärke ist im ganzen Kreis gleich, das Lämpchen gibt Energie ab.</p>`});
+
+/* ---------- Kapitel 2: Ohmsches Gesetz ---------- */
+Object.assign(G,{
+  el2_i(){ /* leicht: I = U : R */
+    const U=pick([3,4.5,6,9,12]),Rr=pick([10,15,20,30,50,60,100]);
+    return{q:`Ein Lämpchen hat im Betrieb einen Widerstand von ${fmt(Rr)} Ω und hängt an ${fmt(U)} V. Wie groß ist die Stromstärke?${unit("A")}`,kind:"num",ans:R(Math.round(U*10),Rr*10),
+      sol:`I = U : R = ${fmt(U)} V : ${fmt(Rr)} Ω = <b>${fmt(U/Rr)} A</b>.`}},
+  el2_ur(){ /* mittel: U oder R, mit mA */
+    if(Math.random()<.5){let Rr,mA,u;do{Rr=pick([100,150,220,330,470]);mA=pick([10,20,30,40,50]);u=Rr*mA/1000}while(u>12);
+      return{q:`Durch einen Widerstand von ${fmt(Rr)} Ω fließen ${fmt(mA)} mA. Welche Spannung liegt an ihm an?${unit("V")}`,kind:"num",ans:R(Rr*mA,1000),
+        sol:`Erst in Ampere umrechnen: ${fmt(mA)} mA = ${fmt(mA/1000)} A. Dann U = R · I = ${fmt(Rr)} Ω · ${fmt(mA/1000)} A = <b>${fmt(u)} V</b>.`}}
+    const U=pick([3,6,9,12]),mA=pick([20,30,40,50,60,100,150,200,300,500]),Rr=U*1000/mA;
+    return{q:`An einem Bauteil liegen ${fmt(U)} V an, es fließen ${fmt(mA)} mA. Wie groß ist der Widerstand?${unit("Ω")}`,kind:"num",ans:R(U*1000,mA),
+      sol:`Erst in Ampere umrechnen: ${fmt(mA)} mA = ${fmt(mA/1000)} A. Dann R = U : I = ${fmt(U)} V : ${fmt(mA/1000)} A = <b>${fmt(Rr)} Ω</b>.`}},
+  el2_zwei(){ /* schwer: zwei Schritte */
+    const Rr=pick([10,20,30,40,60,100]),U1=pick([3,6,9,12]);let U2;do{U2=pick([3,6,9,12])}while(U2===U1);
+    const I1=U1*1000/Rr,I2=U2*1000/Rr;
+    return{q:`Ein gewöhnlicher Widerstand liegt an ${fmt(U1)} V. Dabei fließen ${fmt(I1)} mA. Nun wird er an ${fmt(U2)} V angeschlossen. Wie groß ist der Strom dann?${unit("mA")}`,kind:"num",ans:R(U2*1000,Rr),
+      sol:`Schritt 1: Widerstand ausrechnen. ${fmt(I1)} mA = ${fmt(I1/1000)} A, also R = U : I = ${fmt(U1)} V : ${fmt(I1/1000)} A = ${fmt(Rr)} Ω.<br>Schritt 2: I = U : R = ${fmt(U2)} V : ${fmt(Rr)} Ω = ${fmt(U2/Rr)} A = <b>${fmt(I2)} mA</b>.`}},
+  el2_quiz(){
+    return pick([
+      ()=>ELC("Wie lautet das Ohmsche Gesetz, umgestellt nach der Spannung?","U = R · I",["U = R : I","U = I : R"],"Aus R = U : I folgt durch Malnehmen mit I: <b>U = R · I</b>. Probe: 10 Ω · 0,5 A = 5 V, und 5 V : 0,5 A = 10 Ω."),
+      ()=>ELC("Ein Widerstand hat 100 Ω. Die Spannung an ihm wird verdoppelt. Was passiert mit dem Strom?","Er wird doppelt so groß",["Er wird halb so groß","Er bleibt gleich"],"Bei gleichem Widerstand gilt I = U : R. Doppelte Spannung ergibt <b>doppelten Strom</b>."),
+      ()=>ELC("Wo gilt das Ohmsche Gesetz mit gleichbleibendem Widerstand?","Bei einem Metalldraht mit gleicher Temperatur",["Bei einer LED","Bei einer Glühlampe, die sich aufheizt"],"Nur bei Bauteilen mit <b>konstantem Widerstand</b>. Bei der Glühlampe steigt R mit der Hitze, die LED hat eine eigene Kennlinie (mehr dazu in Kapitel 7).")
+    ])()}
+});
+Object.assign(GEN_NAMES,{el2_i:"Ohm: Strom berechnen",el2_ur:"Ohm: Spannung oder Widerstand",el2_zwei:"Ohm: Aufgaben in zwei Schritten",el2_quiz:"Quiz: Ohmsches Gesetz"});
+
+EL_TOPICS.push(T("p-el2","Das Ohmsche Gesetz","U = R · I, rechnen mit V, A und Ω",["el2_i","el2_ur","el2_zwei","el2_quiz"],[
+ ["Lernziel und Idee",`<p class="tip">Lernziel: Du kannst aus zwei der drei Größen U, I und R die dritte ausrechnen.</p><p>In Kapitel 1 hast du gesehen: Bei gleichem Widerstand gibt doppelte Spannung doppelten Strom. Der Physiker Georg Simon Ohm hat das in eine Formel gefasst, das <b>Ohmsche Gesetz</b>:</p><p class="eq">R = U : I</p><p>Du kannst die Formel umstellen, je nachdem, was gesucht ist:</p><p class="eq">U = R · I<br>I = U : R<br>R = U : I</p><p class="tip">Merkhilfe: Zeichne ein Dreieck mit U oben und R und I unten. Halte die gesuchte Größe zu: Was übrig bleibt, ist die Rechnung. U oben heißt „R mal I“, I unten heißt „U durch R“.</p>`],
+ ["Beispiel 1: Taschenlampe",`<p>Eine Taschenlampe mit Flachbatterie (4,5 V). Das Glühlämpchen hat im Betrieb etwa 15 Ω. Gesucht: die Stromstärke.</p><p class="eq">I = U : R<br>I = 4,5 V : 15 Ω = 0,3 A</p><p>Es fließen also 0,3 A, das sind 300 mA.</p>`],
+ ["Beispiel 2: LED und Vorwiderstand",`<p>Vor eine LED wird ein Widerstand von 150 Ω geschaltet (warum, lernst du in Kapitel 7). Es sollen 20 mA fließen. Gesucht: die Spannung, die am Widerstand anliegt.</p><p class="eq">20 mA = 0,02 A<br>U = R · I<br>U = 150 Ω · 0,02 A = 3 V</p><p class="tip">Immer zuerst auf Grundeinheiten umrechnen: mA in A und kΩ in Ω. Sonst kommen falsche Zahlen heraus.</p>`],
+ ["Wann gilt das Gesetz?",`<p>Das Ohmsche Gesetz in dieser Form gilt für Bauteile mit <b>gleichbleibendem Widerstand</b>, zum Beispiel normale Widerstände oder Metalldrähte bei gleicher Temperatur.</p><p>Bei einer <b>Glühlampe</b> steigt der Widerstand, wenn der Draht heiß wird. Bei einer <b>LED</b> fließt unterhalb einer bestimmten Spannung fast nichts, darüber sehr viel. Dort rechnest du mit dem Gesetz nur für einen einzelnen Betriebspunkt.</p>`],
+ ["Merkkasten",`<p class="eq">U = R · I<br>I = U : R<br>R = U : I</p><ul class="rules"><li>U in Volt (V), I in Ampere (A), R in Ohm (Ω).</li><li>Vor dem Rechnen umrechnen: 1 A = 1000 mA, 1 kΩ = 1000 Ω.</li><li>Gilt für Bauteile mit gleichbleibendem Widerstand.</li></ul>`],
+ ["Sicherheit",`<p class="warn">Rechne mit Kleinspannung, probiere nur bis 12 V Gleichspannung. Auch wenn man mit 230 V rechnen könnte: Das ist lebensgefährlich und kein Versuch. Widerstände werden warm, wenn zu viel Strom fließt: Bleibe bei den Werten aus der Anleitung. Unter 14 Jahren mit Aufsicht eines Erwachsenen.</p>`]
+]));
+Object.assign(KT,{"p-el2":`<p><b>Experiment: Erst rechnen, dann messen.</b> Material: Flachbatterie 4,5 V, drei Widerstände (220 Ω, 470 Ω, 1 kΩ, je ¼ Watt), Multimeter, Kabel mit Krokodilklemmen.</p><ol class="rules"><li>Lies den Wert des Widerstands von der Verpackung ab (Farbcode lernst du in Kapitel 6).</li><li>Rechne vorher: I = U : R. Mit 4,5 V sind das etwa 20 mA (220 Ω), 10 mA (470 Ω) und 4,5 mA (1 kΩ).</li><li>Miss die Spannung der Batterie: Multimeter auf Gleichspannung (V, DC), rote Leitung an Plus, schwarze an Minus.</li><li>Rechne mit dem gemessenen Wert nach. Eine gebrauchte Batterie hat oft etwas weniger als 4,5 V.</li><li>Optional mit einem Erwachsenen: Strom messen. Das Multimeter wird dazu <b>in Reihe</b> in den Kreis gesetzt (Batterie, Widerstand, Multimeter, zurück). Die genaue Anleitung kommt in Kapitel 9.</li></ol><p class="warn">Nur Batterie bis 4,5 V. Das Multimeter im Strommessbereich <b>nie direkt an die Batterie</b> halten, das ist ein Kurzschluss. Unter 14 Jahren mit Aufsicht eines Erwachsenen.</p><p><b>Typischer Fehler:</b> mA nicht in A umrechnen. 20 mA sind 0,02 A, nicht 20 A.</p>`});
+
+/* ---------- Kapitel 3: Leistung ---------- */
+Object.assign(G,{
+  el3_p(){ /* leicht: P = U · I */
+    const U=pick([3,4.5,5,6,9,12]),I=pick([.1,.2,.3,.5,1,2]),who=pick(["Ein kleiner Motor","Ein Lämpchen","Ein Ladegerät","Ein Lüfter"]);
+    return{q:`${who} liegt an ${fmt(U)} V, es fließen ${fmt(I)} A. Welche Leistung setzt es um?${unit("W")}`,kind:"num",ans:R(Math.round(U*10)*Math.round(I*10),100),
+      sol:`P = U · I = ${fmt(U)} V · ${fmt(I)} A = <b>${fmt(Math.round(U*10)*Math.round(I*10)/100)} W</b>.`}},
+  el3_umr(){ /* mittel: Umrechnen und I = P : U */
+    const t=ri(0,2);
+    if(t===0){const U=pick([5,12]),I=pick([1,2,3,5]),P=U*I;
+      return{q:`Ein Gerät mit ${fmt(P)} W Leistung hängt an ${fmt(U)} V. Wie groß ist die Stromstärke?${unit("A")}`,kind:"num",ans:R(P,U),
+        sol:`P = U · I, also I = P : U = ${fmt(P)} W : ${fmt(U)} V = <b>${fmt(I)} A</b>.`}}
+    if(t===1){const U=pick([3,5,6,9,12]),mA=pick([100,200,250,400,500]),P=U*mA/1000;
+      return{q:`An einem Bauteil liegen ${fmt(U)} V an, es fließen ${fmt(mA)} mA. Welche Leistung wird umgesetzt?${unit("W")}`,kind:"num",ans:R(U*mA,1000),
+        sol:`Erst umrechnen: ${fmt(mA)} mA = ${fmt(mA/1000)} A. Dann P = U · I = ${fmt(U)} V · ${fmt(mA/1000)} A = <b>${fmt(P)} W</b>.`}}
+    const k=pick([.5,1.2,1.5,2,2.5,3]);
+    return{q:`Ein Gerät hat eine Leistung von ${fmt(k)} kW. Wie viel sind das in Watt?${unit("W")}`,kind:"num",ans:R(Math.round(k*1000)),
+      sol:`1 kW = 1000 W. Also ${fmt(k)} · 1000 = <b>${fmt(Math.round(k*1000))} W</b>.`}},
+  el3_zwei(){ /* schwer: Widerstand, zwei Schritte */
+    const Rr=pick([10,20,25,40,50,80,100,200]),U=pick([3,4,5,6,8,10,12]),I=U/Rr,P=U*U/Rr;
+    return{q:`Ein Widerstand von ${fmt(Rr)} Ω liegt an ${fmt(U)} V. Welche Leistung setzt er um?${unit("W")}`,kind:"num",ans:R(U*U,Rr),
+      sol:`Schritt 1: I = U : R = ${fmt(U)} V : ${fmt(Rr)} Ω = ${fmt(I)} A.<br>Schritt 2: P = U · I = ${fmt(U)} V · ${fmt(I)} A = <b>${fmt(P)} W</b>.<br>${P>.25?"Ein ¼-Watt-Widerstand wäre hier überlastet und würde zu heiß.":"Ein ¼-Watt-Widerstand reicht hier aus."}`}},
+  el3_quiz(){
+    return pick([
+      ()=>ELC("In welcher Einheit misst man die elektrische Leistung?","Watt (W)",["Joule (J)","Volt (V)"],"Die Leistung P misst man in <b>Watt (W)</b>. Joule (J) ist die Einheit der Energie: 1 W = 1 J pro Sekunde."),
+      ()=>ELC("Ein Gerät hat 10 V und 2 A. Welche Leistung hat es?","20 W",["5 W","12 W"],"P = U · I = 10 V · 2 A = <b>20 W</b>. Nicht teilen (5) und nicht addieren (12)."),
+      ()=>ELC("Eine Lampe hat 60 W. Was bedeutet das?","Sie setzt in jeder Sekunde 60 Joule elektrische Energie um",["Sie leuchtet genau 60 Sekunden lang","An ihr liegen 60 Volt an"],"Leistung ist <b>Energie pro Zeit</b>: 60 W heißt 60 Joule in jeder Sekunde. Mit der Leuchtdauer oder der Spannung hat die Angabe nichts zu tun.")
+    ])()}
+});
+Object.assign(GEN_NAMES,{el3_p:"Leistung: P = U · I",el3_umr:"Leistung: Umrechnen und Stromstärke",el3_zwei:"Leistung am Widerstand",el3_quiz:"Quiz: Leistung"});
+
+EL_TOPICS.push(T("p-el3","Elektrische Leistung","P = U · I, Einheit Watt",["el3_p","el3_umr","el3_zwei","el3_quiz"],[
+ ["Lernziel und Idee",`<p class="tip">Lernziel: Du kannst die Leistung eines Geräts aus Spannung und Stromstärke berechnen und die Einheit Watt erklären.</p><p>Die <b>elektrische Leistung</b> sagt, wie viel elektrische Energie ein Gerät in jeder Sekunde umsetzt, zum Beispiel in Licht, Bewegung oder Wärme. Energie misst man in <b>Joule (J)</b>. Die Leistung hat die Einheit <b>Watt (W)</b>:</p><p class="eq">1 W = 1 J pro Sekunde</p><p>Je höher Spannung und Stromstärke, desto mehr Leistung:</p><p class="eq">P = U · I</p><p>Große Leistungen schreibt man mit Kilo: <b>1 kW = 1000 W</b>. Kleine mit Milli: <b>1 W = 1000 mW</b>.</p>`],
+ ["Beispiel 1: Handy-Ladegerät",`<p>Ein Ladegerät gibt 5 V ab und liefert dabei 2 A. Gesucht: die Leistung.</p><p class="eq">P = U · I<br>P = 5 V · 2 A = 10 W</p><p>Das Ladegerät gibt also 10 Joule pro Sekunde an das Handy ab.</p>`],
+ ["Beispiel 2: Auto-Scheinwerfer",`<p>Eine Autolampe hat 12 V und 60 W. Gesucht: die Stromstärke. Wir stellen die Formel um:</p><p class="eq">I = P : U<br>I = 60 W : 12 V = 5 A</p><p class="tip">Auch hier gilt: Kommt die Stromstärke in mA, erst in A umrechnen.</p>`],
+ ["Leistung am Widerstand",`<p>Zusammen mit dem Ohmschen Gesetz bekommst du zwei weitere Formeln. Setzt du I = U : R ein, entsteht P = U · U : R. Setzt du U = R · I ein, entsteht P = R · I · I:</p><p class="eq">P = U² : R<br>P = R · I²</p><p>Beispiel: Ein Widerstand von 100 Ω liegt an 5 V. Dann ist P = 25 : 100 = 0,25 W. Diese Leistung wird im Widerstand zu <b>Wärme</b>. Deshalb steht bei Widerständen auch, wie viel Watt sie aushalten, oft ¼ W. Bei mehr Leistung wird er zu heiß.</p>`],
+ ["Merkkasten",`<p class="eq">P = U · I<br>I = P : U<br>U = P : I</p><ul class="rules"><li>P in Watt (W), U in Volt (V), I in Ampere (A).</li><li>1 kW = 1000 W, 1 W = 1000 mW.</li><li>Am Widerstand: P = U² : R und P = R · I².</li><li>Leistung ist Energie pro Sekunde, nicht die Dauer.</li></ul>`],
+ ["Sicherheit",`<p class="warn">Je mehr Leistung, desto mehr Wärme. Fasse Widerstände und Lämpchen nach dem Versuch nicht sofort an. Experimentiere nur mit Kleinspannung bis 12 V Gleichspannung. Die Leistung von Geräten an der Steckdose wird nur gerechnet, nie ausprobiert. Unter 14 Jahren mit Aufsicht eines Erwachsenen.</p>`]
+]));
+Object.assign(KT,{"p-el3":`<p><b>Experiment: Typenschilder lesen und nachrechnen.</b> Material: Handy-Ladegerät, Powerbank oder Taschenlampe mit Aufdruck, Taschenrechner, Zettel.</p><ol class="rules"><li>Suche bei einem Ladegerät den Aufdruck „Output“ oder „Ausgang“, zum Beispiel 5 V und 2 A.</li><li>Rechne P = U · I. Steht auch ein Wert in W auf dem Gerät, vergleiche ihn mit deiner Rechnung.</li><li>Mach das mit zwei weiteren Geräten, zum Beispiel einer Taschenlampenbirne mit Aufdruck wie 3,8 V und 0,3 A. Das ergäbe 1,14 W.</li><li>Sortiere die Geräte nach Leistung.</li></ol><p class="warn">Nur ablesen. Geräte nicht öffnen, nichts in die Steckdose stecken, was du nicht kennst. Ein Ladegerät hat auf der Eingangsseite 230 V, die nur gelesen und nie angefasst oder ausprobiert wird. Unter 14 Jahren mit Aufsicht eines Erwachsenen.</p><p><b>Typischer Fehler:</b> Leistung und Spannung verwechseln. Ein Gerät mit 12 V muss nicht stark sein, die Leistung hängt auch von der Stromstärke ab.</p>`});
+
+/* ---------- Kapitel 4: Stromkreis, Gleich- und Wechselspannung ---------- */
+Object.assign(G,{
+  el4_anz(){ /* leicht: Schwingungen zählen */
+    const f=pick([50,100,200,500]),t=pick([2,3,5,10]);
+    return{q:`Eine Wechselspannung hat ${fmt(f)} Hz. Wie viele vollständige Schwingungen gibt es in ${fmt(t)} Sekunden?<p class="muted small">Gib nur die Zahl ein.</p>`,kind:"num",ans:R(f*t),
+      sol:`${fmt(f)} Hz heißt ${fmt(f)} Schwingungen in jeder Sekunde. In ${fmt(t)} s sind das ${fmt(f)} · ${fmt(t)} = <b>${fmt(f*t)} Schwingungen</b>.`}},
+  el4_per(){ /* mittel: Periodendauer in ms */
+    const f=pick([50,100,125,200,250,500,1000]),T=1000/f;
+    return{q:`Eine Wechselspannung hat ${fmt(f)} Hz. Wie lange dauert eine Schwingung in Millisekunden? (1 s = 1000 ms)${unit("ms")}`,kind:"num",ans:R(1000,f),
+      sol:`Eine Schwingung dauert 1 : f = 1 : ${fmt(f)} s = ${fmt(1/f)} s. Mit 1000 malnehmen: <b>${fmt(T)} ms</b>.`}},
+  el4_wechsel(){ /* schwer: Richtungswechsel */
+    const f=pick([50,60]),t=pick([3,5,10,30]);
+    return{q:`Eine Wechselspannung hat ${fmt(f)} Hz. Wie oft wechselt die Stromrichtung in ${fmt(t)} Sekunden?<p class="muted small">Gib nur die Zahl ein.</p>`,kind:"num",ans:R(2*f*t),
+      sol:`Schritt 1: In ${fmt(t)} s gibt es ${fmt(f)} · ${fmt(t)} = ${fmt(f*t)} Schwingungen.<br>Schritt 2: Pro Schwingung wechselt die Richtung zweimal (hin und zurück): ${fmt(f*t)} · 2 = <b>${fmt(2*f*t)} Wechsel</b>.`}},
+  el4_quiz(){
+    return pick([
+      ()=>ELC("Welche dieser Quellen liefert Gleichspannung?","Eine Batterie",["Die Steckdose im Haus","Ein Fahrraddynamo"],"Eine <b>Batterie</b> hat feste Pole, Plus und Minus bleiben gleich. Steckdose und Fahrraddynamo liefern Wechselspannung."),
+      ()=>ELC("Wann fließt in einem einfachen Stromkreis Strom?","Wenn der Kreis geschlossen ist",["Wenn der Schalter offen ist","Wenn nur ein Pol der Batterie angeschlossen ist"],"Strom fließt nur in einem <b>geschlossenen Kreis</b>: von der Quelle durch den Verbraucher und zurück. Bei offenem Schalter oder nur einem angeschlossenen Pol ist der Weg unterbrochen."),
+      ()=>ELC("Was bedeuten 50 Hz bei der Steckdose?","50 vollständige Schwingungen pro Sekunde",["Die Spannung beträgt 50 V","Der Strom beträgt 50 A"],"Hertz (Hz) zählt die <b>Schwingungen pro Sekunde</b>. Die Spannung der Steckdose ist 230 V, die Frequenz 50 Hz.")
+    ])()}
+});
+Object.assign(GEN_NAMES,{el4_anz:"Wechselspannung: Schwingungen zählen",el4_per:"Wechselspannung: Dauer einer Schwingung",el4_wechsel:"Wechselspannung: Richtungswechsel",el4_quiz:"Quiz: Stromkreis und Spannungsarten"});
+
+EL_TOPICS.push(T("p-el4","Stromkreis, Gleich- und Wechselspannung","Wie Strom im Kreis fließt",["el4_anz","el4_per","el4_wechsel","el4_quiz"],[
+ ["Lernziel und Idee",`<p class="tip">Lernziel: Du kannst einen einfachen Stromkreis beschreiben und Gleichspannung von Wechselspannung unterscheiden.</p><p>Eine Taschenlampe leuchtet nur, wenn du sie einschaltest. Im Inneren ist das ein <b>Stromkreis</b>: ein geschlossener Weg, auf dem Ladung von der Quelle durch den Verbraucher und wieder zurück fließt.</p>`],
+ ["Der einfache Stromkreis",`<p>Ein einfacher Stromkreis hat vier Teile:</p><ul class="rules"><li><b>Quelle:</b> liefert die Spannung, zum Beispiel eine Batterie.</li><li><b>Leitungen:</b> Kabel aus Metall, die den Strom leiten.</li><li><b>Verbraucher:</b> ein Bauteil, das Energie nutzt, zum Beispiel ein Lämpchen.</li><li><b>Schalter:</b> öffnet oder schließt den Kreis.</li></ul><p>Nur im <b>geschlossenen</b> Kreis fließt Strom. Ist er irgendwo offen, steht alles. Außerhalb der Quelle fließt der Strom nach der <b>technischen Stromrichtung</b> vom Pluspol zum Minuspol (mehr dazu in Teil 3).</p><p><b>Kurzschluss:</b> Verbindest du Plus und Minus direkt nur mit einem Kabel, ohne Verbraucher, ist der Widerstand winzig. Dann fließt ein sehr großer Strom, und Kabel und Batterie werden heiß.</p>`],
+ ["Gleichspannung",`<p>Bei <b>Gleichspannung</b> (englisch DC) bleibt die Polung gleich: Plus bleibt Plus, Minus bleibt Minus. Der Strom fließt immer in dieselbe Richtung.</p><p>Gleichspannung liefern Batterien, Akkus, Solarzellen und der Ausgang eines Ladegeräts, zum Beispiel 5 V.</p>`],
+ ["Wechselspannung",`<p>Bei <b>Wechselspannung</b> (englisch AC) wechselt die Polung ständig. Der Strom fließt mal in die eine, mal in die andere Richtung. Wie oft das passiert, gibt die <b>Frequenz</b> in <b>Hertz (Hz)</b> an: Hertz heißt Schwingungen pro Sekunde.</p><p>Die Steckdose hat in Deutschland <b>230 V und 50 Hz</b>. Das sind 50 vollständige Schwingungen pro Sekunde. Dabei wechselt die Richtung 100-mal pro Sekunde, zweimal je Schwingung. Auch ein Fahrraddynamo liefert Wechselspannung.</p><p>Ein Ladegerät wandelt die 230 V Wechselspannung der Steckdose in eine kleine Gleichspannung um.</p>`],
+ ["Merkkasten",`<ul class="rules"><li>Stromkreis: Quelle, Leitungen, Verbraucher, Schalter. Er muss <b>geschlossen</b> sein.</li><li>Gleichspannung (DC): feste Pole, Strom in einer Richtung.</li><li>Wechselspannung (AC): Polung wechselt, Frequenz in Hertz (Hz).</li><li>Steckdose: 230 V und 50 Hz, 100 Richtungswechsel pro Sekunde.</li></ul><p class="eq">Dauer einer Schwingung = 1 : Frequenz</p>`],
+ ["Sicherheit",`<p class="warn">Die 230 V aus der Steckdose sind lebensgefährlich. Sie werden hier nur erklärt, nie als Versuch angeleitet. Experimentiere nur mit Batterien bis 12 V Gleichspannung. Schließe eine Batterie nie nur mit einem Kabel kurz. Unter 14 Jahren mit Aufsicht eines Erwachsenen.</p>`]
+]));
+Object.assign(KT,{"p-el4":`<p><b>Experiment: Dein erster Stromkreis.</b> Material: Flachbatterie 4,5 V (oder drei 1,5-V-Batterien im Halter), Glühlämpchen für 3,5 bis 4,5 V mit Fassung, Schalter (oder selbst gebaut aus Pappe, Reißzwecke und Büroklammer), 3 Kabel mit Krokodilklemmen.</p><ol class="rules"><li>Verbinde Batterie, Schalter und Lämpchen zu einem Kreis. Der Schalter bleibt zuerst offen.</li><li>Schließe den Schalter. Das Lämpchen leuchtet.</li><li>Öffne den Schalter wieder. Das Lämpchen geht aus.</li><li>Tausche die Anschlüsse an der Batterie (Plus und Minus). Das Lämpchen leuchtet weiter, bei ihm spielt die Richtung keine Rolle.</li><li>Löse ein Kabel und halte es nur an einen Pol. Das Lämpchen bleibt dunkel: Ein Draht allein reicht nicht.</li></ol><p class="warn">Nur Batterie bis 4,5 V. Plus und Minus nie nur mit einem Kabel verbinden, das ist ein Kurzschluss. Unter 14 Jahren mit Aufsicht eines Erwachsenen.</p><p><b>Typischer Fehler:</b> „Ein Kabel von der Batterie zur Lampe reicht.“ Der Strom braucht den Weg hin und zurück.</p>`});
+
+/* ---------- Kapitel 5: Reihen- und Parallelschaltung ---------- */
+Object.assign(G,{
+  el5_reihe(){ /* leicht: Widerstände in Reihe addieren */
+    const n=pick([2,3]),rs=Array.from({length:n},()=>pick([10,22,47,100,150,220,330])),sum=rs.reduce((a,b)=>a+b,0);
+    return{q:`${n} Widerstände (${rs.map(r=>fmt(r)+" Ω").join(", ")}) sind in Reihe geschaltet. Wie groß ist der Gesamtwiderstand?${unit("Ω")}`,kind:"num",ans:R(sum),
+      sol:`In Reihe addieren sich die Widerstände: ${rs.map(fmt).join(" + ")} = <b>${fmt(sum)} Ω</b>.`}},
+  el5_par(){ /* mittel: parallel */
+    if(Math.random()<.5){const Rr=pick([60,100,120,200,400]),n=pick([2,4]);
+      return{q:`${n} gleiche Widerstände mit je ${fmt(Rr)} Ω sind parallel geschaltet. Wie groß ist der Gesamtwiderstand?${unit("Ω")}`,kind:"num",ans:R(Rr,n),
+        sol:`Bei ${n} gleichen Widerständen parallel gilt: R = R<sub>1</sub> : ${n} = ${fmt(Rr)} Ω : ${n} = <b>${fmt(Rr/n)} Ω</b>. Der Gesamtwiderstand ist kleiner als jeder einzelne.`}}
+    const a=pick([.1,.2,.3,.4,.5]),mb=pick([150,250,350,450]),sum=a+mb/1000;
+    return{q:`Zwei Lämpchen sind parallel an eine Batterie angeschlossen. Das eine nimmt ${fmt(a)} A auf, das andere ${fmt(mb)} mA. Wie groß ist der Gesamtstrom?${unit("A")}`,kind:"num",ans:R(Math.round(a*1000)+mb,1000),
+      sol:`Erst umrechnen: ${fmt(mb)} mA = ${fmt(mb/1000)} A. Bei Parallelschaltung addieren sich die Teilströme: ${fmt(a)} A + ${fmt(mb/1000)} A = <b>${fmt(sum)} A</b>.`}},
+  el5_zwei(){ /* schwer: Spannung am Widerstand in Reihe */
+    const pr=pick([[100,200,[3,6,9,12]],[100,100,[4,6,8,12]],[200,300,[5,10]],[50,150,[4,8,12]],[100,300,[4,8,12]]]),[r1,r2,us]=pr,U=pick(us),sum=r1+r2,I=U/sum,w=pick([1,2]),rx=w===1?r1:r2,Ux=rx*U/sum;
+    return{q:`Zwei Widerstände (R<sub>1</sub> = ${fmt(r1)} Ω, R<sub>2</sub> = ${fmt(r2)} Ω) liegen in Reihe an ${fmt(U)} V. Wie groß ist die Spannung an R<sub>${w}</sub>?${unit("V")}`,kind:"num",ans:R(rx*U,sum),
+      sol:`Schritt 1: R = ${fmt(r1)} Ω + ${fmt(r2)} Ω = ${fmt(sum)} Ω.<br>Schritt 2: I = U : R = ${fmt(U)} V : ${fmt(sum)} Ω = ${fmt(I)} A. Dieser Strom fließt durch beide.<br>Schritt 3: U<sub>${w}</sub> = R<sub>${w}</sub> · I = ${fmt(rx)} Ω · ${fmt(I)} A = <b>${fmt(Ux)} V</b>.`}},
+  el5_quiz(){
+    return pick([
+      ()=>ELC("Zwei Lämpchen sind in Reihe geschaltet. Eines wird herausgeschraubt. Was passiert?","Das andere geht auch aus",["Das andere leuchtet heller","Das andere leuchtet unverändert weiter"],"In der Reihenschaltung gibt es nur <b>einen Weg</b>. Ist er unterbrochen, fließt nirgends Strom."),
+      ()=>ELC("Was ist bei einer Parallelschaltung an allen Zweigen gleich?","Die Spannung",["Die Stromstärke","Der Widerstand"],"Jeder Zweig hängt direkt an der Quelle, also liegt überall <b>dieselbe Spannung</b> an. Der Strom teilt sich auf."),
+      ()=>ELC("Zwei Widerstände mit je 100 Ω sind parallel geschaltet. Der Gesamtwiderstand ist …","50 Ω",["200 Ω","100 Ω"],"Parallel gilt R = 100 Ω : 2 = <b>50 Ω</b>. Die 200 Ω wären die Reihenschaltung.")
+    ])()}
+});
+Object.assign(GEN_NAMES,{el5_reihe:"Reihenschaltung: Gesamtwiderstand",el5_par:"Parallelschaltung: Widerstand und Strom",el5_zwei:"Reihenschaltung: Spannung am Widerstand",el5_quiz:"Quiz: Reihe und parallel"});
+
+EL_TOPICS.push(T("p-el5","Reihen- und Parallelschaltung","Bauteile hintereinander oder nebeneinander",["el5_reihe","el5_par","el5_zwei","el5_quiz"],[
+ ["Lernziel und Idee",`<p class="tip">Lernziel: Du kannst Reihen- und Parallelschaltung unterscheiden und die Regeln für Strom, Spannung und Widerstand anwenden.</p><p>Bei einer alten Lichterkette geht die ganze Kette aus, wenn eine Lampe kaputt ist. Im Haus bleibt das Licht im Flur an, wenn im Zimmer eine Lampe ausfällt. Der Unterschied: Die Lichterkette ist in <b>Reihe</b> geschaltet, die Lampen im Haus <b>parallel</b>.</p>`],
+ ["Reihenschaltung",`<p>Alle Bauteile hängen <b>hintereinander</b>, es gibt nur einen Weg für den Strom.</p><ul class="rules"><li><b>Strom:</b> überall gleich, I = I<sub>1</sub> = I<sub>2</sub>.</li><li><b>Spannung:</b> teilt sich auf, U = U<sub>1</sub> + U<sub>2</sub>.</li><li><b>Widerstand:</b> addiert sich, R = R<sub>1</sub> + R<sub>2</sub>.</li><li>Fällt ein Bauteil aus, ist der ganze Kreis unterbrochen.</li></ul>`],
+ ["Parallelschaltung",`<p>Die Bauteile hängen <b>nebeneinander</b>, jedes an derselben Quelle. Der Strom teilt sich an einer Verzweigung auf.</p><ul class="rules"><li><b>Spannung:</b> an jedem Zweig gleich.</li><li><b>Strom:</b> die Teilströme addieren sich, I = I<sub>1</sub> + I<sub>2</sub>.</li><li><b>Widerstand:</b> der Gesamtwiderstand ist kleiner als der kleinste einzelne.</li><li>Fällt ein Zweig aus, laufen die anderen weiter.</li></ul><p class="eq">1 : R = 1 : R<sub>1</sub> + 1 : R<sub>2</sub><br>Für zwei gleiche: R = R<sub>1</sub> : 2<br>Für zwei beliebige: R = R<sub>1</sub> · R<sub>2</sub> : (R<sub>1</sub> + R<sub>2</sub>)</p>`],
+ ["Beispiel 1: Reihenschaltung",`<p>Eine 9-V-Batterie, dahinter in Reihe 100 Ω und 200 Ω. Gesucht: Strom und Teilspannungen.</p><p class="eq">R = 100 Ω + 200 Ω = 300 Ω<br>I = 9 V : 300 Ω = 0,03 A<br>U<sub>1</sub> = 100 Ω · 0,03 A = 3 V<br>U<sub>2</sub> = 200 Ω · 0,03 A = 6 V</p><p>Probe: 3 V + 6 V = 9 V. Der größere Widerstand bekommt die größere Spannung.</p>`],
+ ["Beispiel 2: Parallelschaltung",`<p>Zwei Lämpchen hängen parallel an 6 V. Das eine nimmt 0,3 A auf, das andere 0,2 A.</p><p class="eq">I = 0,3 A + 0,2 A = 0,5 A<br>R<sub>1</sub> = 6 V : 0,3 A = 20 Ω<br>R<sub>2</sub> = 6 V : 0,2 A = 30 Ω<br>R = 20 · 30 : 50 = 12 Ω</p><p>Probe: 6 V : 12 Ω = 0,5 A. Beide Lämpchen bekommen die vollen 6 V.</p>`],
+ ["Merkkasten",`<div class="tbl-wrap"><table class="tbl"><tr><th></th><th>Reihe</th><th>Parallel</th></tr><tr><td>Strom</td><td>überall gleich</td><td>teilt sich auf</td></tr><tr><td>Spannung</td><td>teilt sich auf</td><td>überall gleich</td></tr><tr><td>Widerstand</td><td>R<sub>1</sub> + R<sub>2</sub></td><td>kleiner als der kleinste</td></tr></table></div>`],
+ ["Sicherheit",`<p class="warn">Schließt du viele Verbraucher parallel an eine Quelle an, addieren sich die Ströme. Die Leitung muss das aushalten, sonst wird sie heiß. Deshalb dürfen Mehrfachsteckdosen nicht überlastet werden. Experimentiere nur mit Batterien bis 12 V. Unter 14 Jahren mit Aufsicht eines Erwachsenen.</p>`]
+]));
+Object.assign(KT,{"p-el5":`<p><b>Experiment: Zwei Lämpchen, zwei Schaltungen.</b> Material: Flachbatterie 4,5 V, zwei gleiche Glühlämpchen für 3,5 bis 4,5 V mit Fassung, 4 bis 5 Kabel mit Krokodilklemmen.</p><ol class="rules"><li><b>Reihe:</b> Batterie, Lämpchen 1, Lämpchen 2, zurück zur Batterie. Beide leuchten deutlich dunkler, denn jedes bekommt nur etwa die halbe Spannung.</li><li>Schraube ein Lämpchen heraus: das andere geht aus.</li><li><b>Parallel:</b> Beide Lämpchen werden einzeln direkt an Plus und Minus der Batterie angeschlossen. Beide leuchten hell.</li><li>Schraube ein Lämpchen heraus: das andere leuchtet unverändert weiter.</li></ol><p>Beobachte: Parallel wird die Batterie schneller leer, weil beide Lämpchen Strom ziehen.</p><p class="warn">Nur Batterie bis 4,5 V. Nicht lange eingeschaltet lassen, die Lämpchen werden heiß. Unter 14 Jahren mit Aufsicht eines Erwachsenen.</p><p><b>Typischer Fehler:</b> „Bei der Parallelschaltung teilt sich die Spannung.“ Es teilt sich der Strom, die Spannung ist an jedem Zweig gleich.</p>`});
+
+/* ---------- Kapitel 6: Widerstand, Schalter, Sicherung ---------- */
+const ELF=["schwarz","braun","rot","orange","gelb","grün","blau","violett","grau","weiß"];
+const ELPAIRS=[10,12,15,18,22,27,33,39,47,56,68,82];
+const ELOHM=v=>v>=1000?`${fmt(v/1000)} kΩ`:`${fmt(v)} Ω`;
+Object.assign(G,{
+  el6_farb(){ /* leicht: Farbcode lesen */
+    const pr=pick(ELPAIRS),m=pick([0,1,2,3]),d1=Math.floor(pr/10),d2=pr%10,v=pr*Math.pow(10,m);
+    return{q:`Ein Widerstand hat die Ringe <b>${ELF[d1]} – ${ELF[d2]} – ${ELF[m]} – gold</b>. Wie groß ist er?${unit("Ω")}`,kind:"num",ans:R(v),
+      sol:`${ELF[d1]} = ${d1}, ${ELF[d2]} = ${d2}, also die Zahl ${pr}. ${ELF[m]} als Multiplikator heißt mal 10<sup>${m}</sup> = ${fmt(Math.pow(10,m))}. Also ${pr} · ${fmt(Math.pow(10,m))} = <b>${fmt(v)} Ω</b> (gold: Toleranz ±5 %).`}},
+  el6_umr(){ /* mittel: Ringfolge finden */
+    const pr=pick(ELPAIRS),m=pick([0,1,2,3]),d1=Math.floor(pr/10),d2=pr%10,v=pr*Math.pow(10,m);
+    const fm=(a,b,c)=>`${ELF[a]} – ${ELF[b]} – ${ELF[c]} – gold`,right=fm(d1,d2,m);
+    const cand=[fm(d1,d2,m+1)];if(m>=1)cand.push(fm(d1,d2,m-1));if(d1!==d2)cand.push(fm(d2,d1,m));cand.push(fm(d1,(d2+1)%10,m));
+    const wrong=shuffle([...new Set(cand)].filter(x=>x!==right)).slice(0,2),o=shuffle([right,...wrong]);
+    return CH(`Welche Ringfolge hat ein Widerstand mit <b>${ELOHM(v)}</b> (vier Ringe, der vierte ist gold)?`,o,o.indexOf(right),
+      `${ELOHM(v)} = ${pr} · ${fmt(Math.pow(10,m))} Ω. Erste Ziffer ${d1} = ${ELF[d1]}, zweite Ziffer ${d2} = ${ELF[d2]}, Multiplikator 10<sup>${m}</sup> = ${ELF[m]}: <b>${right}</b>.`)},
+  el6_sich(){ /* schwer: Gesamtstrom und Sicherung */
+    const n=pick([2,3]),nm=shuffle(["Lampe","Pumpe","Radio","Lüfter","Heizmatte"]).slice(0,n),ps=nm.map(()=>pick([12,24,36,48,60])),P=ps.reduce((a,b)=>a+b,0),I=P/12,F=pick([5,10,15,20]);
+    return{q:`An einer 12-V-Leitung mit ${F}-A-Sicherung hängen parallel: ${nm.map((x,k)=>`${x} (${fmt(ps[k])} W)`).join(", ")}. Wie groß ist der Gesamtstrom?${unit("A")}`,kind:"num",ans:R(P,12),
+      sol:`Parallel addieren sich die Leistungen: ${ps.map(fmt).join(" + ")} = ${fmt(P)} W. Dann I = P : U = ${fmt(P)} W : 12 V = <b>${fmt(I)} A</b>.<br>${I>F?`Das ist mehr als ${F} A: Die Sicherung würde auslösen.`:`Das ist nicht mehr als ${F} A: Die Sicherung hält.`}`}},
+  el6_quiz(){
+    return pick([
+      ()=>ELC("Was passiert in einer Schmelzsicherung bei zu hohem Strom?","Der dünne Draht im Inneren schmilzt und öffnet den Kreis",["Sie leitet den Überschuss in die Erde ab","Sie erhöht dauerhaft die Spannung"],"Der Schmelzdraht erwärmt sich bei zu viel Strom, schmilzt und <b>unterbricht den Stromkreis</b>."),
+      ()=>ELC("Ein Widerstand hat die Ringe braun – schwarz – rot – gold. Wie groß ist er?","1 kΩ",["100 Ω","10 kΩ"],"braun = 1, schwarz = 0, rot = mal 100: 10 · 100 = 1000 Ω = <b>1 kΩ</b>, Toleranz ±5 %."),
+      ()=>ELC("Eine Sicherung ist durchgebrannt. Was ist richtig?","Ursache suchen und eine Sicherung mit gleichem Nennstrom einsetzen",["Mit Draht oder Alufolie überbrücken","Eine Sicherung mit viel größerem Nennstrom einsetzen"],"Erst die <b>Ursache</b> finden (Kurzschluss, Überlast). Eine Sicherung zu überbrücken oder zu stark zu wählen kann zu Kabelbrand führen.")
+    ])()}
+});
+Object.assign(GEN_NAMES,{el6_farb:"Widerstands-Farbcode lesen",el6_umr:"Widerstands-Farbcode finden",el6_sich:"Sicherung und Gesamtstrom",el6_quiz:"Quiz: Widerstand, Schalter, Sicherung"});
+
+EL_TOPICS.push(T("p-el6","Widerstand, Schalter, Sicherung","Farbcode, Schalten und Schützen",["el6_farb","el6_umr","el6_sich","el6_quiz"],[
+ ["Lernziel und Idee",`<p class="tip">Lernziel: Du erkennst Widerstand, Schalter und Sicherung, liest den Farbcode eines Widerstands und weißt, wozu die Sicherung da ist.</p><p>Drei einfache Bauteile, die in fast jeder Schaltung vorkommen: Der <b>Widerstand</b> bremst den Strom gezielt. Der <b>Schalter</b> öffnet und schließt den Kreis. Die <b>Sicherung</b> schützt vor zu viel Strom.</p>`],
+ ["Der Widerstand",`<p>Ein Widerstand besteht aus einem Keramikkörper mit einer dünnen Schicht aus Kohle oder Metall, der Widerstandsschicht, und zwei Drähten zum Anschließen. Er <b>begrenzt den Strom</b>, zum Beispiel vor einer LED, oder teilt eine Spannung auf.</p><p>Außer dem Wert in Ω hat jeder Widerstand eine <b>Belastbarkeit</b> in Watt, die angibt, wie viel Leistung er als Wärme verträgt. Kleine Bauteile haben oft ¼ W (siehe Kapitel 3).</p><p>Es gibt nur bestimmte <b>Normwerte</b>, zum Beispiel 10, 22, 47, 100, 220, 470 Ω und 1 kΩ. Die Zahlen 10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82 kehren mit Faktor 10, 100, 1000 immer wieder.</p>`],
+ ["Der Farbcode",`<p>Kleine Widerstände haben keinen Platz für Zahlen und tragen deshalb <b>Farbringe</b>. Halte den Widerstand so, dass der goldene oder silberne Ring rechts ist, und lies von links:</p><ul class="rules"><li>1. Ring: erste Ziffer</li><li>2. Ring: zweite Ziffer</li><li>3. Ring: Multiplikator (mal 10, 100, …)</li><li>4. Ring: Toleranz</li></ul><div class="tbl-wrap"><table class="tbl"><tr><th>Farbe</th><th>Ziffer</th><th>Multiplikator</th></tr><tr><td>schwarz</td><td>0</td><td>· 1</td></tr><tr><td>braun</td><td>1</td><td>· 10</td></tr><tr><td>rot</td><td>2</td><td>· 100</td></tr><tr><td>orange</td><td>3</td><td>· 1000</td></tr><tr><td>gelb</td><td>4</td><td>· 10 000</td></tr><tr><td>grün</td><td>5</td><td>· 100 000</td></tr><tr><td>blau</td><td>6</td><td>· 1 000 000</td></tr><tr><td>violett</td><td>7</td><td></td></tr><tr><td>grau</td><td>8</td><td></td></tr><tr><td>weiß</td><td>9</td><td></td></tr></table></div><p>Toleranz: gold ±5 %, silber ±10 %, braun ±1 %, rot ±2 %. Sie sagt, wie weit der echte Wert vom Aufdruck abweichen darf.</p><p class="eq">braun – schwarz – rot – gold<br>= 10 · 100 = 1000 Ω = 1 kΩ, ±5 %<br>gelb – violett – rot – gold<br>= 47 · 100 = 4700 Ω = 4,7 kΩ, ±5 %</p><p>Genaue Widerstände haben fünf Ringe: drei Ziffern, ein Multiplikator, eine Toleranz. Beispiel braun – schwarz – schwarz – braun – braun = 100 · 10 = 1 kΩ, ±1 %.</p>`],
+ ["Schalter und Taster",`<p>Ein <b>Schalter</b> öffnet oder schließt den Stromkreis und rastet ein. Ein <b>Taster</b> schließt ihn nur, solange du drückst, wie bei einer Klingel. Ein <b>Schließer</b> leitet, wenn er betätigt wird, ein <b>Öffner</b> leitet im Ruhezustand und trennt, wenn er betätigt wird.</p><p>Jeder Schalter hat eine Obergrenze für Spannung und Strom. Sie steht oft auf dem Gehäuse, zum Beispiel 12 V und 2 A. Der Schalter liegt in <b>Reihe</b> zum Verbraucher.</p>`],
+ ["Die Sicherung",`<p>Eine <b>Sicherung</b> enthält einen dünnen Draht, der bei zu viel Strom schmilzt und den Kreis öffnet. So schützt sie Leitungen und Geräte vor Überhitzung bei Überlast oder Kurzschluss. Sie liegt in <b>Reihe</b> in der Leitung.</p><p>Wichtig ist der <b>Nennstrom</b> in Ampere. Beispiel: Ein Gerät mit 12 V und 36 W zieht 36 W : 12 V = 3 A. Eine 5-A-Sicherung passt: Sie hält den normalen Betrieb aus und löst bei deutlich mehr Strom aus. Es gibt flinke (F) und träge (T) Sicherungen, träge halten kurze Stromspitzen beim Einschalten aus.</p><p class="warn">Eine durchgebrannte Sicherung nie mit Draht oder Alufolie überbrücken und keine mit viel größerem Nennstrom einsetzen. Dann schützt sie nicht mehr, und die Leitung kann brennen.</p>`],
+ ["Merkkasten",`<ul class="rules"><li>Widerstand: begrenzt den Strom, Wert in Ω, Belastbarkeit in W.</li><li>Farbcode: Ziffer, Ziffer, Multiplikator, Toleranz.</li><li>Schalter und Sicherung liegen in Reihe im Kreis.</li><li>Sicherung: Nennstrom in A, nie überbrücken.</li></ul><p class="eq">braun 1 · rot 2 · orange 3 · gelb 4<br>grün 5 · blau 6 · violett 7 · grau 8 · weiß 9<br>schwarz 0</p>`],
+ ["Sicherheit",`<p class="warn">Sicherungen und Schalter im Haus (230 V) gehören ausschließlich in die Hand einer Elektrofachkraft. Probiere nur mit Batterien bis 12 V. Widerstände können nach Betrieb heiß sein. Unter 14 Jahren mit Aufsicht eines Erwachsenen.</p>`]
+]));
+Object.assign(KT,{"p-el6":`<p><b>Experiment: Ablesen, rechnen, nachmessen.</b> Material: 5 Widerstände mit Farbringen (zum Beispiel 220 Ω, 470 Ω, 1 kΩ, 4,7 kΩ, 10 kΩ), Multimeter, Zettel.</p><ol class="rules"><li>Halte den ersten Widerstand so, dass der goldene Ring rechts ist. Notiere die Farben von links nach rechts.</li><li>Berechne den Wert mit der Tabelle und notiere ihn mit Toleranz. Beispiel: 220 Ω ±5 % liegt zwischen 209 Ω und 231 Ω.</li><li>Stelle das Multimeter auf den Widerstandsbereich (Ω). Halte die Messspitzen an die beiden Drähte, ohne die Metallspitzen mit den Fingern zu berühren, sonst misst du dich mit.</li><li>Vergleiche: Liegt der gemessene Wert innerhalb der Toleranz?</li></ol><p class="warn">Nur einzelne Widerstände ohne Spannung messen, nie in einem Stromkreis unter Spannung. Unter 14 Jahren mit Aufsicht eines Erwachsenen.</p><p><b>Typischer Fehler:</b> Die Ringe von der falschen Seite lesen. Der goldene oder silberne Toleranzring ist immer rechts.</p>`});
+
+/* ---------- ENDE der Kapitel ---------- */
+PH.bands.push({key:"E",title:"Elektrotechnik & Löten · Praxis",topics:EL_TOPICS});
+}
 const STOPS={};          // key → Stop
 SUBJECTS.forEach(su=>su.bands.forEach(b=>{
   (b.topics||[]).forEach(t=>{STOPS[t.id]={key:t.id,subj:su,band:b,title:t.title,sub:t.sub,topic:t}});
