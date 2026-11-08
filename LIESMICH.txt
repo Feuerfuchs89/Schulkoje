@@ -55,4 +55,6 @@ Neu in dieser Version: Grundschule Klasse 1 bis 3
   Gesund bleiben) und Physik (Tag und Nacht, Warm und kalt, Straßenverkehr).
 
 Neu in dieser Version: Physik, Band "Elektrotechnik & Löten · Praxis" (im Aufbau):
-Kapitel 1 bis 6, je mit Lektion, Aufgaben (leicht, mittel, schwer), Quiz und Küchentisch-Experiment.
+Kapitel 1 bis 21, je mit Lektion, Aufgaben (leicht, mittel, schwer), Quiz und Küchentisch-Experiment.
+Außerdem: Übungsrunden zeigen keine doppelten Fragen mehr, und Physik Klasse 1–12 hat deutlich mehr Fragen.
+Rechenhilfen: Bei Rechenaufgaben gibt es ein Rechenblatt mit Karopapier (Finger oder Stift) und ab Klasse 5 einen Taschenrechner. Einstellungen: Zahnrad, Rechenhilfen.
