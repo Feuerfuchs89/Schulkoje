@@ -93,3 +93,17 @@ und die App sagt, welcher der beiden Werte noch nicht stimmt.
 
 Übertrag-Kästchen: Neue Taste "Übertrag eintragen" unter der Zifferntastatur springt von Übertrag-Kästchen zu
 Übertrag-Kästchen (von rechts nach links). Das Antippen der kleinen Kästchen reagiert jetzt schon beim Berühren.
+
+Neu in dieser Version: Physik Klasse 6 bis 12
+Jedes der 29 Physik-Themen (Klasse 6 bis 12) hat jetzt einen zusätzlichen Lernschritt "Beispiel und typischer Fehler" mit Formel, durchgerechnetem Beispiel und dem häufigsten Denkfehler.
+Beschreibungstext in manifest.json und index.html von "Klasse 4–12" auf "Klasse 1–12" korrigiert.
+
+Neu in dieser Version: Sachunterricht Klasse 3 bis 4 (Bio, Chemie, Physik)
+Alle 20 Themen haben jetzt je 3 zusätzliche Fragen (vorher 2 bis 3 Fragen pro Thema insgesamt), die Übungsrunden wiederholen sich dadurch deutlich seltener.
+
+Neu in dieser Version: Sachunterricht Klasse 1 bis 4
+- Klasse 1 bis 2 (Bio und Physik, 8 Themen): je 3 zusätzliche Fragen.
+- Klasse 3 bis 4 (20 Themen): neuer Lernschritt "Ausprobieren und nachfragen" mit einem Versuch für zu Hause und einer Frage zum Weiterdenken.
+
+Neu in dieser Version: Elektrotechnik-Quizze
+Jedes der 21 Kapitel hat 2 zusätzliche Quizfragen (vorher 3, jetzt 5), mit ausgeglichenen Antwortlängen.

@@ -1,7 +1,7 @@
 {
   "name": "Schulkoje",
   "short_name": "Schulkoje",
-  "description": "Schulstoff Klasse 4–12 aufarbeiten, um den eigenen Kindern helfen zu können.",
+  "description": "Schulstoff Klasse 1–12 aufarbeiten, um den eigenen Kindern helfen zu können.",
   "lang": "de",
   "start_url": "./index.html",
   "scope": "./",
