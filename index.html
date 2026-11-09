@@ -441,6 +441,8 @@ function checkAnswer(ex,input){
   if(ex.kind==="choice")return{ok:input===ex.correct};
   if(ex.kind==="line")return input==null?{ok:false,invalid:true,note:"Tippe zuerst auf den Zahlenstrahl."}:{ok:Math.abs(input-ex.ans)<ex.step/2};
   if(ex.kind==="order")return{ok:Array.isArray(input)&&input.join()===ex.order.join()};
+  if(ex.kind==="restdiv"){const q=toRat(input&&input.q),r=toRat(input&&input.r);if(!q||!r||q.frac||r.frac)return{ok:false,invalid:true,note:"Trage zwei ganze Zahlen ein: das Ergebnis und den Rest."};
+    const qo=q.n===ex.ans.n*q.d,ro=r.n===ex.rest*r.d;return{ok:qo&&ro,note:qo&&!ro?"Das Ergebnis stimmt, der Rest nicht.":!qo&&ro?"Der Rest stimmt, das Ergebnis nicht.":""}}
   if(ex.kind==="grid")return{ok:ex.order.every(k=>{const e=ex.cells.find(x=>x.r+","+x.c===k);return input&&input[k]===e.ch})};
   if(ex.kind==="pairs")return{ok:input===0,note:input>0?`Alle Paare gefunden, aber mit ${input} Fehlversuch${input>1?"en":""}.`:""};
   const r=toRat(input);
@@ -1123,7 +1125,7 @@ Object.assign(G,{
     if(t===2){const x=a*10,y=b*pick([10,100]);return{q:`Berechne: ${term(`${fmt(x)} · ${fmt(y)}`)}`,kind:"num",ans:R(x*y),sol:`Erst ohne Nullen: ${a} · ${b} = ${a*b}. Dann alle Nullen hinten anhängen: ${fmt(x*y)}.`}}
     if(t===3){const y=a*b*100;return{q:`Berechne: ${term(`${fmt(y)} : ${a}`)}`,kind:"num",ans:R(y/a),sol:`${a*b} : ${a} = ${b}, also ${a*b} Hunderter : ${a} = ${b} Hunderter = ${fmt(y/a)}.`}}
     const q=ri(2,9),d=ri(3,9),r=ri(1,d-1),n=q*d+r;
-    return{q:`Berechne mit Rest: ${term(`${n} : ${d}`)}<p class="muted small">Gib nur das Ergebnis vor dem Rest ein.</p>`,kind:"num",ans:R(q),sol:`${q} · ${d} = ${q*d}, bis ${n} fehlen noch ${r}. Also ${n} : ${d} = ${q} Rest ${r}.`}},
+    return{q:`Berechne mit Rest: ${term(`${n} : ${d}`)}<p class="muted small">Gib das Ergebnis und den Rest ein.</p>`,kind:"restdiv",ans:R(q),rest:r,ansText:`${q} Rest ${r}`,sol:`${q} · ${d} = ${q*d}, bis ${n} fehlen noch ${r}. Also ${n} : ${d} = ${q} Rest ${r}.`}},
 
   schrAdd(){const a=ri(100,9999),b=ri(100,9999),bd=buildAdd(a,b);
     return gridEx(`${fmt(a)} + ${fmt(b)}`,bd,"add",fmt(bd.res),{r:2,ks:range1(Math.max(String(a).length,String(b).length)-1)})},
@@ -5002,7 +5004,7 @@ function kiEx(key,q,i){const order=shuffle(q.opts.map((_,k)=>k));
 function openOverlay(){const root=$("#lesson");root.hidden=false;document.body.style.overflow="hidden";root.scrollTop=0;return root}
 function closeOverlay(){const root=$("#lesson");root.hidden=true;root.innerHTML="";document.body.style.overflow="";
   if(currentTab==="path")renderPath();else if(currentTab==="train")renderTrain();else renderMentor()}
-function answerText(ex){if(ex.kind==="grid")return ex.ansText;if(ex.kind==="choice")return ex.opts[ex.correct];if(ex.kind==="line")return ex.ansText||fmt(ex.ans)+" (grüner Kreis)";if(ex.kind==="order")return ex.order.map(i=>ex.items[i]).join(" &lt; ");if(ex.kind==="pairs")return "alle Paare ohne Fehlversuch";return ex.decimal?decStr(ex.ans):FR(ex.ans)}
+function answerText(ex){if(ex.kind==="grid"||ex.kind==="restdiv")return ex.ansText;if(ex.kind==="choice")return ex.opts[ex.correct];if(ex.kind==="line")return ex.ansText||fmt(ex.ans)+" (grüner Kreis)";if(ex.kind==="order")return ex.order.map(i=>ex.items[i]).join(" &lt; ");if(ex.kind==="pairs")return "alle Paare ohne Fehlversuch";return ex.decimal?decStr(ex.ans):FR(ex.ans)}
 
 /* ===== Rechenhilfen: Rechenblatt (Karopapier) und Taschenrechner ===== */
 const RH_CELL=26,RB_STORE=new WeakMap();
@@ -5179,7 +5181,7 @@ function rhRechner(opener,getField){
 
 /* ---------- Anbindung an die Aufgabenkarte ---------- */
 function rhTools(c,inp,ex,s,o){
-  const kind=ex.kind,numeric=kind==="num"||kind==="frac"||kind==="grid",hasDigits=kind==="choice"&&/\d/.test(plain(ex.q));
+  const kind=ex.kind,numeric=kind==="num"||kind==="frac"||kind==="grid"||kind==="restdiv",hasDigits=kind==="choice"&&/\d/.test(plain(ex.q));
   if(!numeric&&!hasDigits)return;
   const blattOn=S.blatt!==false;
   const mode=S.calc||"auto";
@@ -5190,7 +5192,7 @@ function rhTools(c,inp,ex,s,o){
   if(!blattOn&&!calcOn)return;
   const row=h(`<div class="rh-row"></div>`);
   if(blattOn){const b=h(`<button type="button" class="btn ghost small">${RH_ICON_BLATT}<span>Rechenblatt</span></button>`);b.setAttribute("aria-haspopup","dialog");b.onclick=()=>rhBlatt(s,b);row.append(b)}
-  if(calcOn){const b=h(`<button type="button" class="btn ghost small">${RH_ICON_CALC}<span>Taschenrechner</span></button>`);b.setAttribute("aria-haspopup","dialog");b.onclick=()=>rhRechner(b,numeric&&kind!=="grid"?o.getField:null);row.append(b)}
+  if(calcOn){const b=h(`<button type="button" class="btn ghost small">${RH_ICON_CALC}<span>Taschenrechner</span></button>`);b.setAttribute("aria-haspopup","dialog");b.onclick=()=>rhRechner(b,numeric&&kind!=="grid"&&kind!=="restdiv"?o.getField:null);row.append(b)}
   c.insertBefore(row,inp)}
 
 /* ---------- Einstellungen ---------- */
@@ -5248,6 +5250,9 @@ function runSession({title,steps,stop=null,mode="lesson"}){
       inp.append(box)}
     else if(ex.kind==="line"){special=lineInput(ex,()=>{if(!checked)btn.disabled=false});inp.append(special)}
     else if(ex.kind==="order"){special=orderInput(ex,seq=>{if(!checked)btn.disabled=seq.length!==ex.items.length});inp.append(special)}
+    else if(ex.kind==="restdiv"){const id="rq"+i,w=h(`<div class="stack" style="gap:10px"><div class="row" style="gap:12px;align-items:end;flex-wrap:wrap"><div class="stack" style="gap:6px;flex:1;min-width:110px"><label class="muted small" for="${id}">Ergebnis</label><div class="answer"><input id="${id}" autocomplete="off" inputmode="numeric" spellcheck="false"></div></div><div class="stack" style="gap:6px;flex:1;min-width:110px"><label class="muted small" for="${id}r">Rest</label><div class="answer"><input id="${id}r" autocomplete="off" inputmode="numeric" spellcheck="false"></div></div></div></div>`),a=$("#"+id,w),b=$("#"+id+"r",w),upd=()=>{if(!checked)btn.disabled=!(a.value.trim()&&b.value.trim())};
+      a.oninput=b.oninput=upd;a.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();b.focus()}};b.onkeydown=e=>{if(e.key==="Enter"&&!btn.disabled){e.preventDefault();btn.click()}};
+      w.value=()=>({q:a.value,r:b.value});w.lock=ok=>{[a,b].forEach(x=>{x.readOnly=true;x.classList.add(ok?"right":"wrong")})};special=w;inp.append(w);setTimeout(()=>{try{a.focus({preventScroll:true})}catch(e){}},50)}
     else if(ex.kind==="grid"){special=gridInput(ex,ok=>{if(!checked)btn.disabled=!ok});inp.append(special);setTimeout(()=>{try{special.focus({preventScroll:true})}catch(e){}},50)}
     else if(ex.kind==="pairs"){special=pairsInput(ex,m=>{pairsMiss=m;btn.disabled=false;btn.click()});special.value=()=>pairsMiss;inp.append(special);row.hidden=true}
     else{const id="ans"+i;inp.append(h(`<div class="stack" style="gap:8px"><label class="muted small" for="${id}">Deine Antwort${ex.kind==="frac"?" (Bruch als 3/4)":""}</label><div class="answer"><input id="${id}" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${ex.kind==="frac"?"text":"decimal"}"></div><div class="keys">${["/",MINUS,","].map(k=>`<button type="button" data-k="${k}">${k}</button>`).join("")}</div></div>`));
@@ -5274,7 +5279,7 @@ function runSession({title,steps,stop=null,mode="lesson"}){
       btn.textContent="Weiter";
       if(!res.ok){const ask=h(`<button class="btn ghost small" type="button">Mentor fragen</button>`);row.prepend(ask);
         ask.onclick=()=>{ask.disabled=true;const mb=h(`<div class="card mentorbox"><span class="eyebrow">Mentor</span><div class="ans"></div></div>`);sb.insertBefore(mb,row);
-          const mine=ex.kind==="choice"?plain(ex.opts[sel]):ex.kind==="order"?special.value().map(k=>plain(ex.items[k])).join(" < "):ex.kind==="line"?String(special.value()):ex.kind==="pairs"?`${pairsMiss} Fehlversuche beim Zuordnen`:ex.kind==="grid"?ex.order.map(k=>special.value()[k]||"_").join(""):field.value;
+          const mine=ex.kind==="choice"?plain(ex.opts[sel]):ex.kind==="order"?special.value().map(k=>plain(ex.items[k])).join(" < "):ex.kind==="line"?String(special.value()):ex.kind==="pairs"?`${pairsMiss} Fehlversuche beim Zuordnen`:ex.kind==="grid"?ex.order.map(k=>special.value()[k]||"_").join(""):ex.kind==="restdiv"?`${special.value().q} Rest ${special.value().r}`:field.value;
           streamInto($(".ans",mb),`${SYS()}\n\nIch habe diese Aufgabe falsch gelöst.\nAufgabe: ${plain(ex.q)}\nMeine Antwort: ${mine}\nRichtige Antwort: ${plain(answerText(ex))}\nLösungsweg der App: ${plain(ex.sol)}\n\nErkläre mir einfach und anders als der Lösungsweg, wo mein Denkfehler vermutlich liegt und wie ich es beim nächsten Mal richtig mache.`)}}
       if(steps.length)$(".prog",root).setAttribute("aria-valuemax",steps.length);$(".lbar .eyebrow",root).textContent=`${i+1}/${steps.length}`;
       if(res.ok&&S.auto!==false){c.classList.add("pulse");const bar=h(`<i class="autobar"></i>`);btn.append(bar);autoT=setTimeout(next,1400);

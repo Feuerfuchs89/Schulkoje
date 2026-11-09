@@ -87,3 +87,6 @@ Die Taste ⇄ wechselt die Richtung (nach links, zum Rechnen von rechts), ↵ sp
 Zeile, ⌫ löscht. "Zurück" nimmt das letzte Zeichen wieder weg. Stift und Radierer bleiben wie gehabt.
 
 Taschenrechner (wissenschaftlich): neue Tasten e, eˣ, 10ˣ und x³ (für e-Funktion und Logarithmus).
+
+Teilen mit Rest: Bei "Berechne mit Rest" gibt es jetzt zwei Felder, Ergebnis und Rest. Beide werden geprüft,
+und die App sagt, welcher der beiden Werte noch nicht stimmt.
