@@ -233,6 +233,17 @@ table.pv .komma{border-right:3px solid var(--signal)}
 .sc.under{border-bottom:2.5px solid var(--ink)}
 .sc.hl{background:color-mix(in srgb,var(--signal) 35%,transparent);border-radius:4px}
 .sc.strike{color:var(--muted)}
+.sgrid.gin{touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.sc.in{cursor:pointer;box-shadow:inset 0 0 0 1.5px var(--line);border-radius:4px;background:var(--surface);color:var(--ink)}
+.sc.in.oc{box-shadow:inset 0 0 0 1px var(--line);color:var(--accent);font-size:.8em;height:1.94em;background:transparent}
+.sc.in.act{box-shadow:inset 0 0 0 2.5px var(--signal);background:color-mix(in srgb,var(--signal) 25%,var(--surface))}
+.sc.in.ok{color:var(--ok);background:var(--ok-bg)}
+.sc.in.bad{color:var(--err);background:var(--err-bg)}
+.gkeys{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:420px;margin:10px auto 0;width:100%}
+.gkeys button{font:600 1.15rem var(--f-mono);height:46px;border-radius:10px;border:1px solid var(--line);background:var(--sunk);color:var(--ink);touch-action:manipulation}
+.gkeys button:active{background:var(--surface)}
+.gkeys button:disabled{opacity:.4}
+.gnote{text-align:center;margin:6px 0 0}
 .sc.strike::after{content:"";position:absolute;left:18%;right:18%;top:50%;border-top:2px solid var(--err);transform:rotate(-20deg)}
 .seg{gap:6px}
 .seg .btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
@@ -422,6 +433,7 @@ function checkAnswer(ex,input){
   if(ex.kind==="choice")return{ok:input===ex.correct};
   if(ex.kind==="line")return input==null?{ok:false,invalid:true,note:"Tippe zuerst auf den Zahlenstrahl."}:{ok:Math.abs(input-ex.ans)<ex.step/2};
   if(ex.kind==="order")return{ok:Array.isArray(input)&&input.join()===ex.order.join()};
+  if(ex.kind==="grid")return{ok:ex.order.every(k=>{const e=ex.cells.find(x=>x.r+","+x.c===k);return input&&input[k]===e.ch})};
   if(ex.kind==="pairs")return{ok:input===0,note:input>0?`Alle Paare gefunden, aber mit ${input} Fehlversuch${input>1?"en":""}.`:""};
   const r=toRat(input);
   if(!r)return{ok:false,invalid:true};
@@ -642,6 +654,7 @@ function gridHTML(g,S=99){
     if(x){x.cls.split(" ").filter(Boolean).forEach(k=>cl.push(k));if(x.s===S)cl.push("hl");if(x.strike!=null&&x.strike<=S)cl.push("strike")}
     out+=`<span class="${cl.join(" ")}">${x?x.ch:""}</span>`}
   return out+"</div>"}
+const range1=n=>Array.from({length:Math.max(0,n)},(_,i)=>i+1);
 const digitsR=n=>String(n).split("").reverse().map(Number);
 const PLACE=["Einer","Zehner","Hunderter","Tausender","Zehntausender","Hunderttausender","Millionen"];
 const PLACE1=["Einer","Zehner","Hunderter","Tausender","Zehntausender","Hunderttausender","Million"];
@@ -717,6 +730,56 @@ function buildDiv(a,d){const D=String(a).split("").map(Number),q=Math.floor(a/d)
   t.push(`Ergebnis: ${fmt(a)} : ${d} = <b>${fmt(q)}</b>${rest?` Rest ${rest}`:""}. Probe: ${fmt(q)} · ${d}${rest?` + ${rest}`:""} = ${fmt(a)}.`);
   return{g,t,res:q,rest}}
 const schriftSol=b=>`<div class="sgrid-wrap">${gridHTML(b.g)}</div><ol class="rules small">${b.t.slice(1).map(x=>`<li>${x}</li>`).join("")}</ol>`;
+
+/* ---------- Schriftliches Rechnen zum Eintippen: Kästchen mit eigener Zifferntastatur ---------- */
+function gridModel(op,bd,opt){
+  const g=bd.g,cols=g.cols,last={};
+  g.cells.forEach(e=>{if(!e.cls.includes("row-under"))last[e.r+","+e.c]=e});
+  const cells=[],under=g.cells.filter(e=>e.cls.includes("row-under")).map(e=>({r:e.r,from:e.from,to:e.to}));
+  Object.values(last).forEach(e=>{
+    const b={r:e.r,c:e.c,ch:e.ch,s:e.s,cls:e.cls.replace(/\b(res|carry|hl)\b/g,"").trim()};
+    if(op==="div")cells.push(Object.assign(b,{t:e.s>0?"req":"fix"}));
+    else if(e.s===0)cells.push(Object.assign(b,{t:"fix"}));
+    else if(e.cls.includes("res"))cells.push(Object.assign(b,{t:"req"}))});
+  if(opt)opt.ks.forEach(k=>{const c=cols-1-k,e=last[opt.r+","+c];cells.push({r:opt.r,c,ch:e&&e.cls.includes("carry")?e.ch:"",s:0,cls:"",t:"opt"})});
+  const key=e=>e.r+","+e.c;
+  const order=cells.filter(e=>e.t==="req").sort((a,b)=>op==="div"?a.s-b.s||a.r-b.r||a.c-b.c:a.s-b.s||b.c-a.c).map(key);
+  return{kind:"grid",cols,cells,under,order,rows:[...new Set(cells.map(e=>e.r).concat(under.map(u=>u.r)))].sort((a,b)=>a-b)}}
+function gridInput(ex,onChange){
+  const vals={},K=e=>e.r+","+e.c,by={};ex.cells.forEach(e=>by[K(e)]=e);
+  let act=ex.order[0],locked=false;
+  const wrap=h(`<div class="stack" style="gap:0" tabindex="0" aria-label="Rechenraster zum Ausfüllen"><div class="sgrid-wrap"><div class="sgrid gin" style="grid-template-columns:repeat(${ex.cols},1.55em)"></div></div><div class="gkeys" role="group" aria-label="Zifferntastatur"></div><p class="muted small gnote">Tippe ein Kästchen an und gib die Ziffer ein. Kleine Kästchen sind für den Übertrag (freiwillig).</p></div>`);
+  const gr=$(".sgrid",wrap),kp=$(".gkeys",wrap);
+  const req=()=>ex.order,filled=()=>req().every(k=>vals[k]!=null&&vals[k]!=="");
+  function paint(res){
+    gr.innerHTML="";
+    ex.rows.forEach(r=>{for(let c=0;c<ex.cols;c++){
+      const e=by[r+","+c],cl=["sc"];
+      if(ex.under.some(u=>u.r===r&&c>=u.from&&c<=u.to))cl.push("under");
+      let txt="";
+      if(e){if(e.cls)cl.push(e.cls);
+        if(e.t==="fix")txt=e.ch;
+        else{cl.push("in");if(e.t==="opt")cl.push("oc");txt=vals[K(e)]||"";
+          if(K(e)===act&&!locked)cl.push("act");
+          if(res){const v=vals[K(e)]||"";if(e.t==="req")cl.push(v===e.ch?"ok":"bad");else if(v)cl.push(v===e.ch?"ok":"bad")}}}
+      const sp=h(`<span class="${cl.join(" ")}">${txt}</span>`);
+      if(e&&e.t!=="fix"&&!locked){sp.setAttribute("role","button");sp.setAttribute("aria-label",e.t==="opt"?"Übertrag":"Ziffer eintragen");sp.onclick=()=>{act=K(e);paint()}}
+      gr.append(sp)}})}
+  const nextReq=from=>{const o=req(),i=o.indexOf(from);
+    for(let j=i+1;j<o.length;j++)if(!vals[o[j]])return o[j];
+    for(let j=0;j<o.length;j++)if(!vals[o[j]])return o[j];
+    return from};
+  function put(d){if(locked||!act)return;vals[act]=d;if(by[act].t==="req"){const o=req(),i=o.indexOf(act);act=(i+1<o.length&&!vals[o[i+1]])?o[i+1]:nextReq(act)}else act=nextReq(req()[0]);paint();onChange(filled())}
+  function del(){if(locked||!act)return;if(vals[act]){delete vals[act]}else{const o=req(),i=o.indexOf(act);if(i>0)act=o[i-1];delete vals[act]}paint();onChange(filled())}
+  function skip(){if(locked)return;const o=req(),i=o.indexOf(act);act=o[(i+1)%o.length];paint()}
+  [..."123456789","0","⌫","→"].forEach(k=>{const b=h(`<button type="button">${k}</button>`);b.onclick=()=>k==="⌫"?del():k==="→"?skip():put(k);if(k==="⌫")b.setAttribute("aria-label","Löschen");if(k==="→")b.setAttribute("aria-label","Nächstes Kästchen");kp.append(b)});
+  wrap.addEventListener("keydown",e=>{if(/^\d$/.test(e.key)){e.preventDefault();put(e.key)}else if(e.key==="Backspace"){e.preventDefault();del()}else if(e.key==="Tab"&&false){}else if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();skip()}});
+  paint();
+  wrap.value=()=>vals;
+  wrap.lock=()=>{locked=true;kp.querySelectorAll("button").forEach(b=>b.disabled=true);paint(true)};
+  return wrap}
+function gridEx(q,bd,op,ansText,opt){const m=gridModel(op,bd,opt);
+  return Object.assign({q:`Rechne schriftlich: ${term(q)}<p class="muted small">Trage die Ziffern in die Kästchen ein.</p>`,ans:R(bd.res),ansText,sol:schriftSol(bd)},m)}
 /* ---------- Bausteine: interaktive Animationen, wiederverwendbar über viele Themen ---------- */
 const reduceMotion=()=>{try{return matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){return false}};
 function slider(id,label,min,max,val,step=1){return `<label class="sl" for="${id}"><span>${label} <b id="${id}-v">${val}</b></span><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></label>`}
@@ -1052,14 +1115,14 @@ Object.assign(G,{
     return{q:`Berechne mit Rest: ${term(`${n} : ${d}`)}<p class="muted small">Gib nur das Ergebnis vor dem Rest ein.</p>`,kind:"num",ans:R(q),sol:`${q} · ${d} = ${q*d}, bis ${n} fehlen noch ${r}. Also ${n} : ${d} = ${q} Rest ${r}.`}},
 
   schrAdd(){const a=ri(100,9999),b=ri(100,9999),bd=buildAdd(a,b);
-    return{q:`Rechne schriftlich: ${term(`${fmt(a)} + ${fmt(b)}`)}`,kind:"num",ans:R(bd.res),sol:schriftSol(bd)}},
+    return gridEx(`${fmt(a)} + ${fmt(b)}`,bd,"add",fmt(bd.res),{r:2,ks:range1(Math.max(String(a).length,String(b).length)-1)})},
   schrSub(){let a,b;do{a=ri(1000,9999);b=ri(100,a-1)}while(a-b<100||!digitsR(a).some((d,k)=>d<(digitsR(b)[k]||0)));
-    const bd=buildSub(a,b,(typeof S!=="undefined"&&S.subMode)||"ab");
-    return{q:`Rechne schriftlich: ${term(`${fmt(a)} ${MINUS} ${fmt(b)}`)}`,kind:"num",ans:R(bd.res),sol:schriftSol(bd)}},
+    const mode=(typeof S!=="undefined"&&S.subMode)||"ab",bd=buildSub(a,b,mode);
+    return gridEx(`${fmt(a)} ${MINUS} ${fmt(b)}`,bd,"sub",fmt(bd.res),mode==="ab"?null:{r:2,ks:range1(String(a).length-1)})},
   schrMul(){const a=ri(102,9999),d=ri(3,9),bd=buildMul(a,d);
-    return{q:`Rechne schriftlich: ${term(`${fmt(a)} · ${d}`)}`,kind:"num",ans:R(bd.res),sol:schriftSol(bd)}},
+    return gridEx(`${fmt(a)} · ${d}`,bd,"mul",fmt(bd.res),{r:1,ks:range1(String(a).length-1)})},
   schrDiv(){const d=ri(2,9),q=ri(105,1999),a=q*d;if(a>9999)return G.schrDiv();const bd=buildDiv(a,d);
-    return{q:`Rechne schriftlich: ${term(`${fmt(a)} : ${d}`)}`,kind:"num",ans:R(bd.res),sol:schriftSol(bd)}},
+    return gridEx(`${fmt(a)} : ${d}`,bd,"div",fmt(bd.res),null)},
 
   groessen(){const t=ri(0,7);let q,a,sol,u;
     switch(t){
@@ -4928,7 +4991,7 @@ function kiEx(key,q,i){const order=shuffle(q.opts.map((_,k)=>k));
 function openOverlay(){const root=$("#lesson");root.hidden=false;document.body.style.overflow="hidden";root.scrollTop=0;return root}
 function closeOverlay(){const root=$("#lesson");root.hidden=true;root.innerHTML="";document.body.style.overflow="";
   if(currentTab==="path")renderPath();else if(currentTab==="train")renderTrain();else renderMentor()}
-function answerText(ex){if(ex.kind==="choice")return ex.opts[ex.correct];if(ex.kind==="line")return ex.ansText||fmt(ex.ans)+" (grüner Kreis)";if(ex.kind==="order")return ex.order.map(i=>ex.items[i]).join(" &lt; ");if(ex.kind==="pairs")return "alle Paare ohne Fehlversuch";return ex.decimal?decStr(ex.ans):FR(ex.ans)}
+function answerText(ex){if(ex.kind==="grid")return ex.ansText;if(ex.kind==="choice")return ex.opts[ex.correct];if(ex.kind==="line")return ex.ansText||fmt(ex.ans)+" (grüner Kreis)";if(ex.kind==="order")return ex.order.map(i=>ex.items[i]).join(" &lt; ");if(ex.kind==="pairs")return "alle Paare ohne Fehlversuch";return ex.decimal?decStr(ex.ans):FR(ex.ans)}
 
 /* ===== Rechenhilfen: Rechenblatt (Karopapier) und Taschenrechner ===== */
 const RH_CELL=26,RB_STORE=new WeakMap();
@@ -5081,7 +5144,7 @@ function rhRechner(opener,getField){
 
 /* ---------- Anbindung an die Aufgabenkarte ---------- */
 function rhTools(c,inp,ex,s,o){
-  const kind=ex.kind,numeric=kind==="num"||kind==="frac",hasDigits=kind==="choice"&&/\d/.test(plain(ex.q));
+  const kind=ex.kind,numeric=kind==="num"||kind==="frac"||kind==="grid",hasDigits=kind==="choice"&&/\d/.test(plain(ex.q));
   if(!numeric&&!hasDigits)return;
   const blattOn=S.blatt!==false;
   const mode=S.calc||"auto";
@@ -5092,7 +5155,7 @@ function rhTools(c,inp,ex,s,o){
   if(!blattOn&&!calcOn)return;
   const row=h(`<div class="rh-row"></div>`);
   if(blattOn){const b=h(`<button type="button" class="btn ghost small">${RH_ICON_BLATT}<span>Rechenblatt</span></button>`);b.setAttribute("aria-haspopup","dialog");b.onclick=()=>rhBlatt(s,b);row.append(b)}
-  if(calcOn){const b=h(`<button type="button" class="btn ghost small">${RH_ICON_CALC}<span>Taschenrechner</span></button>`);b.setAttribute("aria-haspopup","dialog");b.onclick=()=>rhRechner(b,numeric?o.getField:null);row.append(b)}
+  if(calcOn){const b=h(`<button type="button" class="btn ghost small">${RH_ICON_CALC}<span>Taschenrechner</span></button>`);b.setAttribute("aria-haspopup","dialog");b.onclick=()=>rhRechner(b,numeric&&kind!=="grid"?o.getField:null);row.append(b)}
   c.insertBefore(row,inp)}
 
 /* ---------- Einstellungen ---------- */
@@ -5150,6 +5213,7 @@ function runSession({title,steps,stop=null,mode="lesson"}){
       inp.append(box)}
     else if(ex.kind==="line"){special=lineInput(ex,()=>{if(!checked)btn.disabled=false});inp.append(special)}
     else if(ex.kind==="order"){special=orderInput(ex,seq=>{if(!checked)btn.disabled=seq.length!==ex.items.length});inp.append(special)}
+    else if(ex.kind==="grid"){special=gridInput(ex,ok=>{if(!checked)btn.disabled=!ok});inp.append(special);setTimeout(()=>{try{special.focus({preventScroll:true})}catch(e){}},50)}
     else if(ex.kind==="pairs"){special=pairsInput(ex,m=>{pairsMiss=m;btn.disabled=false;btn.click()});special.value=()=>pairsMiss;inp.append(special);row.hidden=true}
     else{const id="ans"+i;inp.append(h(`<div class="stack" style="gap:8px"><label class="muted small" for="${id}">Deine Antwort${ex.kind==="frac"?" (Bruch als 3/4)":""}</label><div class="answer"><input id="${id}" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${ex.kind==="frac"?"text":"decimal"}"></div><div class="keys">${["/",MINUS,","].map(k=>`<button type="button" data-k="${k}">${k}</button>`).join("")}</div></div>`));
       field=$("input",inp);field.oninput=()=>{btn.disabled=!field.value.trim()};
@@ -5175,7 +5239,7 @@ function runSession({title,steps,stop=null,mode="lesson"}){
       btn.textContent="Weiter";
       if(!res.ok){const ask=h(`<button class="btn ghost small" type="button">Mentor fragen</button>`);row.prepend(ask);
         ask.onclick=()=>{ask.disabled=true;const mb=h(`<div class="card mentorbox"><span class="eyebrow">Mentor</span><div class="ans"></div></div>`);sb.insertBefore(mb,row);
-          const mine=ex.kind==="choice"?plain(ex.opts[sel]):ex.kind==="order"?special.value().map(k=>plain(ex.items[k])).join(" < "):ex.kind==="line"?String(special.value()):ex.kind==="pairs"?`${pairsMiss} Fehlversuche beim Zuordnen`:field.value;
+          const mine=ex.kind==="choice"?plain(ex.opts[sel]):ex.kind==="order"?special.value().map(k=>plain(ex.items[k])).join(" < "):ex.kind==="line"?String(special.value()):ex.kind==="pairs"?`${pairsMiss} Fehlversuche beim Zuordnen`:ex.kind==="grid"?ex.order.map(k=>special.value()[k]||"_").join(""):field.value;
           streamInto($(".ans",mb),`${SYS()}\n\nIch habe diese Aufgabe falsch gelöst.\nAufgabe: ${plain(ex.q)}\nMeine Antwort: ${mine}\nRichtige Antwort: ${plain(answerText(ex))}\nLösungsweg der App: ${plain(ex.sol)}\n\nErkläre mir einfach und anders als der Lösungsweg, wo mein Denkfehler vermutlich liegt und wie ich es beim nächsten Mal richtig mache.`)}}
       if(steps.length)$(".prog",root).setAttribute("aria-valuemax",steps.length);$(".lbar .eyebrow",root).textContent=`${i+1}/${steps.length}`;
       if(res.ok&&S.auto!==false){c.classList.add("pulse");const bar=h(`<i class="autobar"></i>`);btn.append(bar);autoT=setTimeout(next,1400);
@@ -5196,6 +5260,95 @@ function runSession({title,steps,stop=null,mode="lesson"}){
     else if(stop&&!stop.planned){const again=h(`<button class="btn ghost" type="button">Noch eine Runde</button>`);again.onclick=()=>runSession({title:stop.title,steps:exList(stop.topic.gens,5),stop,mode:"lesson"});row.append(again)}
     const done=h(`<button class="btn" type="button">Fertig</button>`);done.onclick=closeOverlay;row.append(done);sb.append(row)}
   draw()}
+
+/* ---------- Formelkasten: Formelzeichen und Rechenweg zu den Mathe-Lektionen ---------- */
+(()=>{
+const FZ=(rows,bsp,intro="")=>`${intro}<table class="tbl"><tr><th>Zeichen</th><th>Bedeutung</th></tr>${rows.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td></tr>`).join("")}</table>${bsp?`<p><b>Rechenweg am Beispiel:</b> ${bsp[0]}</p><ol class="rules">${bsp.slice(1).map(x=>`<li>${x}</li>`).join("")}</ol>`:""}`;
+const FORMELN={
+"m-regeln":["Reihenfolge beim Rechnen",FZ([["( )","Klammern zuerst"],["a²","Potenzen vor Punkt"],["· und :","Punkt vor Strich"],["+ und −","zuletzt, immer von links nach rechts"]],["2 + 3 · (7 − 4)² : 3","Klammer: 7 − 4 = 3","Potenz: 3² = 9","Punkt, von links: 3 · 9 = 27, dann 27 : 3 = 9","Strich: 2 + 9 = <b>11</b>"])],
+"m-bruch1":["Zeichen und Rechenweg: Kürzen und Erweitern",FZ([["a/b","Bruch: a ist der <b>Zähler</b> (wie viele Teile), b der <b>Nenner</b> (in wie viele gleiche Teile das Ganze geteilt ist)"],["Kürzen","Zähler und Nenner durch dieselbe Zahl teilen"],["Erweitern","Zähler und Nenner mit derselben Zahl malnehmen"]],["Kürze 18/24 so weit wie möglich.","Gemeinsamer Teiler suchen: der größte ist 6.","18 : 6 = 3 und 24 : 6 = 4.","Ergebnis: <b>3/4</b>. Der Wert bleibt gleich, nur die Stücke sind größer."])],
+"m-bruch2":["Rechenweg: Brüche addieren",FZ([["a/b + c/d","zwei Brüche mit verschiedenen Nennern b und d"],["Hauptnenner","kleinste Zahl, in der beide Nenner stecken"]],["2/3 + 3/4","Hauptnenner: kleinstes gemeinsames Vielfaches von 3 und 4 ist 12.","Erweitern: 2/3 = 8/12 (mal 4) und 3/4 = 9/12 (mal 3).","Nur die Zähler addieren, der Nenner bleibt: 8/12 + 9/12 = 17/12.","Umwandeln: 17/12 = <b>1 5/12</b>."],`<p>Gleiche Nenner: Zähler addieren, Nenner bleibt. Verschiedene Nenner: erst gleichnamig machen.</p>`)],
+"m-bruch3":["Rechenweg: Brüche mal und geteilt",FZ([["a/b · c/d","= (a · c) / (b · d): Zähler mal Zähler, Nenner mal Nenner"],["a/b : c/d","= a/b · d/c: mit dem <b>Kehrwert</b> malnehmen (Zähler und Nenner tauschen)"]],["3/5 : 2/3","Teilen heißt mit dem Kehrwert malnehmen: 2/3 wird zu 3/2.","3/5 · 3/2 = (3 · 3) / (5 · 2) = 9/10.","Ergebnis: <b>9/10</b>. Tipp: Vor dem Malnehmen über Kreuz kürzen, das hält die Zahlen klein."])],
+"m-flaeche":["Formelzeichen und Rechenweg",FZ([["A","Flächeninhalt (cm², m²)"],["U","Umfang, Länge des Randes (cm, m)"],["a, b","Seitenlängen des Rechtecks"],["g","Grundseite des Dreiecks"],["h","Höhe, steht senkrecht auf g"]],["Beet mit a = 8 m und b = 5 m, dazu ein Dreieck mit g = 6 cm und h = 4 cm.","Rechteck-Fläche: A = a · b = 8 · 5 = <b>40 m²</b>.","Rechteck-Umfang: U = 2 · (a + b) = 2 · 13 = <b>26 m</b>.","Dreieck: A = g · h : 2 = 6 · 4 : 2 = <b>12 cm²</b>."])],
+"m-volumen":["Formelzeichen und Rechenweg",FZ([["V","Volumen (cm³, dm³, m³)"],["O","Oberfläche, Summe aller Seitenflächen (cm², m²)"],["a, b, c","Länge, Breite, Höhe des Quaders"]],["Quader mit a = 5 cm, b = 4 cm, c = 3 cm.","V = a · b · c = 5 · 4 · 3 = <b>60 cm³</b>.","O = 2 · (a·b + a·c + b·c) = 2 · (20 + 15 + 12) = 2 · 47 = <b>94 cm²</b>.","In Litern: 1000 cm³ = 1 l, also sind 60 cm³ gleich 0,06 l."])],
+"m-winkel":["Formelzeichen und Rechenweg",FZ([["α, β, γ","griechische Buchstaben Alpha, Beta, Gamma: Namen für Winkel"],["°","Grad: ein voller Kreis hat 360°"],["α + β + γ = 180°","Winkelsumme im Dreieck"],["Nebenwinkel","ergänzen sich auf 180°"]],["Dreieck mit α = 50° und β = 65°. Wie groß ist γ?","Winkelsumme: α + β + γ = 180°.","50° + 65° = 115°.","γ = 180° − 115° = <b>65°</b>."])],
+"m-prozent":["Formelzeichen und Rechenweg",FZ([["G","Grundwert: das Ganze, entspricht 100 %"],["p","Prozentsatz (in %)"],["W","Prozentwert: der Anteil, in €, kg …"]],["Drei Aufgaben, jeweils mit der passenden Formel:","<b>W gesucht:</b> G = 240 €, p = 15 %. W = G · p : 100 = 240 · 15 : 100 = <b>36 €</b>.","<b>p gesucht:</b> G = 120 €, W = 18 €. p = W : G · 100 = 18 : 120 · 100 = <b>15 %</b>.","<b>G gesucht:</b> W = 45 €, p = 30 %. G = W : p · 100 = 45 : 30 · 100 = <b>150 €</b>."])],
+"m-zins":["Formelzeichen und Rechenweg",FZ([["K","Kapital: das angelegte oder geliehene Geld"],["p","Zinssatz in % pro Jahr"],["t","Zeit (in Jahren)"],["Z","Zinsen: der Ertrag oder die Kosten, in €"]],["2000 € zu 3 % für 9 Monate.","Zinsen für ein ganzes Jahr: Z = K · p : 100 = 2000 · 3 : 100 = 60 €.","9 Monate sind 9/12 eines Jahres: 60 € · 9 : 12 = <b>45 €</b>.","Kurz in einer Formel: Z = K · p : 100 · t."])],
+"m-daten":["Formelzeichen und Rechenweg",FZ([["x₁, x₂ … xₙ","die einzelnen Werte"],["n","Anzahl der Werte"],["x̄","sprich „x quer“: Mittelwert = (x₁ + x₂ + … + xₙ) : n"]],["Noten: 3, 5, 5, 8, 9.","n = 5 Werte, Summe 3 + 5 + 5 + 8 + 9 = 30.","Mittelwert: x̄ = 30 : 5 = <b>6</b>.","Median (mittlerer Wert der geordneten Liste): <b>5</b>. Modalwert (häufigster Wert): <b>5</b>.","Spannweite: 9 − 3 = <b>6</b>."])],
+"m-gleichung":["Rechenweg: Gleichung lösen",FZ([["x","die Unbekannte, gesucht ist ihr Wert"],["=","beide Seiten sind gleich schwer, wie bei einer Waage"],["Umformung","auf <b>beiden</b> Seiten dasselbe tun (plus, minus, mal, geteilt)"]],["3x + 5 = 20","Auf beiden Seiten − 5: 3x = 15.","Auf beiden Seiten : 3: x = <b>5</b>.","Probe: 3 · 5 + 5 = 20 ✓."])],
+"m-linfkt":["Formelzeichen und Rechenweg",FZ([["y = m · x + b","Gleichung der Geraden"],["x, y","Koordinaten eines Punkts auf der Geraden"],["m","Steigung: um wie viel y wächst, wenn x um 1 wächst"],["b","y-Achsenabschnitt: dort schneidet die Gerade die y-Achse (x = 0)"]],["Gerade durch P₁(1 | 3) und P₂(3 | 7).","Steigung: m = (y₂ − y₁) : (x₂ − x₁) = (7 − 3) : (3 − 1) = 2.","b bestimmen: Punkt P₁ einsetzen: 3 = 2 · 1 + b, also b = 1.","Ergebnis: <b>y = 2x + 1</b>."])],
+"m-lgs":["Rechenweg: Einsetzungsverfahren",FZ([["I, II","Nummern der beiden Gleichungen"],["x, y","die zwei Unbekannten, beide gesucht"]],["I: y = 2x und II: x + y = 9","I in II einsetzen: x + 2x = 9.","Zusammenfassen: 3x = 9, also x = 3.","x in I einsetzen: y = 2 · 3 = 6.","Probe in II: 3 + 6 = 9 ✓. Lösung: <b>x = 3 und y = 6</b>."])],
+"m-binom":["Formelzeichen und Rechenweg",FZ([["a, b","stehen für beliebige Zahlen oder Terme"],["(a + b)²","= a² + 2ab + b² (1. Formel)"],["(a − b)²","= a² − 2ab + b² (2. Formel)"],["(a + b)(a − b)","= a² − b² (3. Formel)"]],["Rechne 51² im Kopf und löse (x + 3)².","51² = (50 + 1)² = 50² + 2 · 50 · 1 + 1² = 2500 + 100 + 1 = <b>2601</b>.","(x + 3)²: a = x, b = 3. Also x² + 2 · x · 3 + 3² = <b>x² + 6x + 9</b>.","Häufiger Fehler: (a + b)² ist <b>nicht</b> a² + b². Das Doppelprodukt 2ab fehlt dann."])],
+"m-potenz":["Formelzeichen und Rechenweg",FZ([["aⁿ","Potenz: a ist die <b>Basis</b>, n der <b>Exponent</b>. a wird n-mal mit sich selbst malgenommen"],["√a","Wurzel: die Zahl, die mit sich selbst malgenommen a ergibt (a heißt Radikand)"],["aᵐ · aⁿ = aᵐ⁺ⁿ","gleiche Basis: Exponenten addieren"],["aᵐ : aⁿ = aᵐ⁻ⁿ","gleiche Basis: Exponenten subtrahieren"],["(aᵐ)ⁿ = aᵐ·ⁿ","Potenz potenzieren: Exponenten multiplizieren"],["a⁰ = 1 und a⁻ⁿ = 1/aⁿ","Sonderfälle"]],["2³ · 2⁴ und √144","Gleiche Basis 2: Exponenten addieren, 2³ · 2⁴ = 2³⁺⁴ = 2⁷ = <b>128</b>.","Wurzel: 12 · 12 = 144, also √144 = <b>12</b>."])],
+"m-qfkt":["Formelzeichen und Rechenweg",FZ([["y = a·x² + b·x + c","allgemeine Form der Parabel"],["y = a·(x − d)² + e","Scheitelform"],["S(d | e)","Scheitelpunkt: tiefster bzw. höchster Punkt"],["a","a &gt; 0: nach oben geöffnet; a &lt; 0: nach unten; je größer |a|, desto enger"]],["Scheitelpunkt von y = x² − 6x + 5.","Quadratisch ergänzen: x² − 6x + 9 − 9 + 5 (die halbe 6 ist 3, 3² = 9).","(x − 3)² − 4. Also y = (x − 3)² − 4.","Ablesen: d = 3, e = −4, Scheitelpunkt <b>S(3 | −4)</b>."])],
+"m-qgl":["Formelzeichen und Rechenweg",FZ([["x² + p·x + q = 0","Normalform: vor x² steht eine 1"],["p, q","die Zahlen vor x und die Zahl ohne x (mit Vorzeichen!)"],["x₁, x₂","die beiden Lösungen"],["D = (p/2)² − q","Diskriminante, steht unter der Wurzel: D &gt; 0 zwei, D = 0 eine, D &lt; 0 keine Lösung"]],["x² − 6x + 8 = 0 mit der pq-Formel x₁,₂ = −p/2 ± √((p/2)² − q)","p = −6 und q = 8. Also p/2 = −3.","D = (−3)² − 8 = 9 − 8 = 1. Die Wurzel ist √1 = 1.","x = −(−3) ± 1 = 3 ± 1.","Lösungen: <b>x₁ = 4 und x₂ = 2</b>. Probe: 4² − 6 · 4 + 8 = 0 ✓."])],
+"m-pyth":["Formelzeichen und Rechenweg",FZ([["a, b","Katheten: die beiden Seiten am rechten Winkel"],["c","Hypotenuse: die längste Seite, liegt dem rechten Winkel gegenüber"],["a² + b² = c²","gilt nur im <b>rechtwinkligen</b> Dreieck"]],["Gesucht sind c und danach eine Kathete.","a = 6 und b = 8: c² = 6² + 8² = 36 + 64 = 100, also c = √100 = <b>10</b>.","Leiter: c = 5 m lang, steht 3 m von der Wand (a = 3 m). Wandhöhe b: b² = c² − a² = 25 − 9 = 16.","b = √16 = <b>4 m</b>."])],
+"m-strahlen":["Formelzeichen und Rechenweg",FZ([["1 : n","Maßstab: 1 Längeneinheit auf der Karte sind n in Wirklichkeit"],["k","Streckfaktor: alle Längen werden mit k malgenommen"],["Fläche","wächst mit k²"],["Volumen","wächst mit k³"]],["Karte 1 : 25 000, die Strecke ist 4 cm lang.","In Wirklichkeit: 4 cm · 25 000 = 100 000 cm.","100 000 cm = 1000 m = <b>1 km</b>.","Bei Streckfaktor k = 2 wird die Länge doppelt so groß, die Fläche <b>4-mal</b> (2²) und das Volumen <b>8-mal</b> (2³) so groß."])],
+"m-kreis":["Formelzeichen und Rechenweg",FZ([["r","Radius: Abstand vom Mittelpunkt zum Rand"],["d","Durchmesser, d = 2 · r"],["π","Kreiszahl, ungefähr 3,14"],["U","Umfang des Kreises"],["A","Flächeninhalt"],["V, h","Volumen und Höhe des Körpers"]],["Kreis mit r = 5 cm, als Zylinder mit h = 10 cm.","U = 2 · π · r = 2 · π · 5 ≈ <b>31,4 cm</b>.","A = π · r² = π · 25 ≈ <b>78,5 cm²</b>.","Zylinder: V = A · h = 78,5 · 10 ≈ <b>785 cm³</b>."])],
+"m-trig":["Formelzeichen und Rechenweg",FZ([["α","der Winkel, den man betrachtet"],["Hypotenuse","längste Seite, gegenüber dem rechten Winkel"],["Gegenkathete","Kathete gegenüber von α"],["Ankathete","Kathete, die an α anliegt"],["sin α","= Gegenkathete : Hypotenuse"],["cos α","= Ankathete : Hypotenuse"],["tan α","= Gegenkathete : Ankathete"]],["Zwei Aufgaben im rechtwinkligen Dreieck.","<b>Seite gesucht:</b> c = 10 cm, α = 30°. Die Gegenkathete a gehört zu sin: a = c · sin 30° = 10 · 0,5 = <b>5 cm</b>.","<b>Winkel gesucht:</b> Gegenkathete 3 cm, Ankathete 4 cm. tan α = 3 : 4 = 0,75.","Mit der Umkehrtaste: α = tan⁻¹(0,75) ≈ <b>36,9°</b> (Taschenrechner auf DEG)."])],
+"m-wkeit":["Formelzeichen und Rechenweg",FZ([["P(E)","Wahrscheinlichkeit des Ereignisses E, eine Zahl von 0 bis 1"],["P(E) = günstige : mögliche","bei gleich wahrscheinlichen Ausgängen"],["1 − P(E)","Gegenereignis: E tritt nicht ein"],["Pfadregel","entlang eines Pfads <b>malnehmen</b>, mehrere Pfade <b>addieren</b>"]],["Münze zweimal werfen. Wie wahrscheinlich ist mindestens einmal Kopf?","Beide Male Zahl: P = 1/2 · 1/2 = 1/4 (Pfad: malnehmen).","Gegenereignis: 1 − 1/4 = <b>3/4</b>, also 75 %."])],
+"m-expo":["Formelzeichen und Rechenweg",FZ([["N(t)","Bestand nach der Zeit t"],["N₀","Startwert (t = 0)"],["q","Wachstumsfaktor: Zunahme um p %: q = 1 + p/100, Abnahme: q = 1 − p/100"],["t","Zeit in Schritten (Jahre, Stunden …)"]],["1000 € mit 3 % Zinsen, 10 Jahre.","q = 1 + 3/100 = 1,03; N₀ = 1000.","N(10) = 1000 · 1,03¹⁰ ≈ 1000 · 1,3439 ≈ <b>1344 €</b>.","Bei 20 % Abnahme wäre q = 1 − 0,2 = 0,8."])],
+"m-ableit":["Formelzeichen und Rechenweg",FZ([["f(x)","die Funktion, ihr Funktionswert an der Stelle x"],["f′(x)","die Ableitung („f Strich“): sie gibt die Steigung der Kurve an jeder Stelle an"],["(xⁿ)′ = n · xⁿ⁻¹","Potenzregel: Exponent nach vorn, dann um 1 kleiner"],["Faktor und Summe","ein Faktor bleibt stehen, jede Summe wird einzeln abgeleitet, eine Zahl ohne x fällt weg"]],["f(x) = 3x² − 4x + 7, Steigung bei x = 2.","3x² wird zu 3 · 2 · x = 6x. 4x wird zu 4. Die 7 fällt weg.","f′(x) = 6x − 4.","Einsetzen: f′(2) = 6 · 2 − 4 = <b>8</b>. Dort steigt die Kurve mit Steigung 8."])],
+"m-kurve":["Formelzeichen und Rechenweg",FZ([["f′(x) = 0","waagerechte Tangente: Kandidat für Hoch- oder Tiefpunkt"],["f″(x)","zweite Ableitung („f zwei Strich“): die Ableitung von f′"],["f″ &lt; 0","Hochpunkt (Kurve ist nach unten gekrümmt)"],["f″ &gt; 0","Tiefpunkt (nach oben gekrümmt)"],["f″(x) = 0","Kandidat für einen Wendepunkt"]],["f(x) = x³ − 3x","f′(x) = 3x² − 3 = 0, also x² = 1 und x = ±1.","f″(x) = 6x.","f″(1) = 6 &gt; 0, also <b>Tiefpunkt T(1 | −2)</b>, denn f(1) = 1 − 3 = −2.","f″(−1) = −6 &lt; 0, also <b>Hochpunkt H(−1 | 2)</b>, denn f(−1) = −1 + 3 = 2."])],
+"m-integral":["Formelzeichen und Rechenweg",FZ([["F(x)","Stammfunktion: ihre Ableitung ist f(x)"],["∫ f(x) dx","Integral: Fläche unter der Kurve (dx heißt: es wird nach x integriert)"],["a, b","untere und obere Grenze des Bereichs"],["∫ xⁿ dx","= xⁿ⁺¹ : (n + 1) + C, also Exponent plus 1 und durch den neuen Exponenten teilen"],["∫ₐᵇ f(x) dx","= F(b) − F(a)"]],["Fläche unter f(x) = x² zwischen 0 und 2.","Stammfunktion: F(x) = x³ : 3.","Obere Grenze minus untere: F(2) − F(0) = 8/3 − 0.","Ergebnis: <b>8/3 ≈ 2,67</b> Flächeneinheiten."])],
+"m-efkt":["Formelzeichen und Rechenweg",FZ([["e","Eulersche Zahl, ungefähr 2,718"],["ln x","natürlicher Logarithmus: die Zahl, mit der man e potenzieren muss, um x zu erhalten"],["N₀, k, t","Startwert, Wachstumskonstante, Zeit in N(t) = N₀ · e^(k·t)"]],["Zwei Aufgaben mit ln.","eˣ = 5: auf beiden Seiten ln: x = ln 5 ≈ <b>1,61</b>.","Verdopplungszeit bei k = 0,05: 2 = e^(0,05 · t), also 0,05 · t = ln 2.","t = ln 2 : 0,05 ≈ 0,693 : 0,05 ≈ <b>13,9</b> Zeiteinheiten."])],
+"m-trigf":["Formelzeichen und Rechenweg",FZ([["α","Winkel in Grad (°)"],["x","Winkel im Bogenmaß (Länge des Bogens am Einheitskreis)"],["π","Kreiszahl; 180° entsprechen π"],["a, b, c","in f(x) = a·sin(b·x) + c: Amplitude, Streckung der Periode (Periode = 2π : b), Verschiebung nach oben"]],["120° umrechnen und f(x) = 3 · sin(2x) + 1 beschreiben.","x = α · π : 180° = 120 · π : 180 = 2π/3 ≈ <b>2,09</b>.","Amplitude a = 3, Periode 2π : 2 = <b>π</b>, Mittellinie y = 1.","Die Werte liegen also zwischen 1 − 3 = −2 und 1 + 3 = 4."])],
+"m-vektor":["Formelzeichen und Rechenweg",FZ([["u, v, AB","Vektoren (mit Pfeil geschrieben), z. B. v = (v₁ | v₂ | v₃)"],["|v|","Betrag: die Länge des Vektors"],["u · v","Skalarprodukt, das Ergebnis ist eine Zahl"],["A, t, u","in g: x = A + t·u: Stützvektor, Parameter (beliebige Zahl), Richtungsvektor"]],["A(1 | 2 | 3), B(4 | 6 | 3).","AB = B − A = (4−1 | 6−2 | 3−3) = (3 | 4 | 0).","Länge: |AB| = √(3² + 4² + 0²) = √25 = <b>5</b>.","Senkrecht? u = (1 | 2 | 2), v = (2 | −1 | 0): u · v = 2 − 2 + 0 = <b>0</b>, also stehen sie senkrecht aufeinander."])],
+"m-ebene":["Formelzeichen und Rechenweg",FZ([["E","Name der Ebene"],["a, b, c, d","Zahlen der Gleichung a·x₁ + b·x₂ + c·x₃ = d"],["n = (a | b | c)","Normalenvektor, steht senkrecht auf der Ebene"],["P(p₁ | p₂ | p₃)","ein Punkt, dessen Abstand oder Lage man prüft"]],["E: 2x₁ + x₂ − 2x₃ = 4","n = (2 | 1 | −2).","Punktprobe P(1 | 2 | 0): 2 + 2 − 0 = 4 ✓, P liegt in E.","Abstand von Q(3 | 3 | 1): Zähler |6 + 3 − 2 − 4| = 3, Nenner √(4 + 1 + 4) = 3.","Abstand = 3 : 3 = <b>1</b>."])],
+"m-binomv":["Formelzeichen und Rechenweg",FZ([["n","Anzahl der Versuche"],["p","Trefferwahrscheinlichkeit bei einem Versuch"],["k","gewünschte Trefferzahl"],["X","die Zufallsgröße „Anzahl der Treffer“"],["C(n,k)","„n über k“: Anzahl der Möglichkeiten, k Treffer auf n Versuche zu verteilen"],["μ, σ","Erwartungswert n·p und Standardabweichung"]],["Münze 4-mal werfen, genau zweimal Kopf: n = 4, p = 0,5, k = 2.","C(4,2) = 6 (Taschenrechner: 4 nCr 2).","P(X = 2) = 6 · 0,5² · 0,5² = 6 · 0,0625 = <b>0,375</b>.","Erwartungswert: μ = 4 · 0,5 = 2 Treffer."])],
+"m-normal":["Formelzeichen und Rechenweg",FZ([["μ","sprich „mü“: Mittelwert, die Mitte der Glocke"],["σ","sprich „sigma“: Standardabweichung, die Breite der Glocke"],["x","der betrachtete Wert"],["z","z-Wert: wie viele σ x von μ entfernt liegt"]],["Füllmenge mit μ = 500 ml und σ = 4 ml. Wie ungewöhnlich sind 508 ml?","z = (x − μ) : σ = (508 − 500) : 4 = <b>2</b>.","508 ml liegen 2σ über dem Mittel.","Nach der Sigma-Regel liegen 95,4 % aller Füllungen zwischen 492 und 508 ml."])]
+};
+for(const bd of SUBJECTS[0].bands)for(const t of (bd.topics||[])){const f=FORMELN[t.id];if(f&&t.steps)t.steps.push({title:f[0],body:f[1]})}
+})();
+
+/* ---------- Ausführliche Erklärungen: schriftliches Rechnen und Brüche ---------- */
+(()=>{
+const find=id=>{for(const bd of SUBJECTS[0].bands)for(const t of (bd.topics||[]))if(t.id===id)return t};
+const walk=bd=>`<ol class="rules sgl">${bd.t.slice(1,-1).map((x,i)=>`<li>${x}<div class="sgrid-wrap">${gridHTML(bd.g,i+1)}</div></li>`).join("")}</ol><p>${bd.t[bd.t.length-1]}</p>`;
+const tbl=(a,b)=>{const A=String(a).padStart(3," "),B=String(b).padStart(3," ");return `<table class="tbl" style="text-align:center"><tr><th></th><th>H</th><th>Z</th><th>E</th></tr><tr><td>${fmt(a)}</td>${[...A].map(x=>`<td>${x.trim()}</td>`).join("")}</tr><tr><td>${fmt(b)}</td>${[...B].map(x=>`<td>${x.trim()}</td>`).join("")}</tr></table>`};
+
+/* ----- Schriftlich plus und minus ----- */
+{const t=find("m4-schrplus");if(t){
+ const add=buildAdd(358,467),subA=buildSub(703,358,"ab"),subE=buildSub(703,358,"erg");
+ t.steps.unshift(
+ {title:"Warum schriftlich? Die Stellen",body:`<p>Jede Zahl besteht aus <b>Stellen</b>: Einer (E), Zehner (Z), Hunderter (H), Tausender (T) …</p>${tbl(358,467)}<p>Beim schriftlichen Rechnen hat <b>jede Stelle ihre eigene Spalte</b>. Deshalb schreibst du Einer unter Einer, Zehner unter Zehner. So rechnest du nie Äpfel mit Birnen zusammen, sondern immer nur gleiche Sorten.</p><p>Und der Trick dahinter: Du musst nie mehr als <b>einstellige</b> Zahlen im Kopf rechnen. Das Schwere zerlegt das Verfahren für dich in lauter Kleinstschritte.</p>`},
+ {title:"Addieren: Schritt für Schritt",body:`<p>Beispiel: ${fmt(358)} + ${fmt(467)}. Du fängst <b>rechts</b> an, bei den Einern. Der Grund: Was in einer Spalte zu viel ist, wandert nach <b>links</b> in die nächste. Also muss die rechte Spalte zuerst fertig sein.</p>${walk(add)}<p><b>Warum der Übertrag?</b> In eine Spalte passt nur eine Ziffer (0 bis 9). 15 Einer sind aber 1 Zehner und 5 Einer. Die 5 bleibt stehen, der Zehner wird <b>klein</b> in die Zehner-Spalte geschrieben und dort mitgezählt.</p>`},
+ {title:"Subtrahieren (1): Abziehen mit Entbündeln",body:`<p>Beispiel: ${fmt(703)} ${MINUS} ${fmt(358)}. Auch hier geht es von rechts los. Aber: 3 ${MINUS} 8 geht nicht. Dann <b>holst du dir von der nächsten Stelle</b>. 1 Zehner sind 10 Einer, 1 Hunderter sind 10 Zehner. Das nennt man <b>Entbündeln</b>.</p>${walk(subA)}<p>Steht in der Nachbarspalte eine <b>0</b>, kann man dort nichts holen. Dann holst du eine Stelle weiter und die Null wird zur <b>9</b>, weil sie 10 weitergegeben hat und selbst 9 behält.</p>`},
+ {title:"Subtrahieren (2): Ergänzen",body:`<p>Gleiche Aufgabe, anderer Weg: ${fmt(703)} ${MINUS} ${fmt(358)}. Du fragst nicht „wie viel bleibt?“, sondern <b>„unten plus wie viel ergibt oben?“</b>. Reicht es nicht, ergänzt du bis zur nächsten Zehnerzahl und merkst dir unten 1.</p>${walk(subE)}<p><b>Warum geht das?</b> Der Unterschied zweier Zahlen bleibt gleich, wenn du zu beiden dasselbe addierst. Oben kommen 10 Einer dazu, unten dafür 1 Zehner (das ist auch 10). Die Differenz ändert sich nicht, die Rechnung wird aber einfacher.</p>`});
+ t.steps.push({title:"Probe und typische Fehler",body:`<p><b>Probe beim Addieren:</b> Ergebnis minus eine Zahl muss die andere ergeben. 825 ${MINUS} 467 = 358 ✓.</p><p><b>Probe beim Subtrahieren:</b> Ergebnis plus die kleine Zahl muss die große ergeben. 345 + 358 = 703 ✓.</p><ul class="rules"><li>Zahlen <b>nicht</b> rechtsbündig untereinander (Einer unter Einer vergessen).</li><li>Übertrag vergessen oder in die falsche Spalte geschrieben.</li><li>Beim Entbündeln den Nachbarn nicht um 1 verkleinert (bei 0: nicht zu 9 gemacht).</li><li>Kleine von großer Ziffer „umgedreht“ abgezogen (3 ${MINUS} 8 = 5 ist falsch).</li></ul>`})}}
+
+/* ----- Schriftlich mal und geteilt ----- */
+{const t=find("m4-schrmal");if(t){
+ const mul=buildMul(358,4),d1=buildDiv(756,3),d2=buildDiv(624,6),d3=buildDiv(785,4);
+ t.steps.unshift(
+ {title:"Malnehmen: was dahintersteckt",body:`<p>${fmt(358)} · 4 bedeutet: 4-mal 358. Zerlegt in Stellen:</p><p class="eq">4 · 300 + 4 · 50 + 4 · 8 = 1200 + 200 + 32 = ${fmt(1432)}</p><p>Das schriftliche Verfahren macht genau das, nur Spalte für Spalte von rechts. Der <b>Übertrag</b> ist das Zusammenfassen: 32 sind 3 Zehner und 2 Einer, die 3 Zehner werden bei den Zehnern dazugezählt.</p>${walk(mul)}<p><b>Merke:</b> Erst malnehmen, dann den gemerkten Übertrag <b>dazuzählen</b> (nicht vorher).</p>`},
+ {title:"Teilen: Verteilen Stelle für Stelle",body:`<p>Beispiel: ${fmt(756)} : 3. Stell dir vor, du verteilst 7 Hunderter, 5 Zehner und 6 Einer auf 3 Kinder. Von links nach rechts, weil man <b>zuerst die großen Einheiten</b> verteilt:</p><ul class="rules"><li>7 Hunderter auf 3 Kinder: je 2 Hunderter (2 · 3 = 6), <b>1 Hunderter bleibt übrig</b>.</li><li>Der Rest-Hunderter wird in 10 Zehner getauscht und zu den 5 Zehnern gelegt: 15 Zehner. Das ist das <b>Herunterholen</b>.</li><li>15 Zehner auf 3: je 5 Zehner, nichts bleibt.</li><li>6 Einer auf 3: je 2 Einer.</li></ul>${walk(d1)}<p>Jedes Kind bekommt 2 Hunderter, 5 Zehner und 2 Einer: <b>252</b>.</p>`},
+ {title:"Teilen: Null im Ergebnis und Rest",body:`<p><b>Eine Null im Ergebnis</b> entsteht, wenn der Teiler gar nicht in den aktuellen Teil passt. Beispiel ${fmt(624)} : 6. Nach der 1 kommt die 2 dran, und 2 : 6 passt 0-mal. Dann schreibst du trotzdem eine <b>0</b> hin und holst die nächste Ziffer.</p>${walk(d2)}<p><b>Mit Rest:</b> Geht die Aufgabe nicht auf, bleibt unten ein Rest, der kleiner als der Teiler ist. ${fmt(785)} : 4:</p>${walk(d3)}<p>Probe: ${d3.res} · 4 + ${d3.rest} = 785 ✓.</p>`});
+ t.steps.push({title:"Probe und typische Fehler",body:`<p><b>Probe beim Malnehmen:</b> Ergebnis durch den Faktor teilen. 1432 : 4 = 358 ✓.</p><p><b>Probe beim Teilen:</b> Ergebnis mal Teiler (plus Rest) muss die Ausgangszahl ergeben. 252 · 3 = 756 ✓.</p><ul class="rules"><li>Übertrag vor dem Malnehmen statt danach addiert.</li><li>Beim Teilen die <b>0 im Ergebnis</b> vergessen.</li><li>Nach dem Abziehen eine Ziffer nicht heruntergeholt.</li><li>Rest größer oder gleich dem Teiler. Dann passt er noch einmal hinein.</li></ul>`})}}
+
+/* ----- Brüche: Bilder ----- */
+const bar=(z,d,w=250)=>{const h=28,cw=w/d;let r="";for(let i=0;i<d;i++)r+=`<rect x="${i*cw+1}" y="1" width="${cw-2}" height="${h}" rx="3" fill="${i<z?"var(--accent)":"var(--surface)"}" stroke="var(--ink)" stroke-width="1.2"/>`;
+  return `<svg viewBox="0 0 ${w+2} ${h+2}" width="100%" style="max-width:${w}px;display:block" role="img" aria-label="${z} von ${d} Teilen gefüllt">${r}</svg>`};
+const bars=l=>`<div style="display:grid;gap:8px;margin:10px 0">${l.map(([z,d,cap])=>`<div style="display:grid;grid-template-columns:4.2em 1fr;align-items:center;gap:10px"><span style="text-align:center">${cap||F(z,d)}</span>${bar(z,d)}</div>`).join("")}</div>`;
+const area=(zr,dr,zc,dc)=>{const w=240,h=150,cw=w/dc,ch=h/dr;let r="";
+  for(let i=0;i<dr;i++)for(let j=0;j<dc;j++){const a=i<zr,b=j<zc;r+=`<rect x="${j*cw+1}" y="${i*ch+1}" width="${cw-2}" height="${ch-2}" fill="${a&&b?"var(--accent)":a||b?"var(--accent)":"var(--surface)"}" fill-opacity="${a&&b?1:a||b?.28:1}" stroke="var(--ink)" stroke-width="1"/>`}
+  return `<svg viewBox="0 0 ${w+2} ${h+2}" width="100%" style="max-width:${w}px;display:block;margin:8px auto" role="img" aria-label="Flächenmodell">${r}</svg>`};
+
+{const t=find("m-bruch1");if(t){
+ t.steps.splice(1,0,
+ {title:"Bruchstrich heißt „geteilt“",body:`<p>Der Bruchstrich ist ein <b>Geteilt-Zeichen</b>: ${F(3,4)} = 3 : 4 = 0,75.</p><p>Beispiel: 3 Pizzen werden gerecht auf 4 Kinder verteilt. Jedes Kind bekommt 3 : 4 = ${F(3,4)} Pizza. Das ist dasselbe wie: jede Pizza in 4 Stücke schneiden und jedem Kind 3 Stücke geben.</p>${bars([[3,4],[4,4,"1"]])}<p>Ein Bruch mit gleichem Zähler und Nenner ist ein <b>Ganzes</b>: ${F(4,4)} = 1. Und jede ganze Zahl ist ein Bruch: 5 = ${F(5,1)}. Wichtig: Durch <b>0</b> darf der Nenner nie sein.</p>`},
+ {title:"Unechte Brüche und gemischte Zahlen",body:`<p>Ist der Zähler größer als der Nenner, ist der Bruch größer als 1. Das ist ein <b>unechter Bruch</b>. Er lässt sich als <b>gemischte Zahl</b> schreiben: ${F(7,4)} = 1 ${F(3,4)}.</p>${bars([[4,4,"1"],[3,4,F(3,4)]])}<p><b>Unecht → gemischt:</b> Zähler durch Nenner teilen. 7 : 4 = 1 Rest 3, also 1 ${F(3,4)}. Das Ergebnis ist die Ganze, der Rest der neue Zähler.</p><p><b>Gemischt → unecht:</b> Ganze mal Nenner plus Zähler. 2 ${F(1,3)}: 2 · 3 + 1 = 7, also ${F(7,3)}.</p>`})}}
+
+{const t=find("m-bruch2");if(t){
+ t.steps.splice(1,0,
+ {title:"Warum gleiche Nenner nötig sind (Bild)",body:`<p>${F(1,3)} + ${F(1,4)}: Ein Drittel und ein Viertel sind verschieden große Stücke. Erst wenn man <b>beide Stücke in gleich kleine Teile schneidet</b>, kann man zählen. Der kleinste gemeinsame Teil ist ein Zwölftel:</p>${bars([[1,3],[1,4],[4,12],[3,12],[7,12]])}<p>${F(1,3)} sind ${F(4,12)}, ${F(1,4)} sind ${F(3,12)}. Zusammen ${F(7,12)}.</p>`});
+ t.steps.push({title:"Hauptnenner finden und gemischte Zahlen",body:`<p><b>Hauptnenner finden:</b> Vielfache des größeren Nenners aufschreiben, bis der kleinere Nenner hineinpasst. ${F(1,6)} + ${F(1,4)}: Vielfache von 6: 6, 12 … 12 ist durch 4 teilbar. Hauptnenner <b>12</b>.</p><p class="eq">${F(1,6)} + ${F(1,4)} = ${F(2,12)} + ${F(3,12)} = ${F(5,12)}</p><p><b>Gemischte Zahlen addieren:</b> Ganze und Brüche getrennt. 2 ${F(1,2)} + 1 ${F(2,3)}:</p><ol class="rules"><li>Ganze: 2 + 1 = 3.</li><li>Brüche: ${F(3,6)} + ${F(4,6)} = ${F(7,6)} = 1 ${F(1,6)}.</li><li>Zusammen: 3 + 1 ${F(1,6)} = <b>4 ${F(1,6)}</b>.</li></ol><p class="tip">Nach dem Rechnen immer prüfen: Lässt sich das Ergebnis noch kürzen? Ist der Zähler größer als der Nenner, in eine gemischte Zahl umwandeln.</p>`})}}
+
+{const t=find("m-bruch3");if(t){
+ t.steps.splice(1,0,
+ {title:"Malnehmen im Bild: das Flächenmodell",body:`<p>${F(2,3)} · ${F(3,4)}: Das Rechteck wird in 4 Spalten und 3 Zeilen geteilt. Drei von 4 Spalten gehören zu ${F(3,4)}, zwei von 3 Zeilen zu ${F(2,3)}. Die kräftige Fläche, wo beides gilt, ist das Ergebnis:</p>${area(2,3,3,4)}<p>Es sind 6 von 12 Feldern, also ${F(6,12)} = ${F(1,2)}. Genau das sagt die Regel: Zähler mal Zähler (2 · 3 = 6), Nenner mal Nenner (3 · 4 = 12).</p><p><b>Ganze mal Bruch:</b> 4 · ${F(2,3)} = ${F(8,3)} = 2 ${F(2,3)}. Die Ganze wird nur mit dem Zähler malgenommen.</p>`});
+ t.steps.push({title:"Teilen: warum der Kehrwert",body:`<p>Die Frage bei ${F(3,4)} : ${F(1,4)} lautet: <b>Wie oft passt ein Viertel in drei Viertel?</b></p>${bars([[3,4],[1,4]])}<p>Dreimal. Mit der Regel: ${F(3,4)} · ${F(4,1)} = ${F(12,4)} = 3 ✓.</p><p><b>Bruch durch ganze Zahl:</b> ${F(3,4)} : 3 heißt „drei Viertel auf 3 Personen verteilen“: Jeder bekommt ${F(1,4)}. Mit Kehrwert: ${F(3,4)} · ${F(1,3)} = ${F(3,12)} = ${F(1,4)} ✓. Das Teilen durch 3 ist dasselbe wie Malnehmen mit ${F(1,3)}.</p><p class="warn">Den Kehrwert nur beim <b>zweiten</b> Bruch bilden, nicht beim ersten.</p>`})}}
+})();
 
 function openStop(st){const was=!!S.seen[st.key];S.seen[st.key]=true;save();
   if(st.planned){openPlanned(st);return}

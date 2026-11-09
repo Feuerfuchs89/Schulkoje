@@ -58,3 +58,24 @@ Neu in dieser Version: Physik, Band "Elektrotechnik & Löten · Praxis" (im Aufb
 Kapitel 1 bis 21, je mit Lektion, Aufgaben (leicht, mittel, schwer), Quiz und Küchentisch-Experiment.
 Außerdem: Übungsrunden zeigen keine doppelten Fragen mehr, und Physik Klasse 1–12 hat deutlich mehr Fragen.
 Rechenhilfen: Bei Rechenaufgaben gibt es ein Rechenblatt mit Karopapier (Finger oder Stift) und ab Klasse 5 einen Taschenrechner. Einstellungen: Zahnrad, Rechenhilfen.
+
+Neu in dieser Version: Schriftliches Rechnen zum Eintippen
+Bei den Aufgaben zu schriftlich Addieren, Subtrahieren, Multiplizieren und Dividieren trägst du die
+Ziffern direkt in die Kästchen ein. Eine eigene Zifferntastatur sitzt unter dem Raster, damit die
+Handy-Tastatur das Raster nicht verdeckt. Der Cursor springt automatisch zum nächsten Kästchen
+(Pfeiltaste = überspringen, ⌫ = löschen). Kleine Kästchen sind für den Übertrag und zählen nicht
+für die Wertung. Beim Abziehverfahren (Entbündeln) gibt es keine Übertragskästchen, dafür bleibt
+das Rechenblatt verfügbar. Nach dem Prüfen werden richtige Kästchen grün und falsche rot.
+
+Neu in dieser Version: Formelzeichen und Rechenweg in den Mathe-Lektionen
+Zu 32 Mathe-Themen (Klasse 5 bis 12, z. B. Brüche, Fläche, Prozent, Zinsen, Pythagoras,
+pq-Formel, Ableitung, Integral, Vektoren, Normalverteilung) gibt es am Ende der Lektion
+einen Kasten "Formelzeichen und Rechenweg": Tabelle mit allen Zeichen und ihrer Bedeutung
+plus ein durchgerechnetes Beispiel Schritt für Schritt.
+
+Neu in dieser Version: Ausführliche Erklärungen zu schriftlichem Rechnen und Brüchen
+- Schriftlich plus/minus und mal/geteilt: Warum es die Spalten gibt, warum man rechts bzw. beim
+  Teilen links anfängt, was Übertrag, Entbündeln, Ergänzen und Herunterholen bedeuten. Jeder
+  Rechenschritt mit Raster-Bild, dazu Probe und typische Fehler.
+- Brüche: Bruchstrich als Geteilt, unechte Brüche und gemischte Zahlen, Bilder zum Addieren,
+  Flächenmodell zum Malnehmen, Hauptnenner finden, gemischte Zahlen, Warum der Kehrwert.
