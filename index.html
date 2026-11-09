@@ -31,6 +31,14 @@
 .rb-g.act{margin-left:auto}
 .rb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 0 24px}
 .rb-sheet{position:relative;margin:0 auto;width:min(100%,900px);background-color:var(--surface);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:26px 26px;background-position:-1px -1px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.rb-cur{position:absolute;width:26px;height:26px;box-sizing:border-box;border:2.5px solid var(--signal);border-radius:4px;background:color-mix(in srgb,var(--signal) 22%,transparent);pointer-events:none;z-index:2}
+.rb-cur::after{content:"›";position:absolute;right:-9px;top:50%;transform:translateY(-52%);font:700 15px/1 var(--f-mono);color:var(--signal)}
+.rb-cur[data-dir="-1"]::after{content:"‹";right:auto;left:-9px}
+.rb-keys{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:8px max(10px,env(safe-area-inset-left,0px));background:var(--surface);border-top:1px solid var(--line)}
+.rb-keys[hidden]{display:none}
+.rb-keys button{height:44px;border-radius:10px;border:1.5px solid var(--line);background:var(--sunk);color:var(--ink);font:600 1.15rem var(--f-mono);touch-action:manipulation}
+.rb-keys button:active{background:var(--surface)}
+.rb-keys .rb-k2{color:var(--accent)}
 .rb-sheet canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .tr-ov{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center}
 .tr-box{width:min(440px,100%);max-height:96dvh;overflow-y:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:18px 18px 0 0;padding:14px max(14px,env(safe-area-inset-left,0px)) calc(14px + env(safe-area-inset-bottom,0px))}
@@ -748,7 +756,7 @@ function gridModel(op,bd,opt){
 function gridInput(ex,onChange){
   const vals={},K=e=>e.r+","+e.c,by={};ex.cells.forEach(e=>by[K(e)]=e);
   let act=ex.order[0],locked=false;
-  const wrap=h(`<div class="stack" style="gap:0" tabindex="0" aria-label="Rechenraster zum Ausfüllen"><div class="sgrid-wrap"><div class="sgrid gin" style="grid-template-columns:repeat(${ex.cols},1.55em)"></div></div><div class="gkeys" role="group" aria-label="Zifferntastatur"></div><p class="muted small gnote">Tippe ein Kästchen an und gib die Ziffer ein. Kleine Kästchen sind für den Übertrag (freiwillig).</p></div>`);
+  const wrap=h(`<div class="stack" style="gap:0;outline:none" tabindex="0" aria-label="Rechenraster zum Ausfüllen"><div class="sgrid-wrap"><div class="sgrid gin" style="grid-template-columns:repeat(${ex.cols},1.55em)"></div></div><div class="gkeys" role="group" aria-label="Zifferntastatur"></div><p class="muted small gnote">Tippe ein Kästchen an und gib die Ziffer ein. Kleine Kästchen sind für den Übertrag (freiwillig).</p></div>`);
   const gr=$(".sgrid",wrap),kp=$(".gkeys",wrap);
   const req=()=>ex.order,filled=()=>req().every(k=>vals[k]!=null&&vals[k]!=="");
   function paint(res){
@@ -5016,28 +5024,47 @@ function rhBlatt(step,opener){
   const strokes=st.strokes;let tool="pen",color="k",cur=null,W=0,H=0,dpr=1,clrT=null;
   const el=h(`<div class="rb-ov" role="dialog" aria-modal="true" aria-label="Rechenblatt">
     <div class="rb-bar">
-      <div class="rb-g" role="group" aria-label="Werkzeug"><button type="button" class="rb-b" data-tool="pen" aria-pressed="true">Stift</button><button type="button" class="rb-b" data-tool="eraser" aria-pressed="false">Radierer</button><button type="button" class="rb-b" data-tool="hand" aria-pressed="false">Verschieben</button></div>
+      <div class="rb-g" role="group" aria-label="Werkzeug"><button type="button" class="rb-b" data-tool="pen" aria-pressed="true">Stift</button><button type="button" class="rb-b" data-tool="type" aria-pressed="false">Tippen</button><button type="button" class="rb-b" data-tool="eraser" aria-pressed="false">Radierer</button><button type="button" class="rb-b" data-tool="hand" aria-pressed="false">Verschieben</button></div>
       <div class="rb-g" role="group" aria-label="Farbe"><button type="button" class="rb-c" data-col="k" aria-pressed="true" aria-label="Stiftfarbe Standard" style="--c:var(--ink)"></button><button type="button" class="rb-c" data-col="b" aria-pressed="false" aria-label="Blau" style="--c:${rhDark()?"#8AB4FF":"#1D4ED8"}"></button><button type="button" class="rb-c" data-col="r" aria-pressed="false" aria-label="Rot" style="--c:${rhDark()?"#FF8A80":"#C62828"}"></button></div>
       <div class="rb-g act"><button type="button" class="rb-b" data-act="undo">Zurück</button><button type="button" class="rb-b" data-act="clear">Alles löschen</button><button type="button" class="rb-b rb-ok" data-act="close">Fertig</button></div>
     </div>
     <p class="rb-hint muted small">Finger oder Stift. „Verschieben“ zum Blättern.</p>
-    <div class="rb-scroll"><div class="rb-sheet"><canvas aria-label="Zeichenfläche, Karopapier"></canvas></div></div></div>`);
+    <div class="rb-scroll"><div class="rb-sheet"><canvas aria-label="Zeichenfläche, Karopapier"></canvas><div class="rb-cur" hidden></div></div></div><div class="rb-keys" role="group" aria-label="Tastatur fürs Rechenblatt" hidden></div></div>`);
   const close=rhModal(el,opener),sheet=el.querySelector(".rb-sheet"),cv=el.querySelector("canvas"),sc=el.querySelector(".rb-scroll"),ctx=cv.getContext("2d");
   const mid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
   const setup=s=>{ctx.globalCompositeOperation=s.c==="e"?"destination-out":"source-over";ctx.strokeStyle=s.c==="e"?"#000":rhColor(s.c);ctx.fillStyle=ctx.strokeStyle;ctx.lineWidth=s.w;ctx.lineCap="round";ctx.lineJoin="round"};
-  const paint=s=>{setup(s);const p=s.p;if(p.length===1){ctx.beginPath();ctx.arc(p[0][0],p[0][1],s.w/2,0,6.2832);ctx.fill();return}
+  const MONO=(getComputedStyle(document.documentElement).getPropertyValue("--f-mono").trim()||"ui-monospace,monospace");
+  const paint=s=>{if(s.tx){const C=RH_CELL;ctx.globalCompositeOperation="source-over";ctx.clearRect(s.gx*C,s.gy*C,C,C);
+      if(s.ch){ctx.fillStyle=rhColor(s.c);ctx.font=`600 ${Math.round(C*.72)}px ${MONO}`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(s.ch,s.gx*C+C/2,s.gy*C+C/2+1)}return}
+    setup(s);const p=s.p;if(p.length===1){ctx.beginPath();ctx.arc(p[0][0],p[0][1],s.w/2,0,6.2832);ctx.fill();return}
     ctx.beginPath();ctx.moveTo(p[0][0],p[0][1]);for(let i=1;i<p.length-1;i++){const m=mid(p[i],p[i+1]);ctx.quadraticCurveTo(p[i][0],p[i][1],m[0],m[1])}
     const l=p[p.length-1];ctx.lineTo(l[0],l[1]);ctx.stroke()};
   const redraw=()=>{ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);strokes.forEach(paint)};
   const fit=()=>{dpr=Math.min(window.devicePixelRatio||1,2);W=Math.max(200,sheet.clientWidth);H=Math.ceil(Math.max(1400,innerHeight*2.2)/RH_CELL)*RH_CELL;sheet.style.height=H+"px";cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);redraw()};
   fit();addEventListener("resize",fit);
   const origClose=close;let closed=false;const done=()=>{if(closed)return;closed=true;removeEventListener("resize",fit);clearTimeout(clrT);origClose()};
-  const setTool=t=>{tool=t;el.querySelectorAll("[data-tool]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tool===t));cv.style.touchAction=t==="hand"?"pan-y":"none";cv.style.cursor=t==="hand"?"grab":"crosshair"};
+  const curEl=el.querySelector(".rb-cur"),keys=el.querySelector(".rb-keys"),hint=el.querySelector(".rb-hint");
+  let cx=1,cy=2,lineX=1,dir=1;const cols=()=>Math.max(1,Math.floor(W/RH_CELL)),rowsN=()=>Math.max(1,Math.floor(H/RH_CELL));
+  const showCur=()=>{curEl.hidden=tool!=="type";curEl.style.left=cx*RH_CELL+"px";curEl.style.top=cy*RH_CELL+"px";curEl.dataset.dir=dir;
+    if(tool==="type"){const t=cy*RH_CELL,b=t+RH_CELL;if(t<sc.scrollTop+10)sc.scrollTop=Math.max(0,t-RH_CELL*3);else if(b>sc.scrollTop+sc.clientHeight-10)sc.scrollTop=b-sc.clientHeight+RH_CELL*3}};
+  const setCur=(x,y)=>{cx=Math.min(cols()-1,Math.max(0,x));cy=Math.min(rowsN()-1,Math.max(0,y));showCur()};
+  const typeKey=k=>{
+    if(k==="←")setCur(cx-1,cy);else if(k==="→")setCur(cx+1,cy);else if(k==="↵")setCur(lineX,cy+1);
+    else if(k==="⇄"){dir=-dir;showCur()}
+    else if(k==="⌫"){setCur(cx-dir,cy);const s={tx:1,gx:cx,gy:cy,ch:"",c:color};strokes.push(s);paint(s)}
+    else{const s={tx:1,gx:cx,gy:cy,ch:k,c:color};strokes.push(s);paint(s);setCur(cx+dir,cy)}};
+  [["7","8","9","+",MINUS,"⌫"],["4","5","6","·",":","←"],["1","2","3",",","=","→"],["0","(",")","/","⇄","↵"]].forEach(r=>r.forEach(k=>{
+    const b=h(`<button type="button">${k}</button>`);if("⌫←→⇄↵".includes(k))b.className="rb-k2";
+    b.setAttribute("aria-label",({"⌫":"Löschen","←":"Cursor nach links","→":"Cursor nach rechts","⇄":"Schreibrichtung wechseln","↵":"Nächste Zeile"})[k]||k);
+    b.onclick=()=>typeKey(k);keys.append(b)}));
+  const HINTS={type:"Kästchen antippen, dann tippen. ⇄ wechselt die Richtung (← zum Rechnen von rechts), ↵ springt in die nächste Zeile.",other:"Finger oder Stift. „Verschieben“ zum Blättern."};
+  const setTool=t=>{tool=t;keys.hidden=t!=="type";hint.textContent=t==="type"?HINTS.type:HINTS.other;showCur();el.querySelectorAll("[data-tool]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tool===t));cv.style.touchAction=t==="hand"||t==="type"?"pan-y":"none";cv.style.cursor=t==="hand"?"grab":t==="type"?"cell":"crosshair"};
   setTool("pen");
   el.querySelectorAll("[data-tool]").forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
   el.querySelectorAll("[data-col]").forEach(b=>b.onclick=()=>{color=b.dataset.col;if(tool==="eraser"||tool==="hand")setTool("pen");el.querySelectorAll("[data-col]").forEach(x=>x.setAttribute("aria-pressed",x===b))});
   const pos=e=>{const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
-  cv.addEventListener("pointerdown",e=>{if(tool==="hand"||(e.pointerType==="mouse"&&e.button!==0))return;e.preventDefault();try{cv.setPointerCapture(e.pointerId)}catch(x){}
+  cv.addEventListener("click",e=>{if(tool!=="type")return;const q=pos(e);lineX=Math.min(cols()-1,Math.max(0,Math.floor(q[0]/RH_CELL)));setCur(lineX,Math.floor(q[1]/RH_CELL))});
+  cv.addEventListener("pointerdown",e=>{if(tool==="hand"||tool==="type"||(e.pointerType==="mouse"&&e.button!==0))return;e.preventDefault();try{cv.setPointerCapture(e.pointerId)}catch(x){}
     cur={c:tool==="eraser"?"e":color,w:tool==="eraser"?26:2.4,p:[pos(e)]};paint(cur)});
   cv.addEventListener("pointermove",e=>{if(!cur)return;e.preventDefault();const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];
     for(const ev of(evs.length?evs:[e])){const q=pos(ev),p=cur.p,l=p[p.length-1];if(Math.abs(q[0]-l[0])+Math.abs(q[1]-l[1])<1)continue;p.push(q);const n=p.length;setup(cur);ctx.beginPath();
@@ -5049,7 +5076,12 @@ function rhBlatt(step,opener){
   clr.onclick=()=>{if(!strokes.length)return;if(clr.dataset.sure){strokes.length=0;redraw();clr.textContent="Alles löschen";delete clr.dataset.sure;clearTimeout(clrT)}
     else{clr.dataset.sure="1";clr.textContent="Wirklich löschen?";clrT=setTimeout(()=>{clr.textContent="Alles löschen";delete clr.dataset.sure},3000)}};
   el.querySelector('[data-act="close"]').onclick=done;
-  el.addEventListener("keydown",e=>{if(e.key==="Escape")done()});
+  el.addEventListener("keydown",e=>{if(e.key==="Escape"){done();return}
+    if(tool!=="type"||e.ctrlKey||e.metaKey||e.altKey)return;
+    const map={Backspace:"⌫",ArrowLeft:"←",ArrowRight:"→",Enter:"↵","*":"·","-":MINUS};
+    const k=map[e.key]||(/^[0-9+:=()\/,]$/.test(e.key)?e.key:e.key==="."?",":null);
+    if(k&&!(e.key==="Enter"&&e.target.tagName==="BUTTON")){e.preventDefault();typeKey(k)}
+    else if(e.key==="ArrowUp"){e.preventDefault();setCur(cx,cy-1)}else if(e.key==="ArrowDown"){e.preventDefault();setCur(cx,cy+1)}});
   el.querySelector('[data-act="close"]').focus({preventScroll:true});
   el.__done=done;el.__strokes=strokes;return el}
 
@@ -5077,7 +5109,7 @@ function calcEval(src,deg){
   function pr(){const t=T[k];if(!t)bad("Unvollständig");
     if(t.n!==undefined){k++;return{v:t.n}}
     if(isO(t,"(")){k++;const e=add();if(!isO(T[k],")"))bad("Klammer fehlt");k++;return e}
-    if(t.f){k++;if(t.f==="pi")return{v:Math.PI};if(!FN[t.f])bad("Unbekannte Funktion");if(!isO(T[k],"("))bad("Klammer fehlt");k++;const e=add();if(!isO(T[k],")"))bad("Klammer fehlt");k++;return{v:fin(FN[t.f](e.v))}}
+    if(t.f){k++;if(t.f==="pi")return{v:Math.PI};if(t.f==="e")return{v:Math.E};if(!FN[t.f])bad("Unbekannte Funktion");if(!isO(T[k],"("))bad("Klammer fehlt");k++;const e=add();if(!isO(T[k],")"))bad("Klammer fehlt");k++;return{v:fin(FN[t.f](e.v))}}
     bad("Unvollständig")}
   function pf(){let a=pr();for(;;){if(isO(peek(),"%")){k++;a={v:a.v/100,pct:true}}else if(isO(peek(),"!")){k++;if(a.v<0||a.v!==Math.floor(a.v)||a.v>170)bad("Fakultät nur für ganze Zahlen von 0 bis 170");let r=1;for(let i=2;i<=a.v;i++)r*=i;a={v:r}}else break}return a}
   function pw(){const a=pf();if(isO(peek(),"^")){k++;const b=un();return{v:fin(Math.pow(a.v,b.v))}}return a}
@@ -5104,9 +5136,9 @@ function rhRechner(opener,getField){
     <div class="tr-keys tr-sci" aria-label="Wissenschaftliche Tasten"></div>
     <div class="tr-keys tr-main" aria-label="Zifferntasten"></div></div></div>`);
   const box=el.querySelector(".tr-box"),exE=el.querySelector(".tr-ex"),resE=el.querySelector(".tr-res"),sci=el.querySelector(".tr-sci"),main=el.querySelector(".tr-main");
-  const AR={"÷":"geteilt","×":"mal","−":"minus","+":"plus",",":"Komma","⌫":"Eine Stelle löschen","C":"Alles löschen","=":"gleich","(":"Klammer auf",")":"Klammer zu","%":"Prozent","x²":"Quadrat","√":"Wurzel","xʸ":"Hoch","±":"Vorzeichen wechseln","1/x":"Kehrwert","Ans":"letztes Ergebnis","π":"Pi","n!":"Fakultät"};
+  const AR={"÷":"geteilt","×":"mal","−":"minus","+":"plus",",":"Komma","⌫":"Eine Stelle löschen","C":"Alles löschen","=":"gleich","(":"Klammer auf",")":"Klammer zu","%":"Prozent","x²":"Quadrat","√":"Wurzel","xʸ":"Hoch","±":"Vorzeichen wechseln","1/x":"Kehrwert","Ans":"letztes Ergebnis","π":"Pi","n!":"Fakultät","e":"Eulersche Zahl","eˣ":"e hoch","10ˣ":"10 hoch","x³":"hoch 3"};
   const mk=(host,list)=>list.forEach(([t,k,c])=>{const b=h(`<button type="button" class="${c||""}" data-k="${k}">${t}</button>`);if(AR[t])b.setAttribute("aria-label",AR[t]);host.append(b)});
-  mk(sci,[["x²","sq","fn"],["√","sqrt","fn"],["xʸ","^","fn"],["π","π","fn"],["sin","sin(","fn"],["cos","cos(","fn"],["tan","tan(","fn"],["n!","!","fn"],["sin⁻¹","asin(","fn"],["cos⁻¹","acos(","fn"],["tan⁻¹","atan(","fn"],["1/x","inv","fn"],["ln","ln(","fn"],["log","log(","fn"],["±","neg","fn"],["Ans","ans","fn"]]);
+  mk(sci,[["x²","sq","fn"],["√","sqrt","fn"],["xʸ","^","fn"],["π","π","fn"],["sin","sin(","fn"],["cos","cos(","fn"],["tan","tan(","fn"],["n!","!","fn"],["sin⁻¹","asin(","fn"],["cos⁻¹","acos(","fn"],["tan⁻¹","atan(","fn"],["1/x","inv","fn"],["ln","ln(","fn"],["log","log(","fn"],["±","neg","fn"],["Ans","ans","fn"],["e","e","fn"],["eˣ","e^(","fn"],["10ˣ","10^(","fn"],["x³","^3","fn"]]);
   mk(main,[["C","C","op"],["⌫","bs","op"],["(","(","op"],[")",")","op"],["7","7"],["8","8"],["9","9"],["÷","÷","op"],["4","4"],["5","5"],["6","6"],["×","×","op"],["1","1"],["2","2"],["3","3"],["−","−","op"],["0","0"],[",",",",""],["%","%","op"],["+","+","op"]]);
   main.append(h(`<button type="button" class="eq" data-k="eq" style="grid-column:1/-1" aria-label="gleich">=</button>`));
   const close=rhModal(el,opener),useB=el.querySelector('[data-a="use"]'),degB=el.querySelector('[data-a="deg"]'),sciB=el.querySelector('[data-a="sci"]');
