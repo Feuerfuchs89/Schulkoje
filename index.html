@@ -760,6 +760,8 @@ function gridInput(ex,onChange){
   let act=ex.order[0],locked=false;
   const wrap=h(`<div class="stack" style="gap:0;outline:none" tabindex="0" aria-label="Rechenraster zum Ausfüllen"><div class="sgrid-wrap"><div class="sgrid gin" style="grid-template-columns:repeat(${ex.cols},1.55em)"></div></div><div class="gkeys" role="group" aria-label="Zifferntastatur"></div><p class="muted small gnote">Tippe ein Kästchen an und gib die Ziffer ein. Kleine Kästchen sind für Übertrag oder Entbündeln (freiwillig, auch zweistellig wie 13). Mit → geht es zum nächsten kleinen Kästchen.</p></div>`);
   const gr=$(".sgrid",wrap),kp=$(".gkeys",wrap);
+  const pick=ev=>{if(locked)return;const t=ev.target.closest&&ev.target.closest("[data-k]");if(!t||!gr.contains(t))return;act=t.dataset.k;paint()};
+  gr.addEventListener("pointerdown",pick);gr.addEventListener("click",pick);
   const req=()=>ex.order,filled=()=>req().every(k=>vals[k]!=null&&vals[k]!=="");
   function paint(res){
     gr.innerHTML="";
@@ -773,7 +775,7 @@ function gridInput(ex,onChange){
           if(K(e)===act&&!locked)cl.push("act");
           if(res){const v=vals[K(e)]||"";if(e.t==="req")cl.push(v===e.ch?"ok":"bad");else if(v)cl.push(v===e.ch?"ok":"bad")}}}
       const sp=h(`<span class="${cl.join(" ")}">${txt}</span>`);
-      if(e&&e.t!=="fix"&&!locked){sp.setAttribute("role","button");sp.setAttribute("aria-label",e.t==="opt"?"Übertrag":"Ziffer eintragen");sp.onclick=()=>{act=K(e);paint()}}
+      if(e&&e.t!=="fix"&&!locked){sp.setAttribute("role","button");sp.setAttribute("aria-label",e.t==="opt"?"Übertrag":"Ziffer eintragen");sp.dataset.k=K(e)}
       gr.append(sp)}})}
   const nextReq=from=>{const o=req(),i=o.indexOf(from);
     for(let j=i+1;j<o.length;j++)if(!vals[o[j]])return o[j];
@@ -786,6 +788,9 @@ function gridInput(ex,onChange){
   function skip(){if(locked)return;if(by[act].t==="opt"){const e=by[act],n=by[e.r+","+(e.c-1)];act=n&&n.t==="opt"?K(n):nextReq(req()[0]);paint();return}
     const o=req(),i=o.indexOf(act);act=o[(i+1)%o.length];paint()}
   [..."123456789","0","⌫","→"].forEach(k=>{const b=h(`<button type="button">${k}</button>`);b.onclick=()=>k==="⌫"?del():k==="→"?skip():put(k);if(k==="⌫")b.setAttribute("aria-label","Löschen");if(k==="→")b.setAttribute("aria-label","Nächstes Kästchen");kp.append(b)});
+  const opts=ex.cells.filter(e=>e.t==="opt").sort((a,b)=>b.c-a.c).map(K);
+  if(opts.length){const ub=h(`<button type="button" class="gk-u" style="grid-column:1/-1;font:600 .95rem var(--f-body,inherit)">${ex.two?"Übertrag / Entbündeln eintragen":"Übertrag eintragen"}</button>`);
+    ub.onclick=()=>{if(locked)return;const i=opts.indexOf(act);act=opts[(i+1)%opts.length];paint()};kp.append(ub)}
   wrap.addEventListener("keydown",e=>{if(/^\d$/.test(e.key)){e.preventDefault();put(e.key)}else if(e.key==="Backspace"){e.preventDefault();del()}else if(e.key==="Tab"&&false){}else if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();skip()}});
   paint();
   wrap.value=()=>vals;

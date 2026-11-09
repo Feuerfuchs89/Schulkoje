@@ -90,3 +90,6 @@ Taschenrechner (wissenschaftlich): neue Tasten e, eˣ, 10ˣ und x³ (für e-Funk
 
 Teilen mit Rest: Bei "Berechne mit Rest" gibt es jetzt zwei Felder, Ergebnis und Rest. Beide werden geprüft,
 und die App sagt, welcher der beiden Werte noch nicht stimmt.
+
+Übertrag-Kästchen: Neue Taste "Übertrag eintragen" unter der Zifferntastatur springt von Übertrag-Kästchen zu
+Übertrag-Kästchen (von rechts nach links). Das Antippen der kleinen Kästchen reagiert jetzt schon beim Berühren.
