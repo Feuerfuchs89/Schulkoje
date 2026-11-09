@@ -756,7 +756,7 @@ function gridModel(op,bd,opt){
 function gridInput(ex,onChange){
   const vals={},K=e=>e.r+","+e.c,by={};ex.cells.forEach(e=>by[K(e)]=e);
   let act=ex.order[0],locked=false;
-  const wrap=h(`<div class="stack" style="gap:0;outline:none" tabindex="0" aria-label="Rechenraster zum Ausfüllen"><div class="sgrid-wrap"><div class="sgrid gin" style="grid-template-columns:repeat(${ex.cols},1.55em)"></div></div><div class="gkeys" role="group" aria-label="Zifferntastatur"></div><p class="muted small gnote">Tippe ein Kästchen an und gib die Ziffer ein. Kleine Kästchen sind für den Übertrag (freiwillig).</p></div>`);
+  const wrap=h(`<div class="stack" style="gap:0;outline:none" tabindex="0" aria-label="Rechenraster zum Ausfüllen"><div class="sgrid-wrap"><div class="sgrid gin" style="grid-template-columns:repeat(${ex.cols},1.55em)"></div></div><div class="gkeys" role="group" aria-label="Zifferntastatur"></div><p class="muted small gnote">Tippe ein Kästchen an und gib die Ziffer ein. Kleine Kästchen sind für Übertrag oder Entbündeln (freiwillig, auch zweistellig wie 13). Mit → geht es zum nächsten kleinen Kästchen.</p></div>`);
   const gr=$(".sgrid",wrap),kp=$(".gkeys",wrap);
   const req=()=>ex.order,filled=()=>req().every(k=>vals[k]!=null&&vals[k]!=="");
   function paint(res){
@@ -777,16 +777,19 @@ function gridInput(ex,onChange){
     for(let j=i+1;j<o.length;j++)if(!vals[o[j]])return o[j];
     for(let j=0;j<o.length;j++)if(!vals[o[j]])return o[j];
     return from};
-  function put(d){if(locked||!act)return;vals[act]=d;if(by[act].t==="req"){const o=req(),i=o.indexOf(act);act=(i+1<o.length&&!vals[o[i+1]])?o[i+1]:nextReq(act)}else act=nextReq(req()[0]);paint();onChange(filled())}
-  function del(){if(locked||!act)return;if(vals[act]){delete vals[act]}else{const o=req(),i=o.indexOf(act);if(i>0)act=o[i-1];delete vals[act]}paint();onChange(filled())}
-  function skip(){if(locked)return;const o=req(),i=o.indexOf(act);act=o[(i+1)%o.length];paint()}
+  function put(d){if(locked||!act)return;if(by[act].t==="opt"){const c=vals[act]||"";vals[act]=ex.two&&c.length===1?c+d:d;paint();onChange(filled());return}
+    vals[act]=d;if(by[act].t==="req"){const o=req(),i=o.indexOf(act);act=(i+1<o.length&&!vals[o[i+1]])?o[i+1]:nextReq(act)}else act=nextReq(req()[0]);paint();onChange(filled())}
+  function del(){if(locked||!act)return;if(by[act].t==="opt"){vals[act]=(vals[act]||"").slice(0,-1);if(!vals[act])delete vals[act];paint();onChange(filled());return}
+    if(vals[act]){delete vals[act]}else{const o=req(),i=o.indexOf(act);if(i>0)act=o[i-1];delete vals[act]}paint();onChange(filled())}
+  function skip(){if(locked)return;if(by[act].t==="opt"){const e=by[act],n=by[e.r+","+(e.c-1)];act=n&&n.t==="opt"?K(n):nextReq(req()[0]);paint();return}
+    const o=req(),i=o.indexOf(act);act=o[(i+1)%o.length];paint()}
   [..."123456789","0","⌫","→"].forEach(k=>{const b=h(`<button type="button">${k}</button>`);b.onclick=()=>k==="⌫"?del():k==="→"?skip():put(k);if(k==="⌫")b.setAttribute("aria-label","Löschen");if(k==="→")b.setAttribute("aria-label","Nächstes Kästchen");kp.append(b)});
   wrap.addEventListener("keydown",e=>{if(/^\d$/.test(e.key)){e.preventDefault();put(e.key)}else if(e.key==="Backspace"){e.preventDefault();del()}else if(e.key==="Tab"&&false){}else if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();skip()}});
   paint();
   wrap.value=()=>vals;
   wrap.lock=()=>{locked=true;kp.querySelectorAll("button").forEach(b=>b.disabled=true);paint(true)};
   return wrap}
-function gridEx(q,bd,op,ansText,opt){const m=gridModel(op,bd,opt);
+function gridEx(q,bd,op,ansText,opt){const m=gridModel(op,bd,opt);m.two=!!(opt&&opt.two);
   return Object.assign({q:`Rechne schriftlich: ${term(q)}<p class="muted small">Trage die Ziffern in die Kästchen ein.</p>`,ans:R(bd.res),ansText,sol:schriftSol(bd)},m)}
 /* ---------- Bausteine: interaktive Animationen, wiederverwendbar über viele Themen ---------- */
 const reduceMotion=()=>{try{return matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){return false}};
@@ -1126,7 +1129,7 @@ Object.assign(G,{
     return gridEx(`${fmt(a)} + ${fmt(b)}`,bd,"add",fmt(bd.res),{r:2,ks:range1(Math.max(String(a).length,String(b).length)-1)})},
   schrSub(){let a,b;do{a=ri(1000,9999);b=ri(100,a-1)}while(a-b<100||!digitsR(a).some((d,k)=>d<(digitsR(b)[k]||0)));
     const mode=(typeof S!=="undefined"&&S.subMode)||"ab",bd=buildSub(a,b,mode);
-    return gridEx(`${fmt(a)} ${MINUS} ${fmt(b)}`,bd,"sub",fmt(bd.res),mode==="ab"?null:{r:2,ks:range1(String(a).length-1)})},
+    return gridEx(`${fmt(a)} ${MINUS} ${fmt(b)}`,bd,"sub",fmt(bd.res),mode==="ab"?{r:0,ks:range1(String(a).length).map(k=>k-1),two:true}:{r:2,ks:range1(String(a).length-1)})},
   schrMul(){const a=ri(102,9999),d=ri(3,9),bd=buildMul(a,d);
     return gridEx(`${fmt(a)} · ${d}`,bd,"mul",fmt(bd.res),{r:1,ks:range1(String(a).length-1)})},
   schrDiv(){const d=ri(2,9),q=ri(105,1999),a=q*d;if(a>9999)return G.schrDiv();const bd=buildDiv(a,d);

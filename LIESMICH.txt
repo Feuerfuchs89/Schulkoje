@@ -64,8 +64,8 @@ Bei den Aufgaben zu schriftlich Addieren, Subtrahieren, Multiplizieren und Divid
 Ziffern direkt in die Kästchen ein. Eine eigene Zifferntastatur sitzt unter dem Raster, damit die
 Handy-Tastatur das Raster nicht verdeckt. Der Cursor springt automatisch zum nächsten Kästchen
 (Pfeiltaste = überspringen, ⌫ = löschen). Kleine Kästchen sind für den Übertrag und zählen nicht
-für die Wertung. Beim Abziehverfahren (Entbündeln) gibt es keine Übertragskästchen, dafür bleibt
-das Rechenblatt verfügbar. Nach dem Prüfen werden richtige Kästchen grün und falsche rot.
+für die Wertung. Beim Abziehverfahren (Entbündeln) gibt es kleine Kästchen über der oberen Zahl, auch
+zweistellig (z. B. 13); die Taste → springt zum nächsten kleinen Kästchen. Nach dem Prüfen werden richtige Kästchen grün und falsche rot.
 
 Neu in dieser Version: Formelzeichen und Rechenweg in den Mathe-Lektionen
 Zu 32 Mathe-Themen (Klasse 5 bis 12, z. B. Brüche, Fläche, Prozent, Zinsen, Pythagoras,
